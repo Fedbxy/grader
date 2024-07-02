@@ -4,6 +4,7 @@ import { editProfileSchema } from "@/lib/zod";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { messages } from "@/config/messages";
 
 export async function editProfile(data: FormData) {
     try {
@@ -16,14 +17,14 @@ export async function editProfile(data: FormData) {
         });
         if (!parsed.success) {
             return {
-                error: "Your request is invalid.",
+                error: messages.form.invalid,
             };
         }
 
         const { user } = await validateRequest();
         if (!user) {
             return {
-                error: "You must be signed in to edit your profile.",
+                error: messages.auth.unauthenticated,
             };
         }
 
@@ -37,7 +38,7 @@ export async function editProfile(data: FormData) {
     } catch (error) {
         console.error("Error: ", error);
         return {
-            error: "An unexpected error occurred. Please try again later.",
+            error: messages.form.unexpected, 
         };
     }
     redirect("/settings");

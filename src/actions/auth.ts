@@ -6,6 +6,7 @@ import { lucia, validateRequest } from "@/lib/auth";
 import { signUpSchema, signInSchema } from "@/lib/zod";
 import { redirect } from "next/navigation";
 import { compare, hash } from "bcrypt";
+import { messages } from "@/config/messages";
 
 export async function signup(data: FormData) {
     try {
@@ -20,14 +21,14 @@ export async function signup(data: FormData) {
         });
         if (!parsed.success) {
             return {
-                error: "Your request is invalid.",
+                error: messages.form.invalid,
             };
         }
 
         const { session } = await validateRequest();
         if (session) {
             return {
-                error: "You are already signed in.",
+                error: messages.auth.signedIn,
             };
         }
 
@@ -36,7 +37,7 @@ export async function signup(data: FormData) {
         });
         if (existingUser) {
             return {
-                error: "Username is already taken.",
+                error: messages.auth.usernameTaken,
             };
         }
 
@@ -56,7 +57,7 @@ export async function signup(data: FormData) {
     } catch (error) {
         console.error("Error: ", error);
         return {
-            error: "An unexpected error occurred. Please try again later.",
+            error: messages.form.unexpected,
         };
     }
     redirect("/settings");
@@ -73,14 +74,14 @@ export async function signin(data: FormData) {
         });
         if (!parsed.success) {
             return {
-                error: "Your request is invalid.",
+                error: messages.form.invalid,
             };
         }
 
         const { session } = await validateRequest();
         if (session) {
             return {
-                error: "You are already signed in.",
+                error: messages.auth.signedIn,
             };
         }
 
@@ -89,24 +90,25 @@ export async function signin(data: FormData) {
         });
         if (!user) {
             return {
-                error: "Invalid username or password.",
+                error: messages.auth.wrongCredentials,
             };
         }
 
         const passwordValid = await compare(password, user.password);
         if (!passwordValid) {
             return {
-                error: "Invalid username or password.",
+                error: messages.auth.wrongCredentials,
             };
         }
 
+        await lucia.invalidateUserSessions(user.id);
         const newSession = await lucia.createSession(user.id, {});
         const sessionCookie = lucia.createSessionCookie(newSession.id);
         cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
     } catch (error) {
         console.error("Error: ", error);
         return {
-            error: "An unexpected error occurred. Please try again later.",
+            error: messages.form.unexpected,
         };
     }
     redirect("/");
@@ -117,7 +119,7 @@ export async function signout() {
         const { session } = await validateRequest();
         if (!session) {
             return {
-                error: "Session not found.",
+                error: messages.auth.noSession,
             };
         }
 
@@ -128,7 +130,7 @@ export async function signout() {
     } catch (error) {
         console.error("Error: ", error);
         return {
-            error: "An unexpected error occurred. Please try again later.",
+            error: messages.form.unexpected,
         };
     }
     redirect("/signin");
