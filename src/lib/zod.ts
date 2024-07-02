@@ -1,38 +1,60 @@
-import { object, string } from "zod";
+import { z } from "zod";
+import { messages } from "@/config/messages";
 
-export const signInSchema = object({
-  username: string()
-    .min(1, "Username is required")
-    .min(3, "Username must be more than 3 characters")
-    .max(20, "Username must be less than 20 characters")
-    .regex(/^[a-zA-Z0-9_]*$/, "Username can only contain letters, numbers, and underscores"),
-  password: string()
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters"),
+export const usernameSchema = z.string()
+  .min(1, messages.schema.username.required)
+  .min(3, messages.schema.username.min)
+  .max(20, messages.schema.username.max)
+  .regex(/^[a-zA-Z0-9_]*$/, messages.schema.username.regex);
+
+export const passwordSchema = z.string()
+  .min(1, messages.schema.password.required)
+  .min(8, messages.schema.password.min);
+
+export const confirmPasswordSchema = z.string()
+  .min(1, messages.schema.confirmPassword.required);
+
+export const displayNameSchema = z.string().trim()
+  .min(1, messages.schema.displayName.required)
+  .max(30, messages.schema.displayName.max);
+
+export const bioSchema = z.string().trim()
+  .max(256, messages.schema.bio.max);
+
+export const roleSchema = z.enum(["user", "admin"]);
+
+// ----- FORM SCHEMAS -----
+
+export const signInSchema = z.object({
+  username: usernameSchema,
+  password: passwordSchema,
 });
 
-export const signUpSchema = object({
-  username: string()
-    .min(1, "Username is required")
-    .min(3, "Username must be more than 3 characters")
-    .max(20, "Username must be less than 20 characters")
-    .regex(/^[a-zA-Z0-9_]*$/, "Username can only contain letters, numbers, and underscores"),
-  password: string()
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters"),
-  confirmPassword: string()
-    .min(1, "Confirm password is required"),
+export const signUpSchema = z.object({
+  username: usernameSchema,
+  password: passwordSchema,
+  confirmPassword: confirmPasswordSchema,
 }).refine(data => data.password === data.confirmPassword, {
   path: ["confirmPassword"],
-  message: "Password does not match",
+  message: messages.schema.confirmPassword.mismatch,
 });
 
-export const editProfileSchema = object({
-  displayName: string().trim()
-    .min(1, "Display name is required")
-    .max(30, "Display name must be less than 30 characters"),
-  bio: string().trim()
-    .max(256, "Bio must be less than 256 characters"),
+export const editProfileSchema = z.object({
+  displayName: displayNameSchema,
+  bio: bioSchema,
 });
 
-// TODO: make the error message import from the config file
+export const editUserSchema = z.object({
+  username: usernameSchema,
+  displayName: displayNameSchema,
+  bio: bioSchema,
+  role: roleSchema,
+  password: z.string()
+    .refine(value => value.length === 0 || value.length >= 8, {
+      message: messages.schema.password.min,
+    }),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  path: ["confirmPassword"],
+  message: messages.schema.confirmPassword.mismatch,
+});
