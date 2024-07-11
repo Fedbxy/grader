@@ -20,9 +20,10 @@ const config = {
     extend: {
       spacing: {
         "header": "3.5rem",
+        "footer": "3.5rem",
       },
-      height: {
-        "screen-minus-header": "calc(100vh - 3.5rem - 1px)",
+      minHeight: {
+        "screen-minus-header-footer": "calc(100vh - 7rem)",
       },
       colors: {
         border: "hsl(var(--border))",

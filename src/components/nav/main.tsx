@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import { navConfig } from "@/config/nav";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +16,8 @@ export function MainNav() {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                            "transition-colors hover:text-foreground/80",
-                            pathname === item.href ? "text-foreground" : "text-foreground/60"
+                            "transition-colors hover:text-primary/80",
+                            pathname === item.href ? "text-primary font-semibold" : "text-foreground/60"
                         )}
                     >
                         {item.title}
@@ -28,3 +27,5 @@ export function MainNav() {
         </div>
     );
 }
+
+// TODO: use shadcn nav menu

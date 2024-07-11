@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { siteConfig } from "@/config/site";
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -16,16 +17,8 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL(siteConfig.url),
   description: siteConfig.description,
-  keywords: [
-    "Competitive Programming",
-    "Grader",
-    "OCOM",
-    "fedbxy",
-    "C",
-    "C++",
-    "Python",
-  ],
-  creator: "fedbxy",
+  keywords: siteConfig.keywords,
+  creator: siteConfig.creator,
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -58,9 +51,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-            <Header />
-            <main>{children}</main>
-            <Toaster />
+          <Header />
+          <main className="min-h-screen-minus-header-footer">
+            {children}
+          </main>
+          <Toaster />
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
