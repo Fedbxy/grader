@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editProfileSchema } from "@/lib/zod";
-import { editProfile } from "@/actions/user";
+import { editAccountSchema } from "@/lib/zod";
+import { editAccount } from "@/actions/user";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,23 +20,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import type { User } from "lucia";
 
-export function EditProfileForm({ user }: Props) {
+export function EditAccountForm({ user }: { user: User }) {
     const { toast } = useToast();
 
-    const form = useForm<z.infer<typeof editProfileSchema>>({
-        resolver: zodResolver(editProfileSchema),
+    const form = useForm<z.infer<typeof editAccountSchema>>({
+        resolver: zodResolver(editAccountSchema),
         defaultValues: {
             displayName: user.displayName,
             bio: user.bio ?? undefined,
         },
     });
 
-    async function onSubmit(values: z.infer<typeof editProfileSchema>) {
+    async function onSubmit(values: z.infer<typeof editAccountSchema>) {
         const data = new FormData();
         data.append("displayName", values.displayName);
         data.append("bio", values.bio);
 
-        const response = await editProfile(data);
+        const response = await editAccount(data);
 
         if (response?.error) {
             return toast({
@@ -90,13 +90,9 @@ export function EditProfileForm({ user }: Props) {
                     className="w-full"
                     disabled={form.formState.isSubmitting}
                 >
-                    {form.formState.isSubmitting ? "Editing..." : "Edit Profile"}
+                    {form.formState.isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
             </form>
         </Form>
     );
-}
-
-interface Props {
-    user: User;
 }

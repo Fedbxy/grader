@@ -1,29 +1,31 @@
-import { validateRequest, allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/lib/auth";
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { EditProfileForm } from "./form";
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs";
+import { AccountCard } from "./account/card";
+import { PasswordCard } from "./password/card";
 
 export default async function Page() {
     await allowAccess("user");
-    const { user } = await validateRequest();
 
     return (
-        <div className="flex justify-center mt-8">
-            <Card className="w-full max-w-xs md:max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Settings</CardTitle>
-                    <CardDescription>Edit your profile information.</CardDescription>
-                </CardHeader>
-                <CardContent>   
-                    <EditProfileForm user={user!} />
-                </CardContent>
-            </Card>
+        <div className="flex justify-center py-8">
+            <Tabs defaultValue="account" className="w-full max-w-xs md:max-w-md">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="account">Account</TabsTrigger>
+                    <TabsTrigger value="password">Password</TabsTrigger>
+                </TabsList>
+                <TabsContent value="account">
+                    <AccountCard />
+                </TabsContent>
+                <TabsContent value="password">
+                    <PasswordCard />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

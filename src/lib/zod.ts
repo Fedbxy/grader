@@ -39,9 +39,21 @@ export const signUpSchema = z.object({
   message: messages.schema.confirmPassword.mismatch,
 });
 
-export const editProfileSchema = z.object({
+export const editAccountSchema = z.object({
   displayName: displayNameSchema,
   bio: bioSchema,
+});
+
+export const changePasswordSchema = z.object({
+  password: passwordSchema,
+  newPassword: passwordSchema,
+  confirmNewPassword: confirmPasswordSchema,
+}).refine(data => data.newPassword === data.confirmNewPassword, {
+  path: ["confirmNewPassword"],
+  message: messages.schema.confirmPassword.mismatch,
+}).refine(data => data.password !== data.newPassword, {
+  path: ["newPassword"],
+  message: messages.form.samePassword,
 });
 
 export const editUserSchema = z.object({
