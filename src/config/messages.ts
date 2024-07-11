@@ -25,6 +25,9 @@ export const messages = {
     form: {
         invalid: "Your request is invalid.",
         unexpected: "An unexpected error occurred. Please try again later.",
+        noChanges: "No changes were made.",
+        samePassword: "New password must be different from the current password.",
+        invalidPassword: "Your current password is invalid.",
     },
     auth: {
         unauthenticated: "You must be signed in to perform this action.",
@@ -35,6 +38,5 @@ export const messages = {
     },
     database: {
         noUser: "User not found.",
-        noChanges: "No changes were made.",
     }
 };

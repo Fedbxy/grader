@@ -82,7 +82,7 @@ export async function editUser(id: number, data: FormData) {
             });
         } else {
             return {
-                error: messages.database.noChanges,
+                error: messages.form.noChanges,
             };
         }
     } catch (error) {
