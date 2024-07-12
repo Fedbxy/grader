@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { editUserSchema } from "@/lib/zod";
 import { User } from "@/lib/types";
 import { editUser } from "@/actions/admin";
+import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,19 +52,45 @@ export function EditUserForm({ user }: { user: User }) {
         data.append("password", values.password || "");
         data.append("confirmPassword", values.confirmPassword || "");
 
+        let updateData: any = {};
+
+        if (values.username !== user.username) {
+            updateData.username = values.username;
+        }
+
+        if (values.displayName !== user.displayName) {
+            updateData.displayName = values.displayName;
+        }
+
+        if (values.bio !== user.bio) {
+            updateData.bio = values.bio;
+        }
+
+        if (values.role !== user.role) {
+            updateData.role = values.role;
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return toast({
+                variant: "destructive",
+                title: messages.toast.error,
+                description: messages.form.noChanges,
+            });
+        }
+
         const response = await editUser(user.id, data);
 
         if (response?.error) {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Something went wrong.",
+                title: messages.toast.error,
                 description: response.error,
             });
         }
 
         return toast({
             variant: "constructive",
-            title: "Success!",
+            title: messages.toast.success,
             description: "You have successfully edited the user.",
         });
     }

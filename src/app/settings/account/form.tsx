@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editAccountSchema } from "@/lib/zod";
 import { editAccount } from "@/actions/user";
+import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -36,19 +37,37 @@ export function EditAccountForm({ user }: { user: User }) {
         data.append("displayName", values.displayName);
         data.append("bio", values.bio);
 
+        let updateData: any = {};
+
+        if (values.displayName !== user.displayName) {
+            updateData.displayName = values.displayName;
+        }
+
+        if (values.bio !== user.bio) {
+            updateData.bio = values.bio;
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return toast({
+                variant: "destructive",
+                title: messages.toast.error,
+                description: messages.form.noChanges,
+            });
+        }
+
         const response = await editAccount(data);
 
         if (response?.error) {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Something went wrong.",
+                title: messages.toast.error,
                 description: response.error,
             });
         }
 
         return toast({
             variant: "constructive",
-            title: "Success!",
+            title: messages.toast.success,
             description: "Your profile has been updated.",
         });
     }
