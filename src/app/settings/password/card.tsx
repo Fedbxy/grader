@@ -13,8 +13,7 @@ export async function PasswordCard() {
         <Card>
             <CardHeader>
                 <CardTitle className="text-2xl">Password</CardTitle>
-                <CardDescription>Change your password. All sessions w
-                    ill be logged out after saving.</CardDescription>
+                <CardDescription>Change your password. All sessions will be logged out after saving.</CardDescription>
             </CardHeader>
             <CardContent>
                 <ChangePasswordForm />
