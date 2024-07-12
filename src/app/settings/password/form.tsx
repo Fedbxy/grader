@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordSchema } from "@/lib/zod";
 import { changePassword } from "@/actions/user";
+import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -41,14 +42,14 @@ export function ChangePasswordForm() {
         if (response?.error) {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Something went wrong.",
+                title: messages.toast.error,
                 description: response.error,
             });
         }
 
         return toast({
             variant: "constructive",
-            title: "Success!",
+            title: messages.toast.success,
             description: "Successfully changed your password.",
         });
     }

@@ -38,5 +38,9 @@ export const messages = {
     },
     database: {
         noUser: "User not found.",
-    }
+    },
+    toast: {
+        success: "Success!",
+        error: "Uh oh! Something went wrong.",
+    },
 };

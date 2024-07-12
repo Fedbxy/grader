@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/lib/zod";
 import { signin } from "@/actions/auth";
+import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -39,14 +40,14 @@ export function SignInForm() {
         if (response?.error) {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Something went wrong.",
+                title: messages.toast.error,
                 description: response.error,
             });
         }
 
         return toast({
             variant: "constructive",
-            title: "Success!",
+            title: messages.toast.success,
             description: "You have successfully signed in.",
         });
     }

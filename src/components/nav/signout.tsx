@@ -1,6 +1,7 @@
 "use client";
 
 import { signout } from "@/actions/auth";
+import { messages } from "@/config/messages";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
@@ -14,14 +15,14 @@ export function SignOut() {
         if (response?.error) {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Something went wrong.",
+                title: messages.toast.error,
                 description: response.error,
             });
         }
 
         return toast({
             variant: "constructive",
-            title: "Success!",
+            title: messages.toast.success,
             description: "You have successfully signed out.",
         });
     }
