@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 export const messages = {
     schema: {
         username: {
@@ -20,7 +22,24 @@ export const messages = {
         },
         bio: {
             max: "Bio must be less than 256 characters",
-        }
+        },
+        title: {
+            required: "Title is required",
+            min: "Title must be more than 3 characters",
+            max: "Title must be less than 30 characters",
+        },
+        timeLimit: {
+            required: "Time limit is required",
+            outOfRange: "Time limit must be between 1ms and 10000ms",
+        },
+        memoryLimit: {
+            required: "Memory limit is required",
+            outOfRange: "Memory limit must be between 1MB and 1024MB",
+        },
+        testcases: {
+            required: "Testcases is required",
+            outOfRange: "Testcases must be between 1 and 100",
+        },
     },
     form: {
         invalid: "Your request is invalid.",
@@ -38,6 +57,7 @@ export const messages = {
     },
     database: {
         noUser: "User not found.",
+        noProblem: "Problem not found.",
     },
     toast: {
         success: "Success!",

@@ -10,3 +10,18 @@ export type User = {
 };
 
 export type Role = "user" | "admin";
+
+export type Problem = {
+    id: number;
+    title: string;
+    publicity: Publicity;
+    timeLimit: number;
+    memoryLimit: number;
+    testcases: number;
+    authorId: number;
+    author: User;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type Publicity = "public" | "private";
