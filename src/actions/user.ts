@@ -1,6 +1,6 @@
 "use server";
 
-import { changePasswordSchema, editAccountSchema } from "@/lib/zod";
+import { changePasswordSchema, editAccountSchema } from "@/lib/zod/user";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";

@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { allowAccess, lucia } from "@/lib/auth";
-import { editUserSchema } from "@/lib/zod";
+import { editUserSchema } from "@/lib/zod/user";
 import { Role } from "@/lib/types";
 import { hash } from "bcrypt";
 import { redirect } from "next/navigation";

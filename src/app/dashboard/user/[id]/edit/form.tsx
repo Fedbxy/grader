@@ -3,9 +3,9 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editUserSchema } from "@/lib/zod";
+import { editUserSchema } from "@/lib/zod/user";
 import { User } from "@/lib/types";
-import { editUser } from "@/actions/admin";
+import { editUser } from "@/actions/admin/user";
 import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
