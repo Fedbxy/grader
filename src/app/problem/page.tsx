@@ -9,7 +9,7 @@ export default async function Page() {
             id: "asc",
         },
         where: {
-            publicity: "public",
+            visibility: "public",
         },
         include: {
             author: true,

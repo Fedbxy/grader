@@ -34,7 +34,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
         resolver: zodResolver(editProblemSchema),
         defaultValues: {
             title: problem.title,
-            publicity: problem.publicity,
+            visibility: problem.visibility,
             timeLimit: problem.timeLimit.toString(),
             memoryLimit: problem.memoryLimit.toString(),
             testcases: problem.testcases.toString(),
@@ -44,7 +44,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
     async function onSubmit(values: z.infer<typeof editProblemSchema>) {
         const data = new FormData();
         data.append("title", values.title);
-        data.append("publicity", values.publicity);
+        data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
         data.append("testcases", values.testcases);
@@ -55,8 +55,8 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
             updateData.title = values.title;
         }
 
-        if (values.publicity !== problem.publicity) {
-            updateData.publicity = values.publicity;
+        if (values.visibility !== problem.visibility) {
+            updateData.visibility = values.visibility;
         }
 
         if (parseInt(values.timeLimit) !== problem.timeLimit) {
@@ -114,14 +114,14 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                 />
                 <FormField
                     control={form.control}
-                    name="publicity"
+                    name="visibility"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Publicity</FormLabel>
+                            <FormLabel>Visibility</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a publicity" />
+                                        <SelectValue placeholder="Select a visibility" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

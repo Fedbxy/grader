@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const data = {
         "ID": problem.id,
         "Title": problem.title,
-        "Publicity": problem.publicity === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
+        "Visibility": problem.visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
         "Testcases": problem.testcases,

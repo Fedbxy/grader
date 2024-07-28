@@ -6,7 +6,7 @@ export const titleSchema = z.string()
     .min(3, messages.schema.title.min)
     .max(30, messages.schema.title.max);
 
-export const publicitySchema = z.enum(["public", "private"]);
+export const visibilitySchema = z.enum(["public", "private"]);
 
 export const timeLimitSchema = z.string()
     .min(1, messages.schema.timeLimit.required)
@@ -24,7 +24,7 @@ export const testcasesSchema = z.string()
 
 export const editProblemSchema = z.object({
     title: titleSchema,
-    publicity: publicitySchema,
+    visibility: visibilitySchema,
     timeLimit: timeLimitSchema,
     memoryLimit: memoryLimitSchema,
     testcases: testcasesSchema,
@@ -32,7 +32,7 @@ export const editProblemSchema = z.object({
 
 export const createProblemSchema = z.object({
     title: titleSchema,
-    publicity: publicitySchema,
+    visibility: visibilitySchema,
     timeLimit: timeLimitSchema,
     memoryLimit: memoryLimitSchema,
     testcases: testcasesSchema,

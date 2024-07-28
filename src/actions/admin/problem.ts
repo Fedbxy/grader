@@ -3,8 +3,7 @@
 import prisma from "@/lib/prisma";
 import { allowAccess, validateRequest } from "@/lib/auth";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Publicity } from "@/lib/types";
-import { hash } from "bcrypt";
+import { Visibility } from "@/lib/types";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
 
@@ -13,14 +12,14 @@ export async function editProblem(id: number, data: FormData) {
 
     try {
         const title = data.get("title") as string;
-        const publicity = data.get("publicity") as Publicity;
+        const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
         const testcases = data.get("testcases") as string;
 
         const parsed = editProblemSchema.safeParse({
             title,
-            publicity,
+            visibility,
             timeLimit,
             memoryLimit,
             testcases,
@@ -46,8 +45,8 @@ export async function editProblem(id: number, data: FormData) {
             updateData.title = title;
         }
 
-        if (publicity !== problem.publicity) {
-            updateData.publicity = publicity;
+        if (visibility !== problem.visibility) {
+            updateData.visibility = visibility;
         }
 
         if (parseInt(timeLimit) !== problem.timeLimit) {
@@ -86,14 +85,14 @@ export async function createProblem(data: FormData) {
 
     try {
         const title = data.get("title") as string;
-        const publicity = data.get("publicity") as Publicity;
+        const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
         const testcases = data.get("testcases") as string;
 
         const parsed = editProblemSchema.safeParse({
             title,
-            publicity,
+            visibility,
             timeLimit,
             memoryLimit,
             testcases,
@@ -114,7 +113,7 @@ export async function createProblem(data: FormData) {
         await prisma.problem.create({
             data: {
                 title,
-                publicity,
+                visibility,
                 timeLimit: parseInt(timeLimit),
                 memoryLimit: parseInt(memoryLimit),
                 testcases: parseInt(testcases),

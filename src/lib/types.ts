@@ -14,7 +14,7 @@ export type Role = "user" | "admin";
 export type Problem = {
     id: number;
     title: string;
-    publicity: Publicity;
+    visibility: Visibility;
     timeLimit: number;
     memoryLimit: number;
     testcases: number;
@@ -24,4 +24,4 @@ export type Problem = {
     updatedAt: Date;
 };
 
-export type Publicity = "public" | "private";
+export type Visibility = "public" | "private";
