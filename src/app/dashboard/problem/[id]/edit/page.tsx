@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { EditProblemForm } from "./form";
 import { Button } from "@/components/ui/button";
+import { Path } from "@/components/path";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -36,13 +37,14 @@ export default async function Page({ params }: { params: { id: string } }) {
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>Edit Problem Details</CardTitle>
+                    <Path path={`/dashboard/problem/${params.id}/edit`} />
                 </CardHeader>
                 <CardContent>
                     <EditProblemForm problem={problem} />
                 </CardContent>
                 <CardFooter className="flex justify-between">
                     <Button variant="outline" asChild>
-                        <Link href="/dashboard/user"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
+                        <Link href="/dashboard/problem"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
                     </Button>
                 </CardFooter>
             </Card>

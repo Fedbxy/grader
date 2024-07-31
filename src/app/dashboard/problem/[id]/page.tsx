@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getFile } from "@/lib/minio";
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -20,6 +20,7 @@ import {
     TableCell,
     TableRow,
 } from "@/components/ui/table";
+import { Path } from "@/components/path";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -43,7 +44,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const data = {
         "ID": problem.id,
         "Title": problem.title,
-        "Statement": statement ? <a href={`/api/problem/${params.id}`} target="_blank" className="hover:underline">View</a> : <span className="text-muted-foreground">Not uploaded</span>,
+        "Statement": statement ? <a href={`/api/problem/${params.id}`} target="_blank" className="hover:underline flex items-center"><FileText className="h-4 w-4 mr-1" />View</a> : <span className="text-muted-foreground">Not uploaded</span>,
         "Visibility": problem.visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
@@ -58,6 +59,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>Problem Details</CardTitle>
+                    <Path path={`/dashboard/problem/${params.id}`} />
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col items-center space-y-4">

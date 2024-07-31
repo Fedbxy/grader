@@ -24,6 +24,7 @@ import {
     TableCell,
     TableRow,
 } from "@/components/ui/table";
+import { Path } from "@/components/path";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -55,6 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>User Details</CardTitle>
+                    <Path path={`/dashboard/user/${user.id}`} />
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col items-center space-y-4">

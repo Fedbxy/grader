@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
+import { Path } from "@/components/path";
 
 export default async function Page() {
     await allowAccess("admin");
@@ -24,7 +25,9 @@ export default async function Page() {
     });
 
     return (
-        <div className="container mx-auto py-10">
+        <div className="container flex flex-col space-y-2 mx-auto py-10">
+            <h1 className="text-2xl font-semibold">Problems</h1>
+            <Path path="/dashboard/user" />
             <DataTable columns={columns} data={data} />
         </div>
     );

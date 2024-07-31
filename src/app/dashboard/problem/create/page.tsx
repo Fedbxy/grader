@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { allowAccess } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
 
 import { ArrowLeft } from 'lucide-react';
 import {
@@ -13,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { CreateProblemForm } from "./form";
 import { Button } from "@/components/ui/button";
+import { Path } from "@/components/path";
 
 export default async function Page() {
     await allowAccess("admin");
@@ -22,6 +21,7 @@ export default async function Page() {
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>Create a Problem</CardTitle>
+                    <Path path="/dashboard/problem/create" />
                 </CardHeader>
                 <CardContent>
                     <CreateProblemForm />
