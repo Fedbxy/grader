@@ -24,7 +24,9 @@ export default async function Page() {
     });
 
     return (
-        <div className="container mx-auto py-10">
+        <div className="container flex flex-col space-y-2 mx-auto py-10">
+            <h1 className="text-2xl font-semibold">Problems</h1>
+            <h2 className="text-sm text-muted-foreground">Select a problem to view its statement and submit a solution.</h2>
             <DataTable columns={columns} data={problems} />
         </div>
     );
