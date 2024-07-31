@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Problem, User } from "@/lib/types";
+import { Problem } from "@/lib/types";
 import { editProblem } from "@/actions/admin/problem";
 import { messages } from "@/config/messages";
 
@@ -34,7 +34,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
         resolver: zodResolver(editProblemSchema),
         defaultValues: {
             title: problem.title,
-            publicity: problem.publicity,
+            visibility: problem.visibility,
             timeLimit: problem.timeLimit.toString(),
             memoryLimit: problem.memoryLimit.toString(),
             testcases: problem.testcases.toString(),
@@ -44,7 +44,8 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
     async function onSubmit(values: z.infer<typeof editProblemSchema>) {
         const data = new FormData();
         data.append("title", values.title);
-        data.append("publicity", values.publicity);
+        if (values.statement) data.append("statement", values.statement);
+        data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
         data.append("testcases", values.testcases);
@@ -55,8 +56,12 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
             updateData.title = values.title;
         }
 
-        if (values.publicity !== problem.publicity) {
-            updateData.publicity = values.publicity;
+        if (values.statement && values.statement !== problem.statement) {
+            updateData.statement = values.statement;
+        }
+
+        if (values.visibility !== problem.visibility) {
+            updateData.visibility = values.visibility;
         }
 
         if (parseInt(values.timeLimit) !== problem.timeLimit) {
@@ -114,14 +119,35 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                 />
                 <FormField
                     control={form.control}
-                    name="publicity"
+                    name="statement"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Statement (PDF)</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Statement"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="visibility"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Publicity</FormLabel>
+                            <FormLabel>Visibility</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a publicity" />
+                                        <SelectValue placeholder="Select a visibility" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

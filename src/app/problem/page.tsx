@@ -9,16 +9,23 @@ export default async function Page() {
             id: "asc",
         },
         where: {
-            publicity: "public",
+            visibility: "public",
         },
         include: {
             author: true,
         },
     });
 
+    const problems = data.map((problem) => {
+        return {
+            ...problem,
+            statement: null,
+        };
+    });
+
     return (
         <div className="container mx-auto py-10">
-            <DataTable columns={columns} data={data} />
+            <DataTable columns={columns} data={problems} />
         </div>
     );
 }

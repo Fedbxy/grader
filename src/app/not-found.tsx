@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
 export default function NotFound() {
@@ -9,9 +8,6 @@ export default function NotFound() {
                 <Separator orientation="vertical" />
                 <h1 className="text-xl">Page not found</h1>
             </div>
-            <Link href="/" className="underline text-primary">
-                Go back to home
-            </Link>
         </div>
     );
 }

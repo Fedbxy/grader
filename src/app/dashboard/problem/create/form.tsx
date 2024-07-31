@@ -33,7 +33,7 @@ export function CreateProblemForm() {
         resolver: zodResolver(createProblemSchema),
         defaultValues: {
             title: "",
-            publicity: "private",
+            visibility: "private",
             timeLimit: "1000",
             memoryLimit: "32",
             testcases: "10",
@@ -43,7 +43,8 @@ export function CreateProblemForm() {
     async function onSubmit(values: z.infer<typeof createProblemSchema>) {
         const data = new FormData();
         data.append("title", values.title);
-        data.append("publicity", values.publicity);
+        if (values.statement) data.append("statement", values.statement);
+        data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
         data.append("testcases", values.testcases);
@@ -83,14 +84,35 @@ export function CreateProblemForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="publicity"
+                    name="statement"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Statement (PDF)</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Statement"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="visibility"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Publicity</FormLabel>
+                            <FormLabel>Visibility</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a publicity" />
+                                        <SelectValue placeholder="Select a visibility" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

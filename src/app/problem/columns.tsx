@@ -71,9 +71,9 @@ export const columns: ColumnDef<Problem>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Link href={`/problem/${problem.id}`}>
+                        <a href={`/api/problem/${problem.id}`} target="_blank">
                             <DropdownMenuItem><FileText className="h-4 w-4 mr-1" />View</DropdownMenuItem>
-                        </Link>
+                        </a>
                         <DropdownMenuSeparator />
                         <Link href={`/submit/${problem.id}`}>
                             <DropdownMenuItem><Send className="h-4 w-4 mr-1" />Submit</DropdownMenuItem>

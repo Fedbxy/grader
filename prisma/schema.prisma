@@ -35,7 +35,7 @@ enum Language {
   python
 }
 
-enum Publicity {
+enum Visibility {
   public
   private
 }
@@ -73,7 +73,7 @@ model Session {
 model Problem {
   id          Int          @id @default(autoincrement())
   title       String
-  publicity   Publicity    @default(private)
+  visibility  Visibility   @default(private)
   timeLimit   Int
   memoryLimit Int
   testcases   Int

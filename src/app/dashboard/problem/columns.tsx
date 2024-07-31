@@ -30,14 +30,14 @@ export const columns: ColumnDef<Problem>[] = [
         ),
     },
     {
-        accessorKey: "publicity",
+        accessorKey: "visibility",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Publicity" />
+            <DataTableColumnHeader column={column} title="Visibility" />
         ),
         cell: ({ row }) => {
-            const publicity = row.original.publicity;
+            const visibility = row.original.visibility;
 
-            return publicity === "public" ? "Public" : <span className="text-muted-foreground">Private</span>;
+            return visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>;
         },
     },
     {

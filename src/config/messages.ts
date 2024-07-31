@@ -28,6 +28,10 @@ export const messages = {
             min: "Title must be more than 3 characters",
             max: "Title must be less than 30 characters",
         },
+        statement: {
+            size: "Statement must be less than 10MB",
+            type: "Statement must be a PDF file",
+        },
         timeLimit: {
             required: "Time limit is required",
             outOfRange: "Time limit must be between 1ms and 10000ms",
