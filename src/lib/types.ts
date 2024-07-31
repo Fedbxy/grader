@@ -14,6 +14,7 @@ export type Role = "user" | "admin";
 export type Problem = {
     id: number;
     title: string;
+    statement: File | null;
     visibility: Visibility;
     timeLimit: number;
     memoryLimit: number;

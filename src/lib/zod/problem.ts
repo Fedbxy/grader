@@ -6,6 +6,10 @@ export const titleSchema = z.string()
     .min(3, messages.schema.title.min)
     .max(30, messages.schema.title.max);
 
+export const statementSchema = z.instanceof(File).optional()
+    .refine(file => file === undefined || file!.size <= 10 * 1024 * 1024, messages.schema.statement.size)
+    .refine(file => file === undefined || file!.type === "application/pdf", messages.schema.statement.type);
+
 export const visibilitySchema = z.enum(["public", "private"]);
 
 export const timeLimitSchema = z.string()
@@ -24,6 +28,7 @@ export const testcasesSchema = z.string()
 
 export const editProblemSchema = z.object({
     title: titleSchema,
+    statement: statementSchema,
     visibility: visibilitySchema,
     timeLimit: timeLimitSchema,
     memoryLimit: memoryLimitSchema,
@@ -32,6 +37,7 @@ export const editProblemSchema = z.object({
 
 export const createProblemSchema = z.object({
     title: titleSchema,
+    statement: statementSchema,
     visibility: visibilitySchema,
     timeLimit: timeLimitSchema,
     memoryLimit: memoryLimitSchema,
