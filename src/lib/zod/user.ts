@@ -34,10 +34,7 @@ export const signUpSchema = z.object({
   username: usernameSchema,
   password: passwordSchema,
   confirmPassword: confirmPasswordSchema,
-}).refine(data => data.password === data.confirmPassword, {
-  path: ["confirmPassword"],
-  message: messages.schema.confirmPassword.mismatch,
-});
+}).refine(data => data.password === data.confirmPassword, messages.schema.confirmPassword.mismatch);
 
 export const editAccountSchema = z.object({
   displayName: displayNameSchema,
@@ -48,13 +45,8 @@ export const changePasswordSchema = z.object({
   password: passwordSchema,
   newPassword: passwordSchema,
   confirmNewPassword: confirmPasswordSchema,
-}).refine(data => data.newPassword === data.confirmNewPassword, {
-  path: ["confirmNewPassword"],
-  message: messages.schema.confirmPassword.mismatch,
-}).refine(data => data.password !== data.newPassword, {
-  path: ["newPassword"],
-  message: messages.form.samePassword,
-});
+}).refine(data => data.newPassword === data.confirmNewPassword, messages.schema.confirmPassword.mismatch)
+  .refine(data => data.password !== data.newPassword, messages.form.samePassword);
 
 export const editUserSchema = z.object({
   username: usernameSchema,
@@ -62,11 +54,6 @@ export const editUserSchema = z.object({
   bio: bioSchema,
   role: roleSchema,
   password: z.string()
-    .refine(value => value.length === 0 || value.length >= 8, {
-      message: messages.schema.password.min,
-    }),
+    .refine(value => value.length === 0 || value.length >= 8, messages.schema.password.min),
   confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  path: ["confirmPassword"],
-  message: messages.schema.confirmPassword.mismatch,
-});
+}).refine(data => data.password === data.confirmPassword, messages.schema.confirmPassword.mismatch);
