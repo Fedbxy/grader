@@ -16,9 +16,16 @@ export default async function Page() {
         },
     });
 
+    const problems = data.map((problem) => {
+        return {
+            ...problem,
+            statement: null,
+        };
+    });
+
     return (
         <div className="container mx-auto py-10">
-            <DataTable columns={columns} data={data} />
+            <DataTable columns={columns} data={problems} />
         </div>
     );
 }

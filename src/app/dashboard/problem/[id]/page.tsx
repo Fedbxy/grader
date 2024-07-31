@@ -2,6 +2,7 @@ import { allowAccess } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getFile } from "@/lib/minio";
 
 import { ArrowLeft } from 'lucide-react';
 import {
@@ -33,14 +34,16 @@ export default async function Page({ params }: { params: { id: string } }) {
             author: true,
         },
     })
-
     if (!problem) {
         notFound();
     }
 
+    const statement = await getFile(`problem/${params.id}/statement.pdf`) as Buffer || null;
+
     const data = {
         "ID": problem.id,
         "Title": problem.title,
+        "Statement": statement ? <a href={`/api/problem/${params.id}`} target="_blank" className="hover:underline">View</a> : <span className="text-muted-foreground">Not uploaded</span>,
         "Visibility": problem.visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
