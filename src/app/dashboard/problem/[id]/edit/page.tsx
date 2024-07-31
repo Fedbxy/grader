@@ -21,14 +21,15 @@ export default async function Page({ params }: { params: { id: string } }) {
         notFound();
     }
 
-    const problem = await prisma.problem.findUnique({
+    const problemData = await prisma.problem.findUnique({
         where: { id: Number(params.id) },
         include: { author: true },
-    })
-
-    if (!problem) {
+    });
+    if (!problemData) {
         notFound();
     }
+
+    const problem = { ...problemData, statement: null };
 
     return (
         <div className="container mx-auto py-10 flex justify-center">

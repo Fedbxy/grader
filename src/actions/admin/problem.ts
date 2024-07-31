@@ -6,12 +6,14 @@ import { editProblemSchema } from "@/lib/zod/problem";
 import { Visibility } from "@/lib/types";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
+import { uploadFile } from "@/lib/minio";
 
 export async function editProblem(id: number, data: FormData) {
     await allowAccess("admin");
 
     try {
         const title = data.get("title") as string;
+        const statement = data.get("statement") as File || undefined;
         const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
@@ -19,6 +21,7 @@ export async function editProblem(id: number, data: FormData) {
 
         const parsed = editProblemSchema.safeParse({
             title,
+            statement,
             visibility,
             timeLimit,
             memoryLimit,
@@ -45,6 +48,10 @@ export async function editProblem(id: number, data: FormData) {
             updateData.title = title;
         }
 
+        if (statement) {
+            uploadFile(`problem/${id}/statement.pdf`, statement);
+        }
+
         if (visibility !== problem.visibility) {
             updateData.visibility = visibility;
         }
@@ -66,7 +73,7 @@ export async function editProblem(id: number, data: FormData) {
                 where: { id },
                 data: updateData,
             });
-        } else {
+        } else if (!statement) {
             return {
                 error: messages.form.noChanges,
             };
@@ -85,6 +92,7 @@ export async function createProblem(data: FormData) {
 
     try {
         const title = data.get("title") as string;
+        const statement = data.get("statement") as File || undefined;
         const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
@@ -92,6 +100,7 @@ export async function createProblem(data: FormData) {
 
         const parsed = editProblemSchema.safeParse({
             title,
+            statement,
             visibility,
             timeLimit,
             memoryLimit,
@@ -110,7 +119,7 @@ export async function createProblem(data: FormData) {
             };
         }
 
-        await prisma.problem.create({
+        const newProblem = await prisma.problem.create({
             data: {
                 title,
                 visibility,
@@ -120,6 +129,10 @@ export async function createProblem(data: FormData) {
                 authorId: user.id,
             },
         });
+
+        if (statement) {
+            uploadFile(`problem/${newProblem.id}/statement.pdf`, statement);
+        }
     } catch (error) {
         console.error("Error: ", error);
         return {

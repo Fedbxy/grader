@@ -28,7 +28,7 @@ export default async function Page() {
                 </CardContent>
                 <CardFooter className="flex justify-between">
                     <Button variant="outline" asChild>
-                        <Link href="/dashboard/user"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
+                        <Link href="/dashboard/problem"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
                     </Button>
                 </CardFooter>
             </Card>

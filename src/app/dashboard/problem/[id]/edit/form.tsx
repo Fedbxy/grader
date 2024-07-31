@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Problem, User } from "@/lib/types";
+import { Problem } from "@/lib/types";
 import { editProblem } from "@/actions/admin/problem";
 import { messages } from "@/config/messages";
 
@@ -44,6 +44,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
     async function onSubmit(values: z.infer<typeof editProblemSchema>) {
         const data = new FormData();
         data.append("title", values.title);
+        if (values.statement) data.append("statement", values.statement);
         data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
@@ -53,6 +54,10 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
 
         if (values.title !== problem.title) {
             updateData.title = values.title;
+        }
+
+        if (values.statement && values.statement !== problem.statement) {
+            updateData.statement = values.statement;
         }
 
         if (values.visibility !== problem.visibility) {
@@ -107,6 +112,27 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                             <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="statement"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Statement (PDF)</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Statement"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

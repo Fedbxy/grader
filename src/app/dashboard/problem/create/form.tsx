@@ -43,6 +43,7 @@ export function CreateProblemForm() {
     async function onSubmit(values: z.infer<typeof createProblemSchema>) {
         const data = new FormData();
         data.append("title", values.title);
+        if (values.statement) data.append("statement", values.statement);
         data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
@@ -76,6 +77,27 @@ export function CreateProblemForm() {
                             <FormLabel>Title</FormLabel>
                             <FormControl>
                                 <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="statement"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Statement (PDF)</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Statement"
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
