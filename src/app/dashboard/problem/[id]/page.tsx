@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const data = {
         "ID": problem.id,
         "Title": problem.title,
-        "Statement": statement ? <a href={`/api/problem/${params.id}`} target="_blank" className="hover:underline flex items-center"><FileText className="h-4 w-4 mr-1" />View</a> : <span className="text-muted-foreground">Not uploaded</span>,
+        "Statement": statement ? <a href={`/api/problem/${params.id}/statement`} target="_blank" className="hover:underline flex items-center"><FileText className="h-4 w-4 mr-1" />View</a> : <span className="text-muted-foreground">Not uploaded</span>,
         "Visibility": problem.visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,

@@ -51,7 +51,7 @@ export const columns: ColumnDef<Problem>[] = [
 
             return (
                 <Link href={`/user/${author.id}`} className="hover:underline">
-                    {author.username}
+                    {author.displayName}
                 </Link>
             );
         },
@@ -71,7 +71,7 @@ export const columns: ColumnDef<Problem>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <a href={`/api/problem/${problem.id}`} target="_blank">
+                        <a href={`/api/problem/${problem.id}/statement`} target="_blank">
                             <DropdownMenuItem><FileText className="h-4 w-4 mr-1" />View</DropdownMenuItem>
                         </a>
                         <DropdownMenuSeparator />
