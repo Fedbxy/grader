@@ -7,6 +7,7 @@ import { editUserSchema } from "@/lib/zod/user";
 import { User } from "@/lib/types";
 import { editUser } from "@/actions/admin/user";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +48,7 @@ export function EditUserForm({ user }: { user: User }) {
         const data = new FormData();
         data.append("username", values.username);
         data.append("displayName", values.displayName);
+        if (values.avatar) data.append("avatar", values.avatar);
         data.append("bio", values.bio);
         data.append("role", values.role);
         data.append("password", values.password || "");
@@ -60,6 +62,10 @@ export function EditUserForm({ user }: { user: User }) {
 
         if (values.displayName !== user.displayName) {
             updateData.displayName = values.displayName;
+        }
+
+        if (values.avatar) {
+            updateData.avatar = values.avatar;
         }
 
         if (values.bio !== user.bio) {
@@ -119,6 +125,27 @@ export function EditUserForm({ user }: { user: User }) {
                             <FormLabel>Display Name</FormLabel>
                             <FormControl>
                                 <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Avatar</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Avatar"
+                                    type="file"
+                                    accept={limits.avatar.type.join(", ")}
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
