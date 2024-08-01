@@ -49,7 +49,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
         "Testcases": problem.testcases,
-        "Author": <Link href={`/dashboard/user/${problem.author.id}`} className="hover:underline">{problem.author.username}</Link>,
+        "Author": <Link href={`/dashboard/user/${problem.author.id}`} className="hover:underline">{problem.author.displayName}</Link>,
         "Created": problem.createdAt.toLocaleString(),
         "Updated": problem.updatedAt.toLocaleString(),
     };

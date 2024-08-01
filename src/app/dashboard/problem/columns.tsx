@@ -69,7 +69,7 @@ export const columns: ColumnDef<Problem>[] = [
 
             return (
                 <Link href={`/dashboard/user/${author.id}`} className="hover:underline">
-                    {author.username}
+                    {author.displayName}
                 </Link>
             );
         }
