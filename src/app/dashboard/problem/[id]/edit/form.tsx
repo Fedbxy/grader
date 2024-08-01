@@ -7,6 +7,7 @@ import { editProblemSchema } from "@/lib/zod/problem";
 import { Problem } from "@/lib/types";
 import { editProblem } from "@/actions/admin/problem";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +57,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
             updateData.title = values.title;
         }
 
-        if (values.statement && values.statement !== problem.statement) {
+        if (values.statement) {
             updateData.statement = values.statement;
         }
 
@@ -128,7 +129,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                                     {...fieldProps}
                                     placeholder="Statement"
                                     type="file"
-                                    accept="application/pdf"
+                                    accept={limits.statement.type.join(", ")}
                                     onChange={(event) =>
                                         onChange(event.target.files && event.target.files[0])
                                     }
