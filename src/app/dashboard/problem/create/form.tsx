@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createProblemSchema } from "@/lib/zod/problem";
 import { createProblem } from "@/actions/admin/problem";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -93,7 +94,7 @@ export function CreateProblemForm() {
                                     {...fieldProps}
                                     placeholder="Statement"
                                     type="file"
-                                    accept="application/pdf"
+                                    accept={limits.statement.type.join(", ")}
                                     onChange={(event) =>
                                         onChange(event.target.files && event.target.files[0])
                                     }
