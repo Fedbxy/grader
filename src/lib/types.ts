@@ -4,7 +4,7 @@ export type User = {
     role: Role;
     displayName: string;
     bio: string | null;
-    image: string | null;
+    avatar: string | null;
     createdAt: Date;
     updatedAt: Date;
 };

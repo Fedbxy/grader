@@ -17,7 +17,7 @@ export default async function Page() {
             role: true,
             displayName: true,
             bio: true,
-            image: true,
+            avatar: true,
             createdAt: true,
             updatedAt: true,
         },

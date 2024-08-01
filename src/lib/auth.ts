@@ -24,7 +24,7 @@ export const lucia = new Lucia(adapter, {
             role: attributes.role,
             displayName: attributes.displayName,
             bio: attributes.bio,
-            image: attributes.image,
+            avatar: attributes.avatar,
         }
     },
 });
