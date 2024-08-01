@@ -37,6 +37,12 @@ export async function getFile(fileName: string) {
     }
 }
 
+export async function deleteFile(fileName: string) {
+    const bucket = process.env.S3_BUCKET_NAME || "";
+
+    await minioClient.removeObject(bucket, fileName);
+}
+
 // source: https://medium.com/@akhilanand.ak01/745fc2f77728
 async function streamToBuffer(readableStream: Readable): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
