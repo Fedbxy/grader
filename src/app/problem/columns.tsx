@@ -50,8 +50,8 @@ export const columns: ColumnDef<Problem>[] = [
             const author = row.original.author;
 
             return (
-                <Link href={`/user/${author.id}`} className="hover:underline">
-                    {author.username}
+                <Link href={`/user/${author.id}/profile`} className="hover:underline">
+                    {author.displayName}
                 </Link>
             );
         },
