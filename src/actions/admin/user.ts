@@ -7,6 +7,7 @@ import { Role } from "@/lib/types";
 import { hash } from "bcrypt";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
+import { uploadFile, deleteFile } from "@/lib/minio";
 
 export async function editUser(id: number, data: FormData) {
     await allowAccess("admin");
@@ -14,6 +15,7 @@ export async function editUser(id: number, data: FormData) {
     try {
         const username = data.get("username") as string;
         const displayName = data.get("displayName") as string;
+        const avatar = data.get("avatar") as File || undefined;
         const bio = data.get("bio") as string;
         const role = data.get("role") as Role;
         const password = data.get("password") as string;
@@ -22,6 +24,7 @@ export async function editUser(id: number, data: FormData) {
         const parsed = editUserSchema.safeParse({
             username,
             displayName,
+            avatar,
             bio,
             role,
             password,
@@ -60,8 +63,14 @@ export async function editUser(id: number, data: FormData) {
             updateData.displayName = displayName;
         }
 
+        if (avatar) {
+            if (user.avatar) deleteFile(user.avatar);
+            uploadFile(`user/${user.id}/avatar.${avatar.type.split("/")[1]}`, avatar);
+            updateData.avatar = `user/${user.id}/avatar.${avatar.type.split("/")[1]}`;
+        }
+
         if (bio !== user.bio) {
-            updateData.bio = bio;
+            updateData.bio = bio || null;
         }
 
         if (role !== user.role) {
@@ -80,7 +89,7 @@ export async function editUser(id: number, data: FormData) {
                 where: { id },
                 data: updateData,
             });
-        } else {
+        } else if (!avatar) {
             return {
                 error: messages.form.noChanges,
             };

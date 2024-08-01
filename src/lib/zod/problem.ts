@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 export const titleSchema = z.string()
     .min(1, messages.schema.title.required)
@@ -7,22 +8,22 @@ export const titleSchema = z.string()
     .max(30, messages.schema.title.max);
 
 export const statementSchema = z.instanceof(File).optional()
-    .refine(file => file === undefined || file!.size <= 10 * 1024 * 1024, messages.schema.statement.size)
-    .refine(file => file === undefined || file!.type === "application/pdf", messages.schema.statement.type);
+    .refine(file => file === undefined || file!.size <= limits.statement.size, messages.schema.statement.size)
+    .refine(file => file === undefined || limits.statement.type.includes(file!.type), messages.schema.statement.type);
 
 export const visibilitySchema = z.enum(["public", "private"]);
 
 export const timeLimitSchema = z.string()
     .min(1, messages.schema.timeLimit.required)
-    .regex(/^([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|10000)$/, messages.schema.timeLimit.outOfRange);
+    .regex(limits.timeLimit.regex, messages.schema.timeLimit.outOfRange);
 
 export const memoryLimitSchema = z.string()
     .min(1, messages.schema.memoryLimit.required)
-    .regex(/^([1-9]|[1-9][0-9]|[1-9][0-9][0-9]|10[01][0-9]|102[0-4])$/, messages.schema.memoryLimit.outOfRange);
+    .regex(limits.memoryLimit.regex, messages.schema.memoryLimit.outOfRange);
 
 export const testcasesSchema = z.string()
     .min(1, messages.schema.testcases.required)
-    .regex(/^([1-9]|[1-9][0-9]|100)$/, messages.schema.testcases.outOfRange);
+    .regex(limits.testcases.regex, messages.schema.testcases.outOfRange);
 
 // ----- FORM SCHEMAS -----
 
