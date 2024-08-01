@@ -40,7 +40,7 @@ export async function UserNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link href={`/user/${user.id}`}>
+                    <Link href={`/user/${user.id}/profile`}>
                         <DropdownMenuItem>
                             Profile
                         </DropdownMenuItem>
