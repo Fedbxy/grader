@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
+import { Problem } from "@/lib/types";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
+
+type databaseProblem = Omit<Problem, "statement">;
 
 export default async function Page() {
     const data = await prisma.problem.findMany({
@@ -16,7 +19,7 @@ export default async function Page() {
         },
     });
 
-    const problems = data.map((problem) => {
+    const problems = data.map((problem: databaseProblem) => {
         return {
             ...problem,
             statement: null,

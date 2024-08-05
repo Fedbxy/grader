@@ -2,11 +2,14 @@ import { allowAccess } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { Problem } from "@/lib/types";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
 import { Path } from "@/components/path";
 import { Button } from "@/components/ui/button";
+
+type databaseProblem = Omit<Problem, "statement">;
 
 export default async function Page() {
     await allowAccess("admin");
@@ -20,7 +23,7 @@ export default async function Page() {
         },
     });
 
-    const problems = data.map((problem) => {
+    const problems = data.map((problem: databaseProblem) => {
         return {
             ...problem,
             statement: null,
