@@ -3,18 +3,24 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app_c
+    container_name: grader-app
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres_c:5432/${POSTGRES_DB}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-db:5432/${POSTGRES_DB}
+      - S3_ENDPOINT=minio-storage
+      - S3_PORT=9001
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
     restart: unless-stopped
     depends_on:
       - postgres
+      - minio
 
   postgres:
     image: postgres:latest
-    container_name: postgres_c
+    container_name: postgres-db
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -27,7 +33,7 @@ services:
 
   minio:
     image: minio/minio:latest
-    container_name: minio_c
+    container_name: minio-storage
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
@@ -37,7 +43,7 @@ services:
     volumes:
       - minio-data:/data
     command: server --address ":9001" --console-address ":9000" /data
-    restart: always
+    restart: unless-stopped
 
 volumes:
   postgres-data:

@@ -1,3 +1,12 @@
 node_modules
-.next
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
 *.md
+LICENSE
+.vscode
+.env*
+.next
+.DS_Store
