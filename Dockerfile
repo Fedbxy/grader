@@ -1,4 +1,4 @@
-FROM imbios/bun-node:1-20-alpine AS base
+FROM imbios/bun-node:1-20-debian AS base
 WORKDIR /usr/src/app
 
 FROM base AS install
