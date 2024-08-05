@@ -1,25 +1,30 @@
 import { z } from "zod";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 export const usernameSchema = z.string()
   .min(1, messages.schema.username.required)
-  .min(3, messages.schema.username.min)
-  .max(20, messages.schema.username.max)
-  .regex(/^[a-zA-Z0-9_]*$/, messages.schema.username.regex);
+  .min(limits.username.min, messages.schema.username.min)
+  .max(limits.username.max, messages.schema.username.max)
+  .regex(limits.username.regex, messages.schema.username.regex);
 
 export const passwordSchema = z.string()
   .min(1, messages.schema.password.required)
-  .min(8, messages.schema.password.min);
+  .min(limits.password.min, messages.schema.password.min);
 
 export const confirmPasswordSchema = z.string()
   .min(1, messages.schema.confirmPassword.required);
 
 export const displayNameSchema = z.string().trim()
   .min(1, messages.schema.displayName.required)
-  .max(30, messages.schema.displayName.max);
+  .max(limits.displayName.max, messages.schema.displayName.max);
+
+export const avatarSchema = z.instanceof(File).optional()
+  .refine(file => file === undefined || file!.size <= limits.avatar.size, messages.schema.avatar.size)
+  .refine(file => file === undefined || limits.avatar.type.includes(file!.type), messages.schema.avatar.type);
 
 export const bioSchema = z.string().trim()
-  .max(256, messages.schema.bio.max);
+  .max(limits.bio.max, messages.schema.bio.max);
 
 export const roleSchema = z.enum(["user", "admin"]);
 
@@ -40,6 +45,7 @@ export const signUpSchema = z.object({
 });
 
 export const editAccountSchema = z.object({
+  avatar: avatarSchema,
   displayName: displayNameSchema,
   bio: bioSchema,
 });
@@ -50,23 +56,23 @@ export const changePasswordSchema = z.object({
   confirmNewPassword: confirmPasswordSchema,
 }).refine(data => data.newPassword === data.confirmNewPassword, {
   path: ["confirmNewPassword"],
-  message: messages.schema.confirmPassword.mismatch,
+  message: messages.schema.confirmPassword.mismatch
 }).refine(data => data.password !== data.newPassword, {
   path: ["newPassword"],
-  message: messages.form.samePassword,
+  message: messages.form.samePassword
 });
 
 export const editUserSchema = z.object({
   username: usernameSchema,
   displayName: displayNameSchema,
+  avatar: avatarSchema,
   bio: bioSchema,
   role: roleSchema,
   password: z.string()
-    .refine(value => value.length === 0 || value.length >= 8, {
-      message: messages.schema.password.min,
-    }),
+    .refine(value => value.length === 0 || value.length >= limits.password.min, messages.schema.password.min),
   confirmPassword: z.string(),
 }).refine(data => data.password === data.confirmPassword, {
   path: ["confirmPassword"],
-  message: messages.schema.confirmPassword.mismatch,
-});
+  message: messages.schema.confirmPassword.mismatch
+}
+);

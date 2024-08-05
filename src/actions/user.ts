@@ -1,19 +1,22 @@
 "use server";
 
-import { changePasswordSchema, editAccountSchema } from "@/lib/zod";
+import { changePasswordSchema, editAccountSchema } from "@/lib/zod/user";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
 import { compare, hash } from "bcrypt";
 import { lucia } from "@/lib/auth";
+import { uploadFile, deleteFile } from "@/lib/minio";
 
 export async function editAccount(data: FormData) {
     try {
+        const avatar = data.get("avatar") as File || undefined;
         const displayName = data.get("displayName") as string;
         const bio = data.get("bio") as string;
 
         const parsed = editAccountSchema.safeParse({
+            avatar,
             displayName,
             bio,
         });
@@ -32,12 +35,18 @@ export async function editAccount(data: FormData) {
 
         const updateData: any = {};
 
+        if (avatar) {
+            if (user.avatar) deleteFile(user.avatar);
+            uploadFile(`user/${user.id}/avatar.${avatar.type.split("/")[1]}`, avatar);
+            updateData.avatar = `user/${user.id}/avatar.${avatar.type.split("/")[1]}`;
+        }
+
         if (displayName !== user.displayName) {
             updateData.displayName = displayName;
         }
 
         if (bio !== user.bio) {
-            updateData.bio = bio;
+            updateData.bio = bio || null;
         }
 
         if (Object.keys(updateData).length > 0) {
@@ -45,7 +54,7 @@ export async function editAccount(data: FormData) {
                 where: { id: user.id },
                 data: updateData,
             });
-        } else {
+        } else if (!avatar) {
             return {
                 error: messages.form.noChanges,
             };

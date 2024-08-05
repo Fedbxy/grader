@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { lucia, validateRequest } from "@/lib/auth";
-import { signUpSchema, signInSchema } from "@/lib/zod";
+import { signUpSchema, signInSchema } from "@/lib/zod/user";
 import { redirect } from "next/navigation";
 import { compare, hash } from "bcrypt";
 import { messages } from "@/config/messages";

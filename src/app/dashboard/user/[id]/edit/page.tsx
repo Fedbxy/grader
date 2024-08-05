@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { EditUserForm } from "./form";
 import { Button } from "@/components/ui/button";
+import { Path } from "@/components/path";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -34,6 +35,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>Edit User Details</CardTitle>
+                    <Path path={`/dashboard/user/${user.id}/edit`} />
                 </CardHeader>
                 <CardContent>
                     <EditUserForm user={user} />

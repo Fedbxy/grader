@@ -3,9 +3,10 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { editAccountSchema } from "@/lib/zod";
+import { editAccountSchema } from "@/lib/zod/user";
 import { editAccount } from "@/actions/user";
 import { messages } from "@/config/messages";
+import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,10 +35,15 @@ export function EditAccountForm({ user }: { user: User }) {
 
     async function onSubmit(values: z.infer<typeof editAccountSchema>) {
         const data = new FormData();
+        if (values.avatar) data.append("avatar", values.avatar);
         data.append("displayName", values.displayName);
         data.append("bio", values.bio);
 
         let updateData: any = {};
+
+        if (values.avatar) {
+            updateData.avatar = values.avatar;
+        }
 
         if (values.displayName !== user.displayName) {
             updateData.displayName = values.displayName;
@@ -75,6 +81,27 @@ export function EditAccountForm({ user }: { user: User }) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="avatar"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Avatar</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Avatar"
+                                    type="file"
+                                    accept={limits.avatar.type.join(", ")}
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name="displayName"

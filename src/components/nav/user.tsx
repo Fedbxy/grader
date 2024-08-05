@@ -26,9 +26,7 @@ export async function UserNav() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
-                        {user.image && (
-                            <AvatarImage src={user.image} alt={user.username} />
-                        )}
+                        <AvatarImage src={user.avatar ? `/api/user/${user.id}/avatar` : ""} alt={user.username} />
                         <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </Button>
@@ -42,9 +40,11 @@ export async function UserNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        Profile
-                    </DropdownMenuItem>
+                    <Link href={`/user/${user.id}/profile`}>
+                        <DropdownMenuItem>
+                            Profile
+                        </DropdownMenuItem>
+                    </Link>
                     <Link href="/settings">
                         <DropdownMenuItem>
                             Settings

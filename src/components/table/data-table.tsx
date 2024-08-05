@@ -13,7 +13,6 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTablePagination } from "@/components/table/pagination";
-import { DataTableViewOptions } from "@/components/table/column-toggle";
 
 import {
     Table,
@@ -23,7 +22,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -56,17 +54,6 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder="Filter by username..."
-                    value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("username")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
-                <DataTableViewOptions table={table} />
-            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
