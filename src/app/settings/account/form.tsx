@@ -29,7 +29,7 @@ export function EditAccountForm({ user }: { user: User }) {
         resolver: zodResolver(editAccountSchema),
         defaultValues: {
             displayName: user.displayName,
-            bio: user.bio ?? undefined,
+            bio: user.bio ?? "",
         },
     });
 
