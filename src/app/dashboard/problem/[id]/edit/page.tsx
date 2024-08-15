@@ -15,7 +15,13 @@ import { EditProblemForm } from "./form";
 import { Button } from "@/components/ui/button";
 import { Path } from "@/components/path";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({
+    params,
+    searchParams,
+}: {
+    params: { id: string },
+    searchParams: { [key: string]: string | string[] | undefined },
+}) {
     await allowAccess("admin");
 
     if (isNaN(Number(params.id))) {
@@ -44,7 +50,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 </CardContent>
                 <CardFooter className="flex justify-between">
                     <Button variant="outline" asChild>
-                        <Link href="/dashboard/problem"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
+                        <Link href={typeof searchParams.back === "string" ? searchParams.back : "/dashboard/problem"}><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
                     </Button>
                 </CardFooter>
             </Card>

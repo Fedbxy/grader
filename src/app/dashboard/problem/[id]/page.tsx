@@ -49,7 +49,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
         "Testcases": problem.testcases,
-        "Author": <Link href={`/dashboard/user/${problem.author.id}`} className="hover:underline">{problem.author.displayName}</Link>,
+        "Author": <Link href={`/dashboard/user/${problem.author.id}?back=/dashboard/problem/${params.id}`} className="hover:underline">{problem.author.displayName}</Link>,
         "Created": problem.createdAt.toLocaleString(),
         "Updated": problem.updatedAt.toLocaleString(),
     };
@@ -79,6 +79,9 @@ export default async function Page({ params }: { params: { id: string } }) {
                 <CardFooter className="flex justify-between">
                     <Button variant="outline" asChild>
                         <Link href="/dashboard/problem"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
+                    </Button>
+                    <Button variant="link" asChild>
+                        <Link href={`/dashboard/problem/${problem.id}/edit?back=/dashboard/problem/${problem.id}`}>Edit</Link>
                     </Button>
                 </CardFooter>
             </Card>
