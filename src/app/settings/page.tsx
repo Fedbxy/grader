@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { allowAccess } from "@/lib/auth";
 
 import {
@@ -8,6 +9,10 @@ import {
 } from "@/components/ui/tabs";
 import { AccountCard } from "./account/card";
 import { PasswordCard } from "./password/card";
+
+export const metadata: Metadata = {
+    title: "Settings",
+};
 
 export default async function Page() {
     await allowAccess("user");
