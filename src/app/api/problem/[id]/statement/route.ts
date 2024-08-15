@@ -8,7 +8,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     if (isNaN(Number(params.id))) {
         return NextResponse.json({
-            error: "Invalid problem ID",
+            statusCode: 400,
+            method: request.method,
+            message: "Invalid problem ID",
+            error: "Bad Request",
         }, { status: 400 });
     }
 
@@ -20,12 +23,18 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     })
     if (!problem) {
         return NextResponse.json({
-            error: "Problem not found",
+            statusCode: 404,
+            method: request.method,
+            message: `Cannot GET problem ${params.id}`,
+            error: "Not Found",
         }, { status: 404 });
     }
 
     if (problem.visibility === "private" && user?.role !== "admin") {
         return NextResponse.json({
+            statusCode: 403,
+            method: request.method,
+            message: `You are not allowed to access problem ${params.id}`,
             error: "Forbidden",
         }, { status: 403 });
     }
@@ -33,7 +42,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const statement = await getFile(`problem/${params.id}/statement.pdf`) as Buffer || null;
     if (!statement) {
         return NextResponse.json({
-            error: "Statement not found",
+            statusCode: 404,
+            method: request.method,
+            message: `Cannot GET statement for problem ${params.id}`,
+            error: "Not Found",
         }, { status: 404 });
     }
 
