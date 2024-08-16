@@ -2,7 +2,6 @@ FROM imbios/bun-node:1-20-alpine AS base
 
 
 FROM base AS deps
-
 WORKDIR /app
 
 COPY package.json bun.lockb ./
@@ -10,7 +9,6 @@ RUN bun install --frozen-lockfile
 
 
 FROM base AS builder
-
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -34,7 +32,8 @@ RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 
 USER nextjs
 
@@ -42,4 +41,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD HOSTNAME="0.0.0.0" npx prisma migrate deploy && node server.js
