@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth";
@@ -10,6 +11,10 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { SignUpForm } from "./form";
+
+export const metadata: Metadata = {
+    title: "Sign Up",
+};
 
 export default async function Page() {
     const { user } = await validateRequest();

@@ -17,6 +17,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOut } from "@/components/nav/signout";
+import { Profile } from "@/components/nav/profile";
 
 export async function UserNav() {
     const { user } = await validateRequest();
@@ -40,11 +41,7 @@ export async function UserNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link href={`/user/${user.id}/profile`}>
-                        <DropdownMenuItem>
-                            Profile
-                        </DropdownMenuItem>
-                    </Link>
+                    <Profile id={user.id} />
                     <Link href="/settings">
                         <DropdownMenuItem>
                             Settings

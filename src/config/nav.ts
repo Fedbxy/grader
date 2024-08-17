@@ -27,7 +27,7 @@ export const navConfig: NavConfig[] = [
     },
     {
         title: "Problems",
-        href: "/problem",
+        href: "/problemset",
         icon: "BookText",
     },
     {
