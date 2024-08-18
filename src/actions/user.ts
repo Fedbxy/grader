@@ -126,5 +126,5 @@ export async function changePassword(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/settings");
+    redirect("/signin");
 }
