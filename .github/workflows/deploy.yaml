@@ -33,6 +33,5 @@ jobs:
           commands: |
             cd ~/Desktop/grader
             git pull
-            docker compose stop
-            docker compose up -d
+            docker compose up --build -d
             
