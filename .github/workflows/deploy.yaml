@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+    name: Build & Deploy
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +31,7 @@ jobs:
           service_token_id: ${{ secrets.CLOUDFLARE_SERVICE_TOKEN_ID }}
           service_token_secret: ${{ secrets.CLOUDFLARE_SERVICE_TOKEN_SECRET }}
           commands: |
-            cd /Desktop/grader
+            cd ~/Desktop/grader
             git pull
             docker compose up -d
             
