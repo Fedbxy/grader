@@ -40,7 +40,7 @@ export async function getFile(fileName: string) {
 export async function deleteFile(fileName: string) {
     const bucket = process.env.S3_BUCKET_NAME || "";
 
-    await minioClient.removeObject(bucket, fileName);
+    await minioClient.removeObject(bucket, fileName, { forceDelete: true });
 }
 
 // source: https://medium.com/@akhilanand.ak01/745fc2f77728
