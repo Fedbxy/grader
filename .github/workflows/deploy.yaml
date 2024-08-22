@@ -27,5 +27,5 @@ jobs:
           commands: |
             cd ~/Desktop/grader
             git pull
-            docker compose up --build -d
+            docker compose -f docker-compose.prod.yaml up --build -d
             
