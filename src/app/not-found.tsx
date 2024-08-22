@@ -1,4 +1,10 @@
+import { Metadata } from "next";
+
 import { Separator } from "@/components/ui/separator";
+
+export const metadata: Metadata = {
+    title: "404 Not Found",
+};
 
 export default function NotFound() {
     return (

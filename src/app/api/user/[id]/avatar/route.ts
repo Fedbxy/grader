@@ -5,7 +5,10 @@ import { getFile } from "@/lib/minio";
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     if (isNaN(Number(params.id))) {
         return NextResponse.json({
-            error: "Invalid user ID",
+            statusCode: 400,
+            method: request.method,
+            message: "Invalid user ID",
+            error: "Bad Request",
         }, { status: 400 });
     }
 
@@ -14,20 +17,29 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     })
     if (!user) {
         return NextResponse.json({
-            error: "User not found",
+            statusCode: 404,
+            method: request.method,
+            message: `Cannot GET user ${params.id}`,
+            error: "Not Found",
         }, { status: 404 });
     }
 
     if (!user.avatar) {
         return NextResponse.json({
-            error: "User has no avatar",
+            statusCode: 404,
+            method: request.method,
+            message: `User ${params.id} has no avatar`,
+            error: "Not Found",
         }, { status: 404 });
     }
 
     const avatar = await getFile(user.avatar);
     if (!avatar) {
         return NextResponse.json({
-            error: "Avatar not found",
+            statusCode: 404,
+            method: request.method,
+            message: `Cannot GET avatar for user ${params.id}`,
+            error: "Not Found",
         }, { status: 404 });
     }
 

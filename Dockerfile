@@ -1,27 +1,44 @@
-FROM imbios/bun-node:1-20-debian AS base
-WORKDIR /usr/src/app
+FROM imbios/bun-node:1-20-alpine AS base
 
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lockb /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
 
-RUN mkdir -p /temp/prod
-COPY package.json bun.lockb /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+FROM base AS deps
+WORKDIR /app
 
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
+
+
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NODE_ENV=production
 RUN bunx prisma generate
 RUN bun run build
 
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/ .
 
-USER bun
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+USER nextjs
+
 EXPOSE 3000
-ENTRYPOINT [ "bun", "run", "start" ]
+
+ENV PORT=3000
+
+CMD HOSTNAME="0.0.0.0" npx prisma migrate deploy && node server.js

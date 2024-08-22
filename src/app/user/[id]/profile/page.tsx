@@ -1,9 +1,13 @@
+import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, BadgeCheck } from "lucide-react";
 
 import {
     Card,
     CardContent,
+    CardFooter,
     CardHeader,
 } from "@/components/ui/card";
 import {
@@ -12,8 +16,19 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export const metadata: Metadata = {
+    title: "User Profile",
+};
+
+export default async function Page({
+    params,
+    searchParams,
+}: {
+    params: { id: string },
+    searchParams: { [key: string]: string | string[] | undefined },
+}) {
     if (isNaN(Number(params.id))) {
         notFound();
     }
@@ -39,7 +54,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                             </Avatar>
                         </div>
                         <div className="text-center">
-                            {user.role === "admin" && <Badge>{user.role}</Badge>}
+                            {user.role === "admin" && <Badge><BadgeCheck className="h-4 w-4 mr-1" />{user.role}</Badge>}
                             <p className="text-lg font-semibold">{user.displayName}</p>
                             <p className="text-sm text-muted-foreground">{user.username}</p>
                         </div>
@@ -48,6 +63,11 @@ export default async function Page({ params }: { params: { id: string } }) {
                         </div>
                     </div>
                 </CardContent>
+                <CardFooter>
+                    <Button variant="outline" asChild>
+                        <Link href={typeof searchParams.back === "string" ? searchParams.back : "/"}><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
+                    </Button>
+                </CardFooter>
             </Card>
         </div>
     );
