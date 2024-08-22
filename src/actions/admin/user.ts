@@ -102,3 +102,30 @@ export async function editUser(id: number, data: FormData) {
     }
     redirect("/dashboard/user");
 }
+
+export async function deleteUser(id: number) {
+    await allowAccess("admin");
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
+        if (!user) {
+            return {
+                error: messages.database.noUser,
+            };
+        }
+
+        deleteFile(`user/${user.id}`);
+
+        await prisma.user.delete({
+            where: { id },
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        return {
+            error: messages.form.unexpected,
+        };
+    }
+    redirect("/dashboard/user");
+}
