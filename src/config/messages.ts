@@ -66,6 +66,7 @@ export const messages = {
     database: {
         noUser: "User not found.",
         noProblem: "Problem not found.",
+        deleteSelf: "You cannot delete yourself.",
     },
     toast: {
         success: "Success!",
