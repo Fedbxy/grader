@@ -32,6 +32,12 @@ export const limits = {
             "application/pdf",
         ],
     },
+    testcase: {
+        size: 100 * 1024 * 1024,
+        type: [
+            "application/zip",
+        ],
+    },
     timeLimit: {
         min: 1,
         max: 10000,

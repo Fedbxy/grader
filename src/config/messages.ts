@@ -36,6 +36,10 @@ export const messages = {
             size: `Statement must be less than ${limits.statement.size / 1024 / 1024}MB`,
             type: `Statement must be one of the following types: ${limits.statement.type.join(", ")}`,
         },
+        testcase: {
+            size: `Testcase must be less than ${limits.testcase.size / 1024 / 1024}MB`,
+            type: `Testcase must be one of the following types: ${limits.testcase.type.join(", ")}`,
+        },
         timeLimit: {
             required: "Time limit is required",
             outOfRange: `Time limit must be between ${limits.timeLimit.min} and ${limits.timeLimit.max} milliseconds`,

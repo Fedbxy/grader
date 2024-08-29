@@ -46,6 +46,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
         const data = new FormData();
         data.append("title", values.title);
         if (values.statement) data.append("statement", values.statement);
+        if (values.testcase) data.append("testcase", values.testcase);
         data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
@@ -59,6 +60,10 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
 
         if (values.statement) {
             updateData.statement = values.statement;
+        }
+
+        if (values.testcase) {
+            updateData.testcase = values.testcase;
         }
 
         if (values.visibility !== problem.visibility) {
@@ -130,6 +135,27 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                                     placeholder="Statement"
                                     type="file"
                                     accept={limits.statement.type.join(", ")}
+                                    onChange={(event) =>
+                                        onChange(event.target.files && event.target.files[0])
+                                    }
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="testcase"
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
+                        <FormItem>
+                            <FormLabel>Testcase (ZIP)</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...fieldProps}
+                                    placeholder="Testcase"
+                                    type="file"
+                                    accept={limits.testcase.type.join(", ")}
                                     onChange={(event) =>
                                         onChange(event.target.files && event.target.files[0])
                                     }
