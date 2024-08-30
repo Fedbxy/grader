@@ -76,7 +76,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 {submission.verdict[0]}
               </div>
             ) : (
-              <Accordion type="multiple">
+              <Accordion type="multiple" className="space-y-2">
                 {submission.verdict.map((v, i) => (
                   <AccordionItem
                     key={i}
