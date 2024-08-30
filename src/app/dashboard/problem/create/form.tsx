@@ -37,6 +37,7 @@ export function CreateProblemForm() {
             visibility: "private",
             timeLimit: "1000",
             memoryLimit: "32",
+            score: "100",
             testcases: "10",
         },
     });
@@ -49,6 +50,7 @@ export function CreateProblemForm() {
         data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
+        data.append("score", values.score);
         data.append("testcases", values.testcases);
 
         const response = await createProblem(data);
@@ -175,10 +177,23 @@ export function CreateProblemForm() {
                 />
                 <FormField
                     control={form.control}
+                    name="score"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Score</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
                     name="testcases"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>testcases</FormLabel>
+                            <FormLabel>Testcases</FormLabel>
                             <FormControl>
                                 <Input type="number" {...field} />
                             </FormControl>

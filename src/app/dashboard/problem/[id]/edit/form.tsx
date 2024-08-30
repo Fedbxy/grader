@@ -38,6 +38,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
             visibility: problem.visibility,
             timeLimit: problem.timeLimit.toString(),
             memoryLimit: problem.memoryLimit.toString(),
+            score: problem.score.toString(),
             testcases: problem.testcases.toString(),
         },
     });
@@ -50,6 +51,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
         data.append("visibility", values.visibility);
         data.append("timeLimit", values.timeLimit);
         data.append("memoryLimit", values.memoryLimit);
+        data.append("score", values.score);
         data.append("testcases", values.testcases);
 
         let updateData: any = {};
@@ -76,6 +78,10 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
 
         if (parseInt(values.memoryLimit) !== problem.memoryLimit) {
             updateData.memoryLimit = values.memoryLimit;
+        }
+
+        if (parseInt(values.score) !== problem.score) {
+            updateData.score = values.score;
         }
 
         if (parseInt(values.testcases) !== problem.testcases) {
@@ -214,10 +220,23 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                 />
                 <FormField
                     control={form.control}
+                    name="score"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Score</FormLabel>
+                            <FormControl>
+                                <Input type="number" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
                     name="testcases"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>testcases</FormLabel>
+                            <FormLabel>Testcases</FormLabel>
                             <FormControl>
                                 <Input type="number" {...field} />
                             </FormControl>

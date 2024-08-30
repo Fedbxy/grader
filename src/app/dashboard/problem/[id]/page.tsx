@@ -48,6 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Visibility": problem.visibility === "public" ? "Public" : <span className="text-muted-foreground">Private</span>,
         "Time Limit": `${problem.timeLimit}ms`,
         "Memory Limit": `${problem.memoryLimit}MB`,
+        "Score": problem.score,
         "Testcases": problem.testcases,
         "Author": <Link href={`/dashboard/user/${problem.author.id}?back=/dashboard/problem/${params.id}`} className="hover:underline">{problem.author.displayName}</Link>,
         "Created": problem.createdAt.toLocaleString(),

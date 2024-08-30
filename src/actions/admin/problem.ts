@@ -19,6 +19,7 @@ export async function editProblem(id: number, data: FormData) {
         const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
+        const score = data.get("score") as string;
         const testcases = data.get("testcases") as string;
 
         const parsed = editProblemSchema.safeParse({
@@ -28,6 +29,7 @@ export async function editProblem(id: number, data: FormData) {
             visibility,
             timeLimit,
             memoryLimit,
+            score,
             testcases,
         });
         if (!parsed.success) {
@@ -71,6 +73,10 @@ export async function editProblem(id: number, data: FormData) {
             updateData.memoryLimit = parseInt(memoryLimit);
         }
 
+        if (parseInt(score) !== problem.score) {
+            updateData.score = parseInt(score);
+        }
+
         if (parseInt(testcases) !== problem.testcases) {
             updateData.testcases = parseInt(testcases);
         }
@@ -104,6 +110,7 @@ export async function createProblem(data: FormData) {
         const visibility = data.get("visibility") as Visibility;
         const timeLimit = data.get("timeLimit") as string;
         const memoryLimit = data.get("memoryLimit") as string;
+        const score = data.get("score") as string;
         const testcases = data.get("testcases") as string;
 
         const parsed = editProblemSchema.safeParse({
@@ -113,6 +120,7 @@ export async function createProblem(data: FormData) {
             visibility,
             timeLimit,
             memoryLimit,
+            score,
             testcases,
         });
         if (!parsed.success) {
@@ -134,6 +142,7 @@ export async function createProblem(data: FormData) {
                 visibility,
                 timeLimit: parseInt(timeLimit),
                 memoryLimit: parseInt(memoryLimit),
+                score: parseInt(score),
                 testcases: parseInt(testcases),
                 authorId: user.id,
             },

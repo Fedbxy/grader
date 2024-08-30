@@ -21,7 +21,7 @@ export const columns: ColumnDef<Problem>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="ID" />
+            <DataTableColumnHeader column={column} title="#" />
         ),
     },
     {
@@ -40,6 +40,12 @@ export const columns: ColumnDef<Problem>[] = [
 
             return formatted;
         },
+    },
+    {
+        accessorKey: "score",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Score" />
+        ),
     },
     {
         accessorKey: "author",

@@ -54,6 +54,12 @@ export const columns: ColumnDef<Problem>[] = [
         },
     },
     {
+        accessorKey: "score",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Score" />
+        ),
+    },
+    {
         accessorKey: "testcases",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Testcases" />

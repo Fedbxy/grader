@@ -12,27 +12,10 @@ enum Role {
   admin
 }
 
-enum Verdict {
-  AC // Accepted
-  WA // Wrong Answer
-  TLE // Time Limit Exceeded
-  MLE // Memory Limit Exceeded
-  SKP // Skipped
-  RE // Runtime Error
-  CE // Compilation Error
-
-  RN // Running
-  WJ // Waiting Judge
-  PD // Pending
-
-  JE // Judge Error
-  SE // System Error
-}
-
 enum Language {
   c
   cpp
-  python
+  py
 }
 
 enum Visibility {
@@ -41,16 +24,17 @@ enum Visibility {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  username    String       @unique
-  password    String
-  role        Role         @default(user)
-  displayName String
-  avatar       String?
-  bio         String?
-  sessions    Session[]
-  Problem     Problem[]
-  Submission  Submission[]
+  id              Int           @id @default(autoincrement())
+  username        String        @unique
+  password        String
+  role            Role          @default(user)
+  displayName     String
+  avatar          String?
+  bio             String?
+  sessions        Session[]
+  Problem         Problem[]
+  Submission      Submission[]
+  AcceptedProblem UserProblem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,15 +55,17 @@ model Session {
 }
 
 model Problem {
-  id          Int          @id @default(autoincrement())
-  title       String
-  visibility  Visibility   @default(private)
-  timeLimit   Int
-  memoryLimit Int
-  testcases   Int
-  authorId    Int
-  author      User         @relation(fields: [authorId], references: [id])
-  Submission  Submission[]
+  id           Int           @id @default(autoincrement())
+  title        String
+  visibility   Visibility    @default(private)
+  timeLimit    Int
+  memoryLimit  Int
+  score        Int
+  testcases    Int
+  authorId     Int
+  author       User          @relation(fields: [authorId], references: [id])
+  Submission   Submission[]
+  AcceptedUser UserProblem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,17 +73,29 @@ model Problem {
   @@map("problems")
 }
 
+model UserProblem {
+  userId    Int
+  problemId Int
+  user      User    @relation(fields: [userId], references: [id])
+  problem   Problem @relation(fields: [problemId], references: [id])
+
+  @@id([userId, problemId])
+  @@map("user_problems")
+}
+
 model Submission {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   code      String
-  lang      Language
-  verdict   Verdict[]
+  language  Language
+  score     Int      @default(0)
+  verdict   String[]
   time      Int[]
   memory    Int[]
+  error     String?
   problemId Int
   userId    Int
-  problem   Problem   @relation(fields: [problemId], references: [id])
-  user      User      @relation(fields: [userId], references: [id])
+  problem   Problem  @relation(fields: [problemId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
