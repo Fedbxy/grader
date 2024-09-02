@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Language } from "@/lib/types";
+import { Language } from "@/utils/types";
 import { messages } from "@/config/messages";
 import { redirect } from "next/navigation";
 

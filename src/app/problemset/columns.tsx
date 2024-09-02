@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Problem } from "@/lib/types";
+import { Problem } from "@/utils/types";
 import Link from "next/link";
 
 import { FileText, MoreHorizontal, Send } from "lucide-react";

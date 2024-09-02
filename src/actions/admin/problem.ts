@@ -3,11 +3,11 @@
 import prisma from "@/lib/prisma";
 import { allowAccess, validateRequest } from "@/lib/auth";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Visibility } from "@/lib/types";
+import { Visibility } from "@/utils/types";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
 import { uploadFile } from "@/lib/minio";
-import { uploadTestcase } from "@/lib/judge";
+import { uploadTestcase } from "@/utils/judge";
 
 export async function editProblem(id: number, data: FormData) {
     await allowAccess("admin");
