@@ -4,9 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Submission } from "@/utils/types";
 import Link from "next/link";
 import { maps } from "@/config/messages";
-import { rejudge } from "@/actions/admin/judge";
 
-import { Eye, MoreHorizontal, RefreshCcw } from "lucide-react";
+import { Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
@@ -19,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
+import { RejudgeButton } from "./rejudge";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -104,10 +104,7 @@ export const columns: ColumnDef<Submission>[] = [
               </DropdownMenuItem>
             </Link>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => rejudge(submission.id)}>
-              <RefreshCcw className="mr-1 h-4 w-4" />
-              Rejudge
-            </DropdownMenuItem>
+            <RejudgeButton id={submission.id} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

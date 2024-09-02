@@ -11,15 +11,15 @@ export function ConfirmButton({ id }: { id: number }) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleClick() {
+  function handleClick() {
     setSubmitting(true);
 
-    await rejudgeAllSubmission(id);
+    rejudgeAllSubmission(id);
 
     return toast({
       variant: "constructive",
       title: messages.toast.success,
-      description: "Your rejudging request has been submitted.",
+      description: `Requested rejudging all submissions for problem #${id}.`,
     });
   }
 
