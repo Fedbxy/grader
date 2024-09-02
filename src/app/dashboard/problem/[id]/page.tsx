@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getFile } from "@/lib/minio";
 
-import { ArrowLeft, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Memory Limit": `${problem.memoryLimit}MB`,
         "Score": problem.score,
         "Testcases": problem.testcases,
-        "Author": <Link href={`/dashboard/user/${problem.author.id}?back=/dashboard/problem/${params.id}`} className="hover:underline">{problem.author.displayName}</Link>,
+        "Author": <Link href={`/dashboard/user/${problem.author.id}`} className="hover:underline">{problem.author.displayName}</Link>,
         "Created": problem.createdAt.toLocaleString(),
         "Updated": problem.updatedAt.toLocaleString(),
     };
@@ -78,11 +78,8 @@ export default async function Page({ params }: { params: { id: string } }) {
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                    <Button variant="outline" asChild>
-                        <Link href="/dashboard/problem"><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
-                    </Button>
                     <Button variant="link" asChild>
-                        <Link href={`/dashboard/problem/${problem.id}/edit?back=/dashboard/problem/${problem.id}`}>Edit</Link>
+                        <Link href={`/dashboard/problem/${problem.id}/edit`}>Edit</Link>
                     </Button>
                 </CardFooter>
             </Card>

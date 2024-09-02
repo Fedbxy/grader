@@ -1,9 +1,7 @@
 import { allowAccess } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 
-import { ArrowLeft } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -33,13 +31,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ConfirmButton } from "./confirmButton";
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page({ params }: { params: { id: string } }) {
   await allowAccess("admin");
 
   if (isNaN(Number(params.id))) {
@@ -100,18 +92,6 @@ export default async function Page({
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" asChild>
-            <Link
-              href={
-                typeof searchParams.back === "string"
-                  ? searchParams.back
-                  : "/dashboard/user"
-              }
-            >
-              <ArrowLeft className="mr-1 h-4 w-4" />
-              Back
-            </Link>
-          </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">Delete</Button>
