@@ -31,7 +31,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DeleteConfirmButton } from "./deleteConfirmButton";
+import { ConfirmButton } from "./confirmButton";
 
 export default async function Page({
   params,
@@ -126,7 +126,7 @@ export default async function Page({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <DeleteConfirmButton id={user.id} />
+                <ConfirmButton id={user.id} />
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

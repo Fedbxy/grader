@@ -7,7 +7,7 @@ import { messages } from "@/config/messages";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
-export function DeleteConfirmButton({ id }: { id: number }) {
+export function ConfirmButton({ id }: { id: number }) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
 

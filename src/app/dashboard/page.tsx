@@ -1,6 +1,6 @@
 import { allowAccess } from "@/lib/auth";
 import Link from "next/link";
-import { Users, FileText } from "lucide-react";
+import { Users, FileText, FileCheck2 } from "lucide-react";
 import prisma from "@/lib/prisma";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ export default async function Page() {
 
     const users = await prisma.user.count();
     const problems = await prisma.problem.count();
+    const submissions = await prisma.submission.count();
 
     const timestamp = new Date().toLocaleString();
 
@@ -45,6 +46,23 @@ export default async function Page() {
                         <Link href="/dashboard/problem">
                             <Button variant="outline" size="sm">
                                 View Problems
+                            </Button>
+                        </Link> 
+                    </div>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
+                    <FileCheck2 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col space-y-2">
+                        <div className="text-4xl font-bold">{submissions}</div>
+                        <p className="text-xs text-muted-foreground">{timestamp}</p>
+                        <Link href="/dashboard/submission">
+                            <Button variant="outline" size="sm">
+                                View Submissions
                             </Button>
                         </Link>
                     </div>
