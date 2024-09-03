@@ -59,6 +59,9 @@ export async function rejudgeAllSubmission(problemId: number) {
 
     const submissions = await prisma.submission.findMany({
         where: { problemId },
+        orderBy: {
+            id: "asc"
+        },
     });
 
     for (const submission of submissions) {

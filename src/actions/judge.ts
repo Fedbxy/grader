@@ -106,5 +106,5 @@ export async function getSubmission(id: number) {
                 ],
             },
         });
-    }, 100);
+    }, 500);
 }
