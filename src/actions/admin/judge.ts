@@ -65,8 +65,7 @@ export async function rejudgeAllSubmission(problemId: number) {
     });
 
     for (const submission of submissions) {
-        console.log(submission.id);
-        rejudge(submission.id);
+        await rejudge(submission.id);
     }
 
     redirect(`/dashboard/submission`);
