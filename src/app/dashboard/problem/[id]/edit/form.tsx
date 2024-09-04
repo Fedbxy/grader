@@ -19,7 +19,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
     Select,
     SelectContent,
@@ -29,8 +29,6 @@ import {
 } from "@/components/ui/select";
 
 export function EditProblemForm({ problem }: { problem: Problem }) {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof editProblemSchema>>({
         resolver: zodResolver(editProblemSchema),
         defaultValues: {
@@ -89,28 +87,16 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
         }
 
         if (Object.keys(updateData).length === 0) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: messages.form.noChanges,
-            });
+            return toast.error(messages.form.noChanges);
         }
 
         const response = await editProblem(problem.id, data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "You have successfully edited the problem.",
-        });
+        return toast.success("You have successfully edited the problem.");
     }
 
     return (

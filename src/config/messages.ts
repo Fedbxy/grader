@@ -80,10 +80,6 @@ export const messages = {
         noProblem: "Problem not found.",
         noSubmission: "Submission not found.",
     },
-    toast: {
-        success: "Success!",
-        error: "Uh oh! Something went wrong.",
-    },
 };
 
 export const maps = {

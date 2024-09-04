@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProblemSchema } from "@/lib/zod/problem";
 import { createProblem } from "@/actions/admin/problem";
-import { messages } from "@/config/messages";
 import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
     Select,
     SelectContent,
@@ -28,8 +27,6 @@ import {
 } from "@/components/ui/select";
 
 export function CreateProblemForm() {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof createProblemSchema>>({
         resolver: zodResolver(createProblemSchema),
         defaultValues: {
@@ -56,18 +53,10 @@ export function CreateProblemForm() {
         const response = await createProblem(data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "You have successfully created a problem.",
-        });
+        return toast.success("You have successfully created a problem.");
     }
 
     return (

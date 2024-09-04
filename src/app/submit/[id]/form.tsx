@@ -6,7 +6,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { submitSchema } from "@/lib/zod/judge";
 import { submitCode } from "@/actions/judge";
-import { messages } from "@/config/messages";
 import { limits } from "@/config/limits";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
     Select,
     SelectContent,
@@ -30,8 +29,6 @@ import {
 } from "@/components/ui/select";
 
 export function SubmitForm({ problemId, userId }: { problemId: number, userId: number }) {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof submitSchema>>({
         resolver: zodResolver(submitSchema),
     });
@@ -59,18 +56,10 @@ export function SubmitForm({ problemId, userId }: { problemId: number, userId: n
         const response = await submitCode(data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "Your solution has been submitted.",
-        });
+        return toast.success("Your code has been submitted.");
     }
 
     return (

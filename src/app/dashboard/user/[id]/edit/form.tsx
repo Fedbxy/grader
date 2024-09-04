@@ -19,7 +19,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
     Select,
     SelectContent,
@@ -30,8 +30,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 export function EditUserForm({ user }: { user: User }) {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof editUserSchema>>({
         resolver: zodResolver(editUserSchema),
         defaultValues: {
@@ -77,28 +75,16 @@ export function EditUserForm({ user }: { user: User }) {
         }
 
         if (Object.keys(updateData).length === 0) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: messages.form.noChanges,
-            });
+            return toast.error(messages.form.noChanges);
         }
 
         const response = await editUser(user.id, data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "You have successfully edited the user.",
-        });
+        return toast.success("You have successfully edited the user.");
     }
 
     return (

@@ -1,26 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { messages } from "@/config/messages";
 import { rejudgeAllSubmission } from "@/actions/admin/judge";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export function ConfirmButton({ id }: { id: number }) {
-  const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
 
-  function handleClick() {
+  async function handleClick() {
     setSubmitting(true);
 
-    rejudgeAllSubmission(id);
+    await rejudgeAllSubmission(id);
 
-    return toast({
-      variant: "constructive",
-      title: messages.toast.success,
-      description: `Requested rejudging all submissions for problem #${id}.`,
-    });
+    return toast.success(`Requested rejudging all submissions for problem #${id}.`);
   }
 
   return (
