@@ -5,12 +5,21 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { AlertDialogAction } from "@/components/ui/alert-dialog";
 
-export function ConfirmButton({ id }: { id: number }) {
+export function DeleteConfirmButton({ validateId, id }: { validateId: number, id: number }) {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleClick() {
     setSubmitting(true);
+
+    if (validateId === id) {
+      return toast({
+        variant: "destructive",
+        title: messages.toast.error,
+        description: messages.database.deleteSelf,
+      });
+    }
 
     const response = await deleteUser(id);
 
@@ -26,8 +35,11 @@ export function ConfirmButton({ id }: { id: number }) {
       variant="destructive"
       disabled={submitting}
       onClick={() => handleClick()}
+      asChild
     >
-      {submitting ? "Deleting..." : "Delete"}
+      <AlertDialogAction>
+        {submitting ? "Deleting..." : "Delete"}
+      </AlertDialogAction>
     </Button>
   );
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { allowAccess, lucia } from "@/lib/auth";
+import { validateRequest, allowAccess, lucia } from "@/lib/auth";
 import { editUserSchema } from "@/lib/zod/user";
 import { Role } from "@/utils/types";
 import { hash } from "bcrypt";
@@ -107,6 +107,13 @@ export async function deleteUser(id: number) {
     await allowAccess("admin");
 
     try {
+        const { user: validateUser  } = await validateRequest();
+        if (validateUser!.id === id) {
+            return {
+                error: messages.database.deleteSelf,
+            };
+        }
+
         const user = await prisma.user.findUnique({
             where: { id },
         });

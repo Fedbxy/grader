@@ -1,4 +1,4 @@
-import { allowAccess } from "@/lib/auth";
+import { validateRequest, allowAccess } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -56,6 +56,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     Updated: user.updatedAt.toLocaleString(),
   };
 
+  const { user: validateUser } = await validateRequest();
+
   return (
     <div className="container mx-auto flex justify-center py-10">
       <Card className="w-full max-w-lg md:max-w-xl">
@@ -106,7 +108,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <ConfirmButton id={user.id} />
+                <DeleteConfirmButton validateId={validateUser!.id} id={user.id} />
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

@@ -79,6 +79,7 @@ export const messages = {
         noUser: "User not found.",
         noProblem: "Problem not found.",
         noSubmission: "Submission not found.",
+        deleteSelf: "You cannot delete yourself.",
     },
 };
 
