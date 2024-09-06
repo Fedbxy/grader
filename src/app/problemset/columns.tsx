@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Problem } from "@/lib/types";
+import { Problem } from "@/utils/types";
 import Link from "next/link";
 
 import { FileText, MoreHorizontal, Send } from "lucide-react";
@@ -21,7 +21,7 @@ export const columns: ColumnDef<Problem>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="ID" />
+            <DataTableColumnHeader column={column} title="#" />
         ),
     },
     {
@@ -42,6 +42,12 @@ export const columns: ColumnDef<Problem>[] = [
         },
     },
     {
+        accessorKey: "score",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Score" />
+        ),
+    },
+    {
         accessorKey: "author",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Author" />
@@ -50,7 +56,7 @@ export const columns: ColumnDef<Problem>[] = [
             const author = row.original.author;
 
             return (
-                <Link href={`/user/${author.id}/profile?back=/problemset`} className="hover:underline">
+                <Link href={`/user/${author.id}/profile`} className="hover:underline">
                     {author.displayName}
                 </Link>
             );

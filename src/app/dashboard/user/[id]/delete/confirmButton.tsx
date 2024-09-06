@@ -2,13 +2,11 @@
 
 import { deleteUser } from "@/actions/admin/user";
 import { useState } from "react";
-import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
-export function DeleteConfirmButton({ id }: { id: number }) {
-  const { toast } = useToast();
+export function ConfirmButton({ id }: { id: number }) {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleClick() {
@@ -17,18 +15,10 @@ export function DeleteConfirmButton({ id }: { id: number }) {
     const response = await deleteUser(id);
 
     if (response?.error) {
-      return toast({
-        variant: "destructive",
-        title: messages.toast.error,
-        description: response.error,
-      });
+      return toast.error(response.error);
     }
 
-    return toast({
-      variant: "constructive",
-      title: messages.toast.success,
-      description: "You have successfully deleted the user.",
-    });
+    return toast.success("You have successfully deleted the user.");
   }
 
   return (

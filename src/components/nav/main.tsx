@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navConfig } from "@/config/nav";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shadcn";
 
 export function MainNav() {
     const pathname = usePathname();

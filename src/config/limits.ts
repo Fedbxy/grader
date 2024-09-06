@@ -32,6 +32,12 @@ export const limits = {
             "application/pdf",
         ],
     },
+    testcase: {
+        size: 100 * 1024 * 1024,
+        type: [
+            "application/zip",
+        ],
+    },
     timeLimit: {
         min: 1,
         max: 10000,
@@ -42,9 +48,24 @@ export const limits = {
         max: 1024,
         regex: /^([1-9]|[1-9][0-9]{1,2}|10[01][0-9]|102[0-4])$/,
     },
+    score: {
+        min: 1,
+        max: 1000,
+        regex: /^([1-9]|[1-9][0-9]{1,2}|1000)$/,
+    },
     testcases: {
         min: 1,
         max: 100,
         regex: /^([1-9]|[1-9][0-9]|100)$/,
-    }
+    },
+    code: {
+        max: 65536,
+    },
+    codeFile: {
+        type: [
+            ".cpp",
+            ".c",
+            ".py",
+        ],
+    },
 };

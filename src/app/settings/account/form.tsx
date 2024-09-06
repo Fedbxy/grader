@@ -19,12 +19,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import type { User } from "lucia";
 
 export function EditAccountForm({ user }: { user: User }) {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof editAccountSchema>>({
         resolver: zodResolver(editAccountSchema),
         defaultValues: {
@@ -54,28 +52,16 @@ export function EditAccountForm({ user }: { user: User }) {
         }
 
         if (Object.keys(updateData).length === 0) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: messages.form.noChanges,
-            });
+            return toast.error(messages.form.noChanges);
         }
 
         const response = await editAccount(data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "Your profile has been updated.",
-        });
+        return toast.success("Your profile has been updated.");
     }
 
     return (

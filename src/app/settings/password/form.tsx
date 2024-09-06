@@ -5,7 +5,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordSchema } from "@/lib/zod/user";
 import { changePassword } from "@/actions/user";
-import { messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +16,9 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export function ChangePasswordForm() {
-    const { toast } = useToast();
-
     const form = useForm<z.infer<typeof changePasswordSchema>>({
         resolver: zodResolver(changePasswordSchema),
         defaultValues: {
@@ -40,18 +37,10 @@ export function ChangePasswordForm() {
         const response = await changePassword(data);
 
         if (response?.error) {
-            return toast({
-                variant: "destructive",
-                title: messages.toast.error,
-                description: response.error,
-            });
+            return toast.error(response.error);
         }
 
-        return toast({
-            variant: "constructive",
-            title: messages.toast.success,
-            description: "Successfully changed your password.",
-        });
+        return toast.success("Successfully changed your password.");
     }
 
     return (

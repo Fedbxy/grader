@@ -36,6 +36,14 @@ export const messages = {
             size: `Statement must be less than ${limits.statement.size / 1024 / 1024}MB`,
             type: `Statement must be one of the following types: ${limits.statement.type.join(", ")}`,
         },
+        score: {
+            required: "Score is required",
+            outOfRange: `Score must be between ${limits.score.min} and ${limits.score.max}`,
+        },
+        testcase: {
+            size: `Testcase must be less than ${limits.testcase.size / 1024 / 1024}MB`,
+            type: `Testcase must be one of the following types: ${limits.testcase.type.join(", ")}`,
+        },
         timeLimit: {
             required: "Time limit is required",
             outOfRange: `Time limit must be between ${limits.timeLimit.min} and ${limits.timeLimit.max} milliseconds`,
@@ -47,6 +55,10 @@ export const messages = {
         testcases: {
             required: "Testcases is required",
             outOfRange: `Testcases must be between ${limits.testcases.min} and ${limits.testcases.max}`,
+        },
+        code: {
+            required: "Code is required",
+            max: `Code must be less than ${limits.code.max} characters`,
         },
     },
     form: {
@@ -66,9 +78,22 @@ export const messages = {
     database: {
         noUser: "User not found.",
         noProblem: "Problem not found.",
-    },
-    toast: {
-        success: "Success!",
-        error: "Uh oh! Something went wrong.",
+        noSubmission: "Submission not found.",
     },
 };
+
+export const maps = {
+    submission: {
+        verdict: {
+            AC: "Accepted",
+            WA: "Wrong Answer",
+            TLE: "Time Limit Exceeded",
+            MLE: "Memory Limit Exceeded",
+            SKP: "Skipped",
+            RE: "Runtime Error",
+            CE: "Compilation Error",
+            JE: "Judge Error",
+            SE: "System Error",
+        },
+    }
+}

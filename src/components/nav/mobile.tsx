@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import { navConfig, iconMap, IconName } from "@/config/nav";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shadcn";
 
 import { Button } from "@/components/ui/button";
 import {
