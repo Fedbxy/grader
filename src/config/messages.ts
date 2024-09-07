@@ -70,16 +70,18 @@ export const messages = {
     },
     auth: {
         unauthenticated: "You must be signed in to perform this action.",
+        unauthorized: "You are not authorized to perform this action.",
         signedIn: "You are already signed in.",
         usernameTaken: "Username is already taken.",
         wrongCredentials: "Invalid username or password.",
         noSession: "Session not found.",
+        banned: "This account is banned. Please contact an administrator if you believe this is a mistake.",
     },
     database: {
         noUser: "User not found.",
         noProblem: "Problem not found.",
         noSubmission: "Submission not found.",
-        deleteSelf: "You cannot delete yourself.",
+        banSelf: "You cannot ban yourself.",
     },
 };
 

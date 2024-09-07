@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Ban } from "lucide-react";
 
 import {
     Card,
@@ -45,7 +45,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                             </Avatar>
                         </div>
                         <div className="text-center">
-                            {user.role === "admin" && <Badge><BadgeCheck className="h-4 w-4 mr-1" />{user.role}</Badge>}
+                            <div className="flex justify-center space-x-2">
+                                {user.role === "admin" && <Badge><BadgeCheck className="h-4 w-4 mr-1" />{user.role}</Badge>}
+                                {user.isBanned && <Badge variant="destructive"><Ban className="h-4 w-4 mr-1" />Banned</Badge>}
+                            </div>
                             <p className="text-lg font-semibold">{user.displayName}</p>
                             <p className="text-sm text-muted-foreground">{user.username}</p>
                         </div>

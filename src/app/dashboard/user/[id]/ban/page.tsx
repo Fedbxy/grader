@@ -1,4 +1,5 @@
-import { validateRequest, allowAccess } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -56,14 +57,16 @@ export default async function Page({ params }: { params: { id: string } }) {
     Updated: user.updatedAt.toLocaleString(),
   };
 
+  const { isBanned } = user;
+
   const { user: validateUser } = await validateRequest();
 
   return (
     <div className="container mx-auto flex justify-center py-10">
       <Card className="w-full max-w-lg md:max-w-xl">
         <CardHeader>
-          <CardTitle className="text-destructive">Delete User</CardTitle>
-          <Path path={`/dashboard/user/${user.id}/delete`} />
+          <CardTitle className="text-destructive">{isBanned ? "Unban" : "Ban"} User</CardTitle>
+          <Path path={`/dashboard/user/${user.id}/ban`} />
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center space-y-4">
@@ -96,19 +99,18 @@ export default async function Page({ params }: { params: { id: string } }) {
         <CardFooter className="flex justify-between">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Delete</Button>
+              <Button variant="destructive">{isBanned ? "Unban" : "Ban"}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  this account and remove the data from our servers.
+                  This will <span className="font-bold">{isBanned ? "unban" : "ban"}</span> the user from the platform.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <DeleteConfirmButton validateId={validateUser!.id} id={user.id} />
+                <ConfirmButton unban={isBanned} validateId={validateUser!.id} id={user.id} />
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
