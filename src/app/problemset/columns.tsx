@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Problem } from "@/utils/types";
+import { Problem } from "@/types/problem";
 import Link from "next/link";
 
 import { FileText, MoreHorizontal, Send } from "lucide-react";
@@ -17,12 +17,34 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const columns: ColumnDef<Problem>[] = [
+type ProblemWithAccepted = Problem & {
+    accepted: number;
+    isUserAccepted?: boolean;
+    latestSubmissionId?: number;
+};
+
+export const columns: ColumnDef<ProblemWithAccepted>[] = [
     {
         accessorKey: "id",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="#" />
         ),
+        cell: ({ row }) => {
+            const id = row.original.id;
+            const isUserAccepted = row.original.isUserAccepted;
+            const latestSubmissionId = row.original.latestSubmissionId;
+
+            let formatted = <span>{id}</span>;
+            if (isUserAccepted !== undefined) {
+                formatted = (
+                    <Link href={`/submission/${latestSubmissionId}`}>
+                        <span className={`hover:underline font-bold ${isUserAccepted ? "text-constructive" : "text-destructive"}`}>{id}</span>
+                    </Link>
+                );
+            }
+
+            return formatted;
+        }
     },
     {
         accessorKey: "title",
@@ -61,6 +83,12 @@ export const columns: ColumnDef<Problem>[] = [
                 </Link>
             );
         },
+    },
+    {
+        accessorKey: "accepted",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Accepted" />
+        ),
     },
     {
         id: "actions",
