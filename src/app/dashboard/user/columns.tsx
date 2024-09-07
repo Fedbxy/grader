@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { User } from "@/utils/types";
+import { User } from "@/types/user";
 import Link from "next/link";
 
 import { MoreHorizontal, Eye, UserCog, UserX } from "lucide-react";
@@ -22,6 +22,20 @@ export const columns: ColumnDef<User>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
+    cell: ({ row }) => {
+      const id = row.getValue("id") as number;
+      const banned = row.original.isBanned;
+
+      return (
+        <div className="flex items-center space-x-2">
+          {banned ? (
+            <span className="text-destructive">{id} (Banned)</span>
+          ) : (
+            <span>{id}</span>
+          )}
+        </div>
+      );
+    }
   },
   {
     accessorKey: "username",
@@ -75,10 +89,10 @@ export const columns: ColumnDef<User>[] = [
                 Edit
               </DropdownMenuItem>
             </Link>
-            <Link href={`/dashboard/user/${user.id}/delete`}>
+            <Link href={`/dashboard/user/${user.id}/ban`}>
               <DropdownMenuItem className="text-destructive">
                 <UserX className="mr-1 h-4 w-4" />
-                Delete
+                {user.isBanned ? "Unban" : "Ban"}
               </DropdownMenuItem>
             </Link>
           </DropdownMenuContent>

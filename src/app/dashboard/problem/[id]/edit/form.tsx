@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Problem } from "@/utils/types";
+import { Problem } from "@/types/problem";
 import { editProblem } from "@/actions/admin/problem";
 import { messages } from "@/config/messages";
 import { limits } from "@/config/limits";

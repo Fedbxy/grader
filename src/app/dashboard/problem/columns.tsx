@@ -1,7 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Problem, User } from "@/utils/types";
+import { Problem } from "@/types/problem";
+import { User } from "@/types/user";
 import Link from "next/link";
 
 import { MoreHorizontal, Eye, FolderCog, RefreshCcw } from "lucide-react";

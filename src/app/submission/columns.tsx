@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Submission } from "@/utils/types";
+import { Submission } from "@/types/submission";
 import Link from "next/link";
 import { maps } from "@/config/messages";
 

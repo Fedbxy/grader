@@ -3,10 +3,9 @@ import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { Role, User as DatabaseUserAttributes } from "@/utils/types";
+import { Role, User as DatabaseUserAttributes } from "@/types/user";
 
 import type { Session, User } from "lucia";
-import { notFound } from "next/navigation";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -64,17 +63,21 @@ export const validateRequest = cache(
     },
 );
 
-export async function allowAccess(role: Role) {
+export async function allowAccess(
+    role: Role,
+    unauthenticatedFallback: () => any,
+    unauthorizedFallback: () => any,
+) {
     const { user } = await validateRequest();
     if (!user) {
-        return notFound();
+        return unauthenticatedFallback();
     }
 
     const userRoleValue = roleMap[user.role];
     const roleValue = roleMap[role];
 
     if (userRoleValue < roleValue) {
-        return notFound();
+        return unauthorizedFallback();
     }
 }
 
