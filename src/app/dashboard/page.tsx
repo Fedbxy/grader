@@ -1,4 +1,4 @@
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import Link from "next/link";
 import { Users, FileText, FileCheck2 } from "lucide-react";
 import prisma from "@/lib/prisma";

@@ -1,4 +1,4 @@
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -43,6 +43,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Display Name": user.displayName,
         "Bio": user.bio || "",
         "Role": user.role,
+        "Banned": user.isBanned ? <span className="text-destructive">Yes</span> : "No",
         "Created": user.createdAt.toLocaleString(),
         "Updated": user.updatedAt.toLocaleString(),
     };

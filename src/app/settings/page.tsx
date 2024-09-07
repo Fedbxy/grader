@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 
 import {
     Tabs,

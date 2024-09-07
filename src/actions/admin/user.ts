@@ -1,18 +1,22 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { validateRequest, allowAccess, lucia } from "@/lib/auth";
+import { validateRequest, lucia } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import { editUserSchema } from "@/lib/zod/user";
-import { Role } from "@/utils/types";
+import { Role } from "@/types/user";
 import { hash } from "bcrypt";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
 import { uploadFile, deleteFile } from "@/lib/minio";
 
 export async function editUser(id: number, data: FormData) {
-    await allowAccess("admin");
-
     try {
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
         const username = data.get("username") as string;
         const displayName = data.get("displayName") as string;
         const avatar = data.get("avatar") as File || undefined;
@@ -103,14 +107,17 @@ export async function editUser(id: number, data: FormData) {
     redirect("/dashboard/user");
 }
 
-export async function deleteUser(id: number) {
-    await allowAccess("admin");
-
+export async function banUser(id: number) {
     try {
-        const { user: validateUser  } = await validateRequest();
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
+        const { user: validateUser } = await validateRequest();
         if (validateUser!.id === id) {
             return {
-                error: messages.database.deleteSelf,
+                error: messages.database.banSelf,
             };
         }
 
@@ -123,10 +130,44 @@ export async function deleteUser(id: number) {
             };
         }
 
-        deleteFile(`user/${user.id}`);
-
-        await prisma.user.delete({
+        await prisma.user.update({
             where: { id },
+            data: {
+                isBanned: true,
+            },
+        });
+
+        lucia.invalidateUserSessions(id);
+    } catch (error) {
+        console.error("Error: ", error);
+        return {
+            error: messages.form.unexpected,
+        };
+    }
+    redirect("/dashboard/user");
+}
+
+export async function unbanUser(id: number) {
+    try {
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id },
+        });
+        if (!user) {
+            return {
+                error: messages.database.noUser,
+            };
+        }
+
+        await prisma.user.update({
+            where: { id },
+            data: {
+                isBanned: false,
+            },
         });
     } catch (error) {
         console.error("Error: ", error);

@@ -1,18 +1,22 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { allowAccess, validateRequest } from "@/lib/auth";
+import { validateRequest } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import { editProblemSchema } from "@/lib/zod/problem";
-import { Visibility } from "@/utils/types";
+import { Visibility } from "@/types/problem";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
 import { uploadFile } from "@/lib/minio";
-import { uploadTestcase } from "@/utils/judge";
+import { uploadTestcase } from "@/utils/uploadTestcase";
 
 export async function editProblem(id: number, data: FormData) {
-    await allowAccess("admin");
-
     try {
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
         const title = data.get("title") as string;
         const statement = data.get("statement") as File || undefined;
         const testcase = data.get("testcase") as File || undefined;
@@ -101,9 +105,12 @@ export async function editProblem(id: number, data: FormData) {
 }
 
 export async function createProblem(data: FormData) {
-    await allowAccess("admin");
-
     try {
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
         const title = data.get("title") as string;
         const statement = data.get("statement") as File || undefined;
         const testcase = data.get("testcase") as File || undefined;

@@ -1,4 +1,4 @@
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 
 import { columns } from "./columns";
@@ -17,6 +17,7 @@ export default async function Page() {
             id: true,
             username: true,
             role: true,
+            isBanned: true,
             displayName: true,
             bio: true,
             avatar: true,

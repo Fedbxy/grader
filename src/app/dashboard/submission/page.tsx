@@ -1,4 +1,4 @@
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 
 import { columns } from "./columns";
