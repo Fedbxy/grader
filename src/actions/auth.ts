@@ -106,6 +106,12 @@ export async function signin(data: FormData) {
             };
         }
 
+        if (user.isBanned) {
+            return {
+                error: messages.auth.banned,
+            };
+        }
+
         await lucia.invalidateUserSessions(user.id);
         const newSession = await lucia.createSession(user.id, {});
         const sessionCookie = lucia.createSessionCookie(newSession.id);
