@@ -13,6 +13,7 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'user',
+    "isBanned" BOOLEAN NOT NULL DEFAULT false,
     "displayName" TEXT NOT NULL,
     "avatar" TEXT,
     "bio" TEXT,
@@ -37,10 +38,10 @@ CREATE TABLE "sessions" (
 CREATE TABLE "problems" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
-    "score" INTEGER NOT NULL,
     "visibility" "Visibility" NOT NULL DEFAULT 'private',
     "timeLimit" INTEGER NOT NULL,
     "memoryLimit" INTEGER NOT NULL,
+    "score" INTEGER NOT NULL,
     "testcases" INTEGER NOT NULL,
     "authorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -53,6 +54,8 @@ CREATE TABLE "problems" (
 CREATE TABLE "user_problems" (
     "userId" INTEGER NOT NULL,
     "problemId" INTEGER NOT NULL,
+    "submissionId" INTEGER NOT NULL,
+    "isAccepted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "user_problems_pkey" PRIMARY KEY ("userId","problemId")
 );
@@ -89,6 +92,9 @@ ALTER TABLE "user_problems" ADD CONSTRAINT "user_problems_userId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "user_problems" ADD CONSTRAINT "user_problems_problemId_fkey" FOREIGN KEY ("problemId") REFERENCES "problems"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_problems" ADD CONSTRAINT "user_problems_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "submissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "submissions" ADD CONSTRAINT "submissions_problemId_fkey" FOREIGN KEY ("problemId") REFERENCES "problems"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

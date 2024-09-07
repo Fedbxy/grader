@@ -24,17 +24,18 @@ enum Visibility {
 }
 
 model User {
-  id              Int           @id @default(autoincrement())
-  username        String        @unique
-  password        String
-  role            Role          @default(user)
-  displayName     String
-  avatar          String?
-  bio             String?
-  sessions        Session[]
-  Problem         Problem[]
-  Submission      Submission[]
-  AcceptedProblem UserProblem[]
+  id          Int           @id @default(autoincrement())
+  username    String        @unique
+  password    String
+  role        Role          @default(user)
+  isBanned    Boolean       @default(false)
+  displayName String
+  avatar      String?
+  bio         String?
+  sessions    Session[]
+  Problem     Problem[]
+  Submission  Submission[]
+  UserProblem UserProblem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,17 +56,17 @@ model Session {
 }
 
 model Problem {
-  id           Int           @id @default(autoincrement())
-  title        String
-  visibility   Visibility    @default(private)
-  timeLimit    Int
-  memoryLimit  Int
-  score        Int
-  testcases    Int
-  authorId     Int
-  author       User          @relation(fields: [authorId], references: [id])
-  Submission   Submission[]
-  AcceptedUser UserProblem[]
+  id          Int           @id @default(autoincrement())
+  title       String
+  visibility  Visibility    @default(private)
+  timeLimit   Int
+  memoryLimit Int
+  score       Int
+  testcases   Int
+  authorId    Int
+  author      User          @relation(fields: [authorId], references: [id])
+  Submission  Submission[]
+  UserProblem UserProblem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -74,28 +75,32 @@ model Problem {
 }
 
 model UserProblem {
-  userId    Int
-  problemId Int
-  user      User    @relation(fields: [userId], references: [id])
-  problem   Problem @relation(fields: [problemId], references: [id])
+  userId       Int
+  problemId    Int
+  submissionId Int
+  isAccepted   Boolean    @default(false)
+  user         User       @relation(fields: [userId], references: [id])
+  problem      Problem    @relation(fields: [problemId], references: [id])
+  submission   Submission @relation(fields: [submissionId], references: [id])
 
   @@id([userId, problemId])
   @@map("user_problems")
 }
 
 model Submission {
-  id        Int      @id @default(autoincrement())
-  code      String
-  language  Language
-  score     Int      @default(0)
-  verdict   String[]
-  time      Int[]
-  memory    Int[]
-  error     String?
-  problemId Int
-  userId    Int
-  problem   Problem  @relation(fields: [problemId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  id          Int           @id @default(autoincrement())
+  code        String
+  language    Language
+  score       Int           @default(0)
+  verdict     String[]
+  time        Int[]
+  memory      Int[]
+  error       String?
+  problemId   Int
+  userId      Int
+  problem     Problem       @relation(fields: [problemId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+  UserProblem UserProblem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
