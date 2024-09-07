@@ -122,7 +122,7 @@ export function SubmitForm({ problemId, userId }: { problemId: number, userId: n
                     className="w-full"
                     disabled={form.formState.isSubmitting}
                 >
-                    {form.formState.isSubmitting ? "Creating..." : "Create"}
+                    {form.formState.isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
             </form>
         </Form>
