@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Problem } from "@/types/problem";
 import Link from "next/link";
 
-import { FileText, MoreHorizontal, Send } from "lucide-react";
+import { FileText, MoreHorizontal, Send, FileCheck2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
@@ -29,22 +29,6 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="#" />
         ),
-        cell: ({ row }) => {
-            const id = row.original.id;
-            const isUserAccepted = row.original.isUserAccepted;
-            const latestSubmissionId = row.original.latestSubmissionId;
-
-            let formatted = <span>{id}</span>;
-            if (isUserAccepted !== undefined) {
-                formatted = (
-                    <Link href={`/submission/${latestSubmissionId}`}>
-                        <span className={`hover:underline font-bold ${isUserAccepted ? "text-constructive" : "text-destructive"}`}>{id}</span>
-                    </Link>
-                );
-            }
-
-            return formatted;
-        }
     },
     {
         accessorKey: "title",
@@ -94,12 +78,18 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
         id: "actions",
         cell: ({ row }) => {
             const problem = row.original;
+            const isUserAccepted = problem.isUserAccepted;
+            const latestSubmissionId = problem.latestSubmissionId;
 
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="outline" className={`h-8 w-8 p-0 ${isUserAccepted !== undefined ? (isUserAccepted ? "bg-constructive/15 text-constructive" : "bg-destructive/15 text-destructive") : ""}`}>
+                            {isUserAccepted !== undefined ? (
+                                isUserAccepted ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />
+                            ) : (
+                                <MoreHorizontal className="h-4 w-4" />
+                            )}
                             <span className="sr-only">Open menu</span>
                         </Button>
                     </DropdownMenuTrigger>
@@ -109,9 +99,14 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
                             <DropdownMenuItem><FileText className="h-4 w-4 mr-1" />View</DropdownMenuItem>
                         </a>
                         <DropdownMenuSeparator />
-                        <Link href={`/submit/${problem.id}`}>
+                        <a href={`/submit/${problem.id}`} target="_blank">
                             <DropdownMenuItem><Send className="h-4 w-4 mr-1" />Submit</DropdownMenuItem>
-                        </Link>
+                        </a>
+                        {latestSubmissionId && (
+                            <a href={`/submission/${latestSubmissionId}`} target="_blank">
+                                <DropdownMenuItem><FileCheck2 className="h-4 w-4 mr-1" />Latest Submission</DropdownMenuItem>
+                            </a>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
