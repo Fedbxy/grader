@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { Column } from "@tanstack/react-table";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shadcn";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,

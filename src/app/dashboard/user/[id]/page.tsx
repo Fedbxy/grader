@@ -1,17 +1,13 @@
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 
-import { ArrowLeft } from 'lucide-react';
 import {
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
     Avatar,
     AvatarFallback,
@@ -26,13 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Path } from "@/components/path";
 
-export default async function Page({
-    params,
-    searchParams,
-}: {
-    params: { id: string },
-    searchParams: { [key: string]: string | string[] | undefined },
-}) {
+export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
 
     if (isNaN(Number(params.id))) {
@@ -53,6 +43,7 @@ export default async function Page({
         "Display Name": user.displayName,
         "Bio": user.bio || "",
         "Role": user.role,
+        "Banned": user.isBanned ? <span className="text-destructive">Yes</span> : "No",
         "Created": user.createdAt.toLocaleString(),
         "Updated": user.updatedAt.toLocaleString(),
     };
@@ -83,14 +74,6 @@ export default async function Page({
                         </Table>
                     </div>
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <Button variant="outline" asChild>
-                        <Link href={typeof searchParams.back === "string" ? searchParams.back : "/dashboard/user"}><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
-                    </Button>
-                    <Button variant="link" asChild>
-                        <Link href={`/dashboard/user/${user.id}/edit?back=/dashboard/user/${user.id}`}>Edit</Link>
-                    </Button>
-                </CardFooter>
             </Card>
         </div>
     );

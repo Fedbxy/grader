@@ -1,27 +1,17 @@
-import Link from "next/link";
-import { allowAccess } from "@/lib/auth";
+import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
-import { ArrowLeft } from 'lucide-react';
 import {
     Card,
     CardContent,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 import { EditProblemForm } from "./form";
-import { Button } from "@/components/ui/button";
 import { Path } from "@/components/path";
 
-export default async function Page({
-    params,
-    searchParams,
-}: {
-    params: { id: string },
-    searchParams: { [key: string]: string | string[] | undefined },
-}) {
+export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
 
     if (isNaN(Number(params.id))) {
@@ -48,11 +38,6 @@ export default async function Page({
                 <CardContent>
                     <EditProblemForm problem={problem} />
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <Button variant="outline" asChild>
-                        <Link href={typeof searchParams.back === "string" ? searchParams.back : "/dashboard/problem"}><ArrowLeft className="h-4 w-4 mr-1" />Back</Link>
-                    </Button>
-                </CardFooter>
             </Card>
         </div>
     );

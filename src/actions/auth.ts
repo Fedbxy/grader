@@ -32,10 +32,15 @@ export async function signup(data: FormData) {
             };
         }
 
-        const existingUser = await prisma.user.findUnique({
-            where: { username },
+        const existingUsers = await prisma.user.findMany({
+            where: {
+                username: {
+                    equals: username,
+                    mode: "insensitive",
+                },
+            },
         });
-        if (existingUser) {
+        if (existingUsers.length > 0) {
             return {
                 error: messages.auth.usernameTaken,
             };
@@ -98,6 +103,12 @@ export async function signin(data: FormData) {
         if (!passwordValid) {
             return {
                 error: messages.auth.wrongCredentials,
+            };
+        }
+
+        if (user.isBanned) {
+            return {
+                error: messages.auth.banned,
             };
         }
 

@@ -1,10 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Problem, User } from "@/lib/types";
+import { Problem } from "@/types/problem";
+import { User } from "@/types/user";
 import Link from "next/link";
 
-import { MoreHorizontal, Eye, FolderCog } from "lucide-react";
+import { MoreHorizontal, Eye, FolderCog, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -54,6 +55,12 @@ export const columns: ColumnDef<Problem>[] = [
         },
     },
     {
+        accessorKey: "score",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Score" />
+        ),
+    },
+    {
         accessorKey: "testcases",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Testcases" />
@@ -68,7 +75,7 @@ export const columns: ColumnDef<Problem>[] = [
             const author = row.getValue("author") as User;
 
             return (
-                <Link href={`/dashboard/user/${author.id}?back=/dashboard/problem`} className="hover:underline">
+                <Link href={`/dashboard/user/${author.id}`} className="hover:underline">
                     {author.displayName}
                 </Link>
             );
@@ -82,7 +89,7 @@ export const columns: ColumnDef<Problem>[] = [
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="outline" className="h-8 w-8 p-0">
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Open menu</span>
                         </Button>
@@ -95,6 +102,9 @@ export const columns: ColumnDef<Problem>[] = [
                         <DropdownMenuSeparator />
                         <Link href={`/dashboard/problem/${problem.id}/edit`}>
                             <DropdownMenuItem><FolderCog className="h-4 w-4 mr-1" />Edit</DropdownMenuItem>
+                        </Link>
+                        <Link href={`/dashboard/problem/${problem.id}/rejudge`}>
+                            <DropdownMenuItem><RefreshCcw className="h-4 w-4 mr-1" />Rejudge</DropdownMenuItem>
                         </Link>
                     </DropdownMenuContent>
                 </DropdownMenu>

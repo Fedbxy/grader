@@ -1,11 +1,9 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
-import { Problem } from "@/lib/types";
+import { validateRequest } from "@/lib/auth";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
-
-type databaseProblem = Omit<Problem, "statement">;
 
 export const metadata: Metadata = {
     title: "Problems",
@@ -21,13 +19,34 @@ export default async function Page() {
         },
         include: {
             author: true,
+            UserProblem: true,
         },
     });
 
-    const problems = data.map((problem: databaseProblem) => {
+    const { user: validateUser } = await validateRequest();
+    let user = null;
+    if (validateUser) {
+        user = await prisma.user.findUnique({
+            where: {
+                id: validateUser.id,
+            },
+            select: {
+                UserProblem: true,
+            }
+        });
+    }
+
+    const dataWithAccepted = data.map((problem) => {
+        const accepted = problem.UserProblem.filter((userProblem) => userProblem.isAccepted).length;
+        const userProblem = user?.UserProblem.find((userProblem) => userProblem.problemId === problem.id);
+        const isUserAccepted = userProblem?.isAccepted;
+        const latestSubmissionId = userProblem?.submissionId;
+
         return {
             ...problem,
-            statement: null,
+            accepted,
+            isUserAccepted,
+            latestSubmissionId,
         };
     });
 
@@ -35,7 +54,7 @@ export default async function Page() {
         <div className="container flex flex-col space-y-2 mx-auto py-10">
             <h1 className="text-2xl font-semibold">Problems</h1>
             <h2 className="text-sm text-muted-foreground">Select a problem to view its statement and submit a solution.</h2>
-            <DataTable columns={columns} data={problems} />
+            <DataTable columns={columns} data={dataWithAccepted} />
         </div>
     );
 }

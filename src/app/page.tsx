@@ -17,7 +17,7 @@ export default async function Page() {
         competitive programming. Start your journey today!
       </p>
       <div className="flex flex-col items-center gap-4 md:flex-row md:gap-8">
-        <Link href={user ? "/submission" : "/signup"}>
+        <Link href={user ? "/submission/my" : "/signup"}>
           <Button className="text-lg font-semibold">
             {user ? "Continue your journey" : "Get Started"}
             <ArrowRight className="ml-2 h-5 w-5" />

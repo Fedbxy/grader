@@ -1,4 +1,4 @@
-import { LucideIcon, Home, BookText, FileUp, ListChecks } from "lucide-react";
+import { LucideIcon, Home, BookText, ListChecks } from "lucide-react";
 
 export type NavConfig = {
     title: string;
@@ -9,13 +9,11 @@ export type NavConfig = {
 export type IconName =
     "Home" |
     "BookText" |
-    "FileUp" |
     "ListChecks";
 
 export const iconMap: Record<IconName, LucideIcon> = {
     Home,
     BookText,
-    FileUp,
     ListChecks,
 };
 
@@ -29,11 +27,6 @@ export const navConfig: NavConfig[] = [
         title: "Problems",
         href: "/problemset",
         icon: "BookText",
-    },
-    {
-        title: "Submit",
-        href: "/submit",
-        icon: "FileUp",
     },
     {
         title: "Submissions",
