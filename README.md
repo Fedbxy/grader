@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# https://grader.fedbxy.com/
 
-## Getting Started
+The latest version of my grader website. The project was started in May of 2024 as a hobby project. The goal for this project is not to compete with other online judge platforms, but to learn and improve my web development skills. I hope you love this website as much as I developed it. If you have any suggestions or feedback, please let me know. I would love to hear from you. 
 
-First, run the development server:
+## Repositories
+In this project, there are two repositories below.
+- [grader](https://github.com/Fedbxy/grader): Web Application
+- [grader-backend](https://github.com/Fedbxy/grader-backend): Judge Server
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack
+The project is built with the following technologies.
+### Web Application (Frontend & Backend)
+- [React](https://reactjs.org/): JavaScript Library
+- [Next.js](https://nextjs.org/): React Framework
+- [shadcn/ui](https://ui.shadcn.com/): UI Components
+- [PostgreSQL](https://www.postgresql.org/): Database
+- [prisma](https://www.prisma.io/orm): Database ORM
+- [MinIO](https://min.io/): Object Storage
+- [Lucia](https://lucia-auth.com/): Authentication
+- [Zod](https://zod.dev/): Schema Validation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Judge Server (Backend)
+- [FastAPI](https://fastapi.tiangolo.com/): Python Web Framework
+- [Isolate](https://github.com/ioi/isolate): Sandbox Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deployment
+- [Docker](https://www.docker.com/): Containerization
+- [GitHub Actions](https://github.com/features/actions): CI/CD Pipeline
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Bug Reports
+If you find any bugs or issues, please create an [issue](https://github.com/Fedbxy/grader/issues) in the repository. I will try to fix it if I have time.
 
-## Learn More
+## Contribution
+Open a pull request to contribute to this project. I would love to see your contributions.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## License
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
