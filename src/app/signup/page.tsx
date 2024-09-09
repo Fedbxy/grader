@@ -16,11 +16,17 @@ export const metadata: Metadata = {
     title: "Sign Up",
 };
 
-export default async function Page() {
+export default async function Page({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined },
+}) {
     const { user } = await validateRequest();
     if (user) {
         return redirect("/");
     }
+
+    const nextUrl = typeof searchParams.nextUrl === "string" ? searchParams.nextUrl : undefined;
 
     return (
         <div className="container mx-auto py-10 flex justify-center">
@@ -30,10 +36,10 @@ export default async function Page() {
                     <CardDescription>Create an account to get started.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <SignUpForm />
+                    <SignUpForm nextUrl={nextUrl} />
                     <div className="mt-4 text-center text-sm">
                         Already have an account?{" "}
-                        <Link href="/signin" className="underline">
+                        <Link href={`/signin${nextUrl && `?nextUrl=${nextUrl}`}`} className="underline">
                             Sign In
                         </Link>
                     </div>

@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-export function SignInForm() {
+export function SignInForm({ nextUrl }: { nextUrl?: string }) {
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
@@ -32,7 +32,7 @@ export function SignInForm() {
         data.append("username", values.username);
         data.append("password", values.password);
 
-        const response = await signin(data);
+        const response = await signin(data, nextUrl);
 
         if (response?.error) {
             return toast.error(response.error);

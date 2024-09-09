@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { compare, hash } from "bcrypt";
 import { messages } from "@/config/messages";
 
-export async function signup(data: FormData) {
+export async function signup(data: FormData, nextUrl?: string) {
     try {
         const username = data.get("username") as string;
         const password = data.get("password") as string;
@@ -65,10 +65,10 @@ export async function signup(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/settings");
+    redirect(nextUrl || "/");
 }
 
-export async function signin(data: FormData) {
+export async function signin(data: FormData, nextUrl?: string) {
     try {
         const username = data.get("username") as string;
         const password = data.get("password") as string;
@@ -122,7 +122,7 @@ export async function signin(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/");
+    redirect(nextUrl || "/");
 }
 
 export async function signout() {

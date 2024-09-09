@@ -59,7 +59,7 @@ export function Verdict({
         ) ? (
         <pre>{verdict[0]}</pre>
       ) : (
-        <div className="h-96 overflow-y-auto">
+        <div className="max-h-96 overflow-y-auto">
           <Accordion type="multiple" className="space-y-2">
             {verdict.map((v, i) => (
               <AccordionItem
@@ -68,7 +68,7 @@ export function Verdict({
                 className={`rounded-md px-4 text-xs ${v === "AC" ? "bg-constructive text-constructive-foreground" : "bg-destructive text-destructive-foreground"}`}
               >
                 <AccordionTrigger>
-                  #{i + 1}{" "}
+                  {!error && `#${i + 1} `}
                   {
                     maps.submission.verdict[
                     v as keyof typeof maps.submission.verdict
