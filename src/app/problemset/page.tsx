@@ -19,7 +19,11 @@ export default async function Page() {
         },
         include: {
             author: true,
-            UserProblem: true,
+            UserProblem: {
+                select: {
+                    isAccepted: true,
+                },
+            },
         },
     });
 
@@ -32,7 +36,7 @@ export default async function Page() {
             },
             select: {
                 UserProblem: true,
-            }
+            },
         });
     }
 

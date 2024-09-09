@@ -16,6 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AcceptedUsersDialog } from "./acceptedUsers";
 
 type ProblemWithAccepted = Problem & {
     accepted: number;
@@ -73,6 +74,15 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Accepted" />
         ),
+        cell: ({ row }) => {
+            const accepted = row.original.accepted;
+
+            return accepted ? (
+                <AcceptedUsersDialog accepted={accepted} problemId={row.original.id} />
+            ) : (
+                <span>{accepted}</span>
+            );
+        },
     },
     {
         id: "actions",
