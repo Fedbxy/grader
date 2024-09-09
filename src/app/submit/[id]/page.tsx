@@ -13,7 +13,7 @@ import { SubmitForm } from "./form";
 export default async function Page({ params }: { params: { id: string } }) {
   const { user } = await validateRequest();
   if (!user) {
-    redirect("/signin");
+    redirect(`/signin?nextUrl=${`/submit/${params.id}`}`);
   }
 
   if (isNaN(Number(params.id))) {
