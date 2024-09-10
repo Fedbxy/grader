@@ -39,7 +39,7 @@ export default async function Page({
                     <SignInForm nextUrl={nextUrl} />
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{" "}
-                        <Link href={`/signup${nextUrl && `?nextUrl=${nextUrl}`}`} className="underline">
+                        <Link href={`/signup${nextUrl ? `?nextUrl=${nextUrl}` : ""}`} className="underline">
                             Sign Up
                         </Link>
                     </div>

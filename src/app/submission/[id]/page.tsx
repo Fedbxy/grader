@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
 import { Progress } from "@/components/ui/progress";
 import { Verdict } from "./verdict";
+import { SubmitTime } from "./submit-time";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -55,7 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         {submission.user.displayName}
       </Link>
     ),
-    Date: new Date(submission.createdAt).toLocaleString(),
+    "Submission Time": <SubmitTime date={submission.createdAt.toISOString()} />,
     Language: submission.language,
   };
 
