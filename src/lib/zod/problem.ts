@@ -4,8 +4,8 @@ import { limits } from "@/config/limits";
 
 export const titleSchema = z.string()
     .min(1, messages.schema.title.required)
-    .min(3, messages.schema.title.min)
-    .max(30, messages.schema.title.max);
+    .min(limits.title.min, messages.schema.title.min)
+    .max(limits.title.max, messages.schema.title.max);
 
 export const statementSchema = z.instanceof(File).optional()
     .refine(file => file === undefined || file!.size <= limits.statement.size, messages.schema.statement.size)
