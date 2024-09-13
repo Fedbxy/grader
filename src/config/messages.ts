@@ -56,6 +56,9 @@ export const messages = {
             required: "Testcases is required",
             outOfRange: `Testcases must be between ${limits.testcases.min} and ${limits.testcases.max}`,
         },
+        language: {
+            required: "Language is required",
+        },
         code: {
             required: "Code is required",
             max: `Code must be less than ${limits.code.max} characters`,
