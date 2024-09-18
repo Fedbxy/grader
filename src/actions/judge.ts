@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { Language } from "@/types/submission";
 import { messages } from "@/config/messages";
 import { redirect } from "next/navigation";
+import { submitSchema } from "@/lib/zod/judge";
 
 const protocol = process.env.BACKEND_PROTOCOL;
 const endpoint = process.env.BACKEND_ENDPOINT;
@@ -19,8 +20,23 @@ export async function submitCode(data: FormData) {
             return accessResult;
         }
 
+        const problemId = Number(data.get("problemId"));
+        const userId = Number(data.get("userId"));
+        const language = data.get("language") as string;
+        const code = data.get("code") as string;
+
+        const parsed = submitSchema.safeParse({
+            language,
+            code,
+        });
+        if (!parsed.success || isNaN(problemId) || isNaN(userId)) {
+            return {
+                error: messages.form.invalid,
+            };
+        }
+
         const problem = await prisma.problem.findUnique({
-            where: { id: Number(data.get("problemId")) },
+            where: { id: problemId },
         });
         if (!problem) {
             return {
@@ -28,12 +44,21 @@ export async function submitCode(data: FormData) {
             }
         }
 
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user) {
+            return {
+                error: messages.database.noUser,
+            }
+        }
+
         const submission = await prisma.submission.create({
             data: {
-                problemId: Number(data.get("problemId")),
-                userId: Number(data.get("userId")),
-                language: data.get("language") as Language,
-                code: data.get("code") as string,
+                problemId: problemId,
+                userId: userId,
+                language: language as Language,
+                code: code,
                 verdict: [
                     "Pending"
                 ],
@@ -76,13 +101,19 @@ export async function getSubmission(id: number) {
             });
 
             if (!response.ok) {
-                return { error: messages.form.unexpected };
+                clearInterval(interval);
+                return {
+                    error: messages.form.unexpected
+                };
             }
 
             const json = await response.json();
 
             if (json.error) {
-                return { error: json.error };
+                clearInterval(interval);
+                return {
+                    error: json.error
+                };
             }
 
             if (json.result) {
@@ -112,7 +143,10 @@ export async function getSubmission(id: number) {
                     },
                 });
                 if (!submission) {
-                    return { error: messages.database.noSubmission };
+                    clearInterval(interval);
+                    return {
+                        error: messages.database.noSubmission
+                    };
                 }
 
                 const isAccepted = submission.score === submission.problem.testcases;
@@ -165,6 +199,7 @@ export async function getSubmission(id: number) {
                 },
             });
         } catch (error) {
+            clearInterval(interval);
             console.error(error);
             return {
                 error: messages.form.unexpected,

@@ -31,6 +31,10 @@ import {
 export function SubmitForm({ problemId, userId }: { problemId: number, userId: number }) {
     const form = useForm<z.infer<typeof submitSchema>>({
         resolver: zodResolver(submitSchema),
+        defaultValues: {
+            language: undefined, 
+            code: "",
+        },
     });
 
     const [fileInput, setFileInput] = useState<File | null>(null);

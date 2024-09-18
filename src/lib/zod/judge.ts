@@ -2,7 +2,10 @@ import { z } from "zod";
 import { messages } from "@/config/messages";
 import { limits } from "@/config/limits";
 
-export const languageSchema = z.enum(["c", "cpp", "py"]);
+export const languageSchema = z.enum(["c", "cpp", "py"]).optional()
+    .refine((value) => value !== undefined, {
+        message: messages.schema.language.required
+    });
 
 export const codeSchema = z.string()
     .min(1, messages.schema.code.required)

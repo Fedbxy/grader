@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { allowAccess } from "@/utils/access";
-import { editProblemSchema } from "@/lib/zod/problem";
+import { editProblemSchema, createProblemSchema } from "@/lib/zod/problem";
 import { Visibility } from "@/types/problem";
 import { redirect } from "next/navigation";
 import { messages } from "@/config/messages";
@@ -120,7 +120,7 @@ export async function createProblem(data: FormData) {
         const score = data.get("score") as string;
         const testcases = data.get("testcases") as string;
 
-        const parsed = editProblemSchema.safeParse({
+        const parsed = createProblemSchema.safeParse({
             title,
             statement,
             testcase,
