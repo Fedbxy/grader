@@ -101,13 +101,19 @@ export async function getSubmission(id: number) {
             });
 
             if (!response.ok) {
-                return { error: messages.form.unexpected };
+                clearInterval(interval);
+                return {
+                    error: messages.form.unexpected
+                };
             }
 
             const json = await response.json();
 
             if (json.error) {
-                return { error: json.error };
+                clearInterval(interval);
+                return {
+                    error: json.error
+                };
             }
 
             if (json.result) {
@@ -137,7 +143,10 @@ export async function getSubmission(id: number) {
                     },
                 });
                 if (!submission) {
-                    return { error: messages.database.noSubmission };
+                    clearInterval(interval);
+                    return {
+                        error: messages.database.noSubmission
+                    };
                 }
 
                 const isAccepted = submission.score === submission.problem.testcases;
@@ -190,6 +199,7 @@ export async function getSubmission(id: number) {
                 },
             });
         } catch (error) {
+            clearInterval(interval);
             console.error(error);
             return {
                 error: messages.form.unexpected,
