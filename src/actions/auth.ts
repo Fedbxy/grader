@@ -65,7 +65,7 @@ export async function signup(data: FormData, nextUrl?: string) {
             error: messages.form.unexpected,
         };
     }
-    redirect(nextUrl || "/");
+    redirect(nextUrl || "/settings");
 }
 
 export async function signin(data: FormData, nextUrl?: string) {
