@@ -41,4 +41,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" npx prisma migrate deploy && npx prisma db seed && node server.js
+CMD HOSTNAME="0.0.0.0" npx prisma migrate deploy && node server.js
