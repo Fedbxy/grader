@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: grader-app
     ports:
-      - ${PORT}:3000
+      - ${NEXT_PRIVATE_PORT}:3000
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres-db:5432/${POSTGRES_DB}
       - S3_ENDPOINT=minio-storage

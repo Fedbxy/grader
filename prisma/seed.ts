@@ -4,7 +4,7 @@ import { hash } from "bcrypt";
 const prisma = new PrismaClient();
 
 async function initRootUser() {
-    const password = process.env.ROOT_PASSWORD || "00000000";
+    const password = process.env.NEXT_PRIVATE_ROOT_PASSWORD || "00000000";
     const passwordHash = await hash(password, 10);
 
     await prisma.user.upsert({
