@@ -30,7 +30,7 @@ export default async function Page({
 
     return (
         <div className="container mx-auto py-10 flex justify-center">
-            <Card className="w-full max-w-xs md:max-w-md">
+            <Card className="w-full max-w-sm md:max-w-md">
                 <CardHeader>
                     <CardTitle className="text-2xl">Sign Up</CardTitle>
                     <CardDescription>Create an account to get started.</CardDescription>

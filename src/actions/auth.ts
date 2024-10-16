@@ -7,9 +7,19 @@ import { signUpSchema, signInSchema } from "@/lib/zod/user";
 import { redirect } from "next/navigation";
 import { compare, hash } from "bcrypt";
 import { messages } from "@/config/messages";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export async function signup(data: FormData, nextUrl?: string) {
     try {
+        const token = data.get("turnstileToken") as string;
+
+        const captchaResult = await verifyTurnstile(token);
+        if (!captchaResult.success) {
+            return {
+                error: captchaResult.error,
+            };
+        }
+
         const username = data.get("username") as string;
         const password = data.get("password") as string;
         const confirmPassword = data.get("confirmPassword") as string;
@@ -70,6 +80,15 @@ export async function signup(data: FormData, nextUrl?: string) {
 
 export async function signin(data: FormData, nextUrl?: string) {
     try {
+        const token = data.get("turnstileToken") as string;
+
+        const captchaResult = await verifyTurnstile(token);
+        if (!captchaResult.success) {
+            return {
+                error: captchaResult.error,
+            };
+        }
+
         const username = data.get("username") as string;
         const password = data.get("password") as string;
 

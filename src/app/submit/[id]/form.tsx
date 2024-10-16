@@ -8,6 +8,8 @@ import { submitSchema } from "@/lib/zod/judge";
 import { submitCode } from "@/actions/judge";
 import { limits } from "@/config/limits";
 import { Language } from "@/types/submission";
+import { useTurnstile } from "@/hooks/turnstile";
+import { handleTurnstileStatus } from "@/utils/turnstile";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +30,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export function SubmitForm({
     problemId,
@@ -49,6 +52,15 @@ export function SubmitForm({
     });
 
     const [fileInput, setFileInput] = useState<File | null>(null);
+    const {
+        turnstileRef,
+        turnstileToken,
+        turnstileStatus,
+        handleTurnstileError,
+        handleTurnstileExpire,
+        handleTurnstileSuccess,
+        resetTurnstile,
+    } = useTurnstile();
 
     useEffect(() => {
         if (fileInput) {
@@ -62,7 +74,12 @@ export function SubmitForm({
     }, [fileInput, form]);
 
     async function onSubmit(values: z.infer<typeof submitSchema>) {
+        if (handleTurnstileStatus(turnstileStatus)) {
+            return;
+        }
+
         const data = new FormData();
+        data.append("turnstileToken", turnstileToken as string);
         data.append("problemId", problemId.toString());
         data.append("userId", userId.toString());
         data.append("language", values.language);
@@ -71,6 +88,7 @@ export function SubmitForm({
         const response = await submitCode(data);
 
         if (response?.error) {
+            resetTurnstile();
             return toast.error(response.error);
         }
 
@@ -132,6 +150,13 @@ export function SubmitForm({
                     </FormControl>
                     <FormMessage />
                 </FormItem>
+                <Turnstile
+                    ref={turnstileRef}
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+                    onError={handleTurnstileError}
+                    onExpire={handleTurnstileExpire}
+                    onSuccess={handleTurnstileSuccess}
+                />
                 <Button
                     type="submit"
                     className="w-full"

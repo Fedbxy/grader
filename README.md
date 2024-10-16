@@ -18,6 +18,7 @@ The project is built with the following technologies.
 - [MinIO](https://min.io/): Object Storage
 - [Lucia](https://lucia-auth.com/): Authentication
 - [Zod](https://zod.dev/): Schema Validation
+- [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/): CAPTCHA
 
 ### Judge Server (Backend)
 - [FastAPI](https://fastapi.tiangolo.com/): Python Web Framework
