@@ -1,4 +1,4 @@
-# https://grader.fedbxy.com/
+# https://grader.fedbxy.dev/
 
 The latest version of my grader website. The project was started in May of 2024 as a hobby project. The goal for this project is not to compete with other online judge platforms, but to learn and improve my web development skills. I hope you love this website as much as I developed it. If you have any suggestions or feedback, please let me know. I would love to hear from you. 
 
