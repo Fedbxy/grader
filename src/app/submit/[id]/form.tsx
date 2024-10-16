@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { submitSchema } from "@/lib/zod/judge";
 import { submitCode } from "@/actions/judge";
 import { limits } from "@/config/limits";
+import { Language } from "@/types/submission";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,12 +29,22 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-export function SubmitForm({ problemId, userId }: { problemId: number, userId: number }) {
+export function SubmitForm({
+    problemId,
+    userId,
+    latestCode,
+    latestLanguage,
+}: {
+    problemId: number,
+    userId: number,
+    latestCode: string,
+    latestLanguage?: Language,
+}) {
     const form = useForm<z.infer<typeof submitSchema>>({
         resolver: zodResolver(submitSchema),
         defaultValues: {
-            language: undefined, 
-            code: "",
+            language: latestLanguage,
+            code: latestCode,
         },
     });
 

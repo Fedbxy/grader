@@ -21,12 +21,28 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   const problem = await prisma.problem.findUnique({
-    where: { id: Number(params.id) },
-    include: { author: true },
+    where: {
+      id: Number(params.id),
+    },
+    include: {
+      author: true,
+      UserProblem: {
+        where: {
+          userId: user.id,
+        },
+        include: {
+          submission: true,
+        },
+      },
+    },
   });
   if (!problem || (user.role !== "admin" && problem.visibility === "private")) {
     notFound();
   }
+
+  const submission = problem.UserProblem[0]?.submission;
+  const latestCode = submission ? submission.code : "";
+  const latestLanguage = submission ? submission.language : undefined;
 
   return (
     <div className="container mx-auto flex justify-center py-10">
@@ -37,7 +53,12 @@ export default async function Page({ params }: { params: { id: string } }) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <SubmitForm problemId={Number(params.id)} userId={user.id} />
+          <SubmitForm
+            problemId={Number(params.id)}
+            userId={user.id}
+            latestCode={latestCode}
+            latestLanguage={latestLanguage}
+          />
         </CardContent>
       </Card>
     </div>
