@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
 import { Verdict } from "./verdict";
-import { SubmitTime } from "./submit-time";
+import { LocalTime } from "@/components/local-time";
 import { Score } from "./score";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -48,7 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         {submission.user.displayName}
       </Link>
     ),
-    "Submission Time": <SubmitTime date={submission.createdAt.toISOString()} />,
+    "Submission Time": <LocalTime date={submission.createdAt.toISOString()} />,
     Language: submission.language,
   };
 

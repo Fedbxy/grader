@@ -1,10 +1,12 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 import {
     Card,
     CardContent,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -21,6 +23,8 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Path } from "@/components/path";
+import { Button } from "@/components/ui/button";
+import { LocalTime } from "@/components/local-time";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -44,8 +48,8 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Bio": user.bio || "",
         "Role": user.role,
         "Banned": user.isBanned ? <span className="text-destructive">Yes</span> : "No",
-        "Created": user.createdAt.toLocaleString(),
-        "Updated": user.updatedAt.toLocaleString(),
+        "Created": <LocalTime date={user.createdAt.toISOString()} />,
+        "Updated": <LocalTime date={user.updatedAt.toISOString()} />,
     };
 
     return (
@@ -74,6 +78,11 @@ export default async function Page({ params }: { params: { id: string } }) {
                         </Table>
                     </div>
                 </CardContent>
+                <CardFooter className="flex justify-between">
+                    <Button variant="link" asChild>
+                        <Link href={`/dashboard/user/${user.id}/edit`}>Edit</Link>
+                    </Button>
+                </CardFooter>
             </Card>
         </div>
     );

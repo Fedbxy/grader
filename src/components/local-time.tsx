@@ -1,5 +1,5 @@
 "use client";
 
-export function SubmitTime({ date }: { date: string }) {
+export function LocalTime({ date }: { date: string }) {
     return <span>{new Date(date).toLocaleString()}</span>;
 }

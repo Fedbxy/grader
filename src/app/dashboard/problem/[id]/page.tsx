@@ -21,6 +21,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Path } from "@/components/path";
+import { LocalTime } from "@/components/local-time";
 
 export default async function Page({ params }: { params: { id: string } }) {
     await allowAccess("admin");
@@ -51,8 +52,8 @@ export default async function Page({ params }: { params: { id: string } }) {
         "Score": problem.score,
         "Testcases": problem.testcases,
         "Author": <Link href={`/dashboard/user/${problem.author.id}`} className="hover:underline">{problem.author.displayName}</Link>,
-        "Created": problem.createdAt.toLocaleString(),
-        "Updated": problem.updatedAt.toLocaleString(),
+        "Created": <LocalTime date={problem.createdAt.toISOString()} />,
+        "Updated": <LocalTime date={problem.updatedAt.toISOString()} />,
     };
 
     return (
