@@ -33,7 +33,7 @@ export async function submitCode(data: FormData) {
         const problemId = Number(data.get("problemId"));
         const userId = Number(data.get("userId"));
         const language = data.get("language") as string;
-        const code = data.get("code") as string;
+        const code = (data.get("code") as string).trim();
 
         const parsed = submitSchema.safeParse({
             language,

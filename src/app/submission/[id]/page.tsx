@@ -5,9 +5,9 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
-import { Progress } from "@/components/ui/progress";
 import { Verdict } from "./verdict";
 import { SubmitTime } from "./submit-time";
+import { Score } from "./score";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -26,19 +26,11 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   const data = {
-    Score: (
-      <div className="flex flex-col">
-        <span className="text-xs">
-          {(submission.score * submission.problem.score) /
-            submission.problem.testcases}{" "}
-          pts.
-        </span>
-        <Progress
-          className="h-2 w-32"
-          value={(submission.score * 100) / submission.problem.testcases}
-        />
-      </div>
-    ),
+    Score: <Score
+      submissionId={submission.id}
+      problemScore={submission.problem.score}
+      testcases={submission.problem.testcases}
+    />,
     Problem: (
       <a
         href={`/api/problem/${submission.problem.id}/statement`}
@@ -83,7 +75,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 ))}
               </TableBody>
             </Table>
-            <Verdict verdict={submission.verdict} error={submission.error} time={submission.time} memory={submission.memory} />
+            <Verdict submissionId={submission.id} />
             <div className="overflow-x-auto rounded-md bg-secondary p-4">
               <pre>{submission.code}</pre>
             </div>
