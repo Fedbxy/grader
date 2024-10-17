@@ -16,6 +16,8 @@ services:
       - BACKEND_PROTOCOL=http
       - BACKEND_ENDPOINT=grader-backend
       - BACKEND_PORT=8000
+      - NEXT_PUBLIC_TURNSTILE_SITE_KEY=${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      - NEXT_PRIVATE_TURNSTILE_SECRET_KEY=${NEXT_PRIVATE_TURNSTILE_SECRET_KEY}
     networks:
       - grader-network
     restart: unless-stopped

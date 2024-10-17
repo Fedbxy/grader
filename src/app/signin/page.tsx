@@ -36,7 +36,10 @@ export default async function Page({
                     <CardDescription>Sign in to your account to continue.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <SignInForm nextUrl={nextUrl} />
+                    <SignInForm
+                        nextUrl={nextUrl}
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+                    />
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{" "}
                         <Link href={`/signup${nextUrl ? `?nextUrl=${nextUrl}` : ""}`} className="underline">

@@ -56,6 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </CardHeader>
         <CardContent>
           <SubmitForm
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
             problemId={Number(params.id)}
             userId={user.id}
             latestCode={latestCode}

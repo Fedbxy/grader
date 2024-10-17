@@ -36,11 +36,13 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { CodeEditor } from "@/components/code-editor";
 
 export function SubmitForm({
+  siteKey,
   problemId,
   userId,
   latestCode,
   latestLanguage,
 }: {
+  siteKey: string;
   problemId: number;
   userId: number;
   latestCode: string;
@@ -190,7 +192,7 @@ export function SubmitForm({
         </FormItem>
         <Turnstile
           ref={turnstileRef}
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+          siteKey={siteKey}
           onError={handleTurnstileError}
           onExpire={handleTurnstileExpire}
           onSuccess={handleTurnstileSuccess}

@@ -21,7 +21,13 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Turnstile } from "@marsidev/react-turnstile";
 
-export function SignInForm({ nextUrl }: { nextUrl?: string }) {
+export function SignInForm({
+    nextUrl,
+    siteKey,
+}: {
+    nextUrl?: string;
+    siteKey: string;
+}) {
     const form = useForm<z.infer<typeof signInSchema>>({
         resolver: zodResolver(signInSchema),
         defaultValues: {
@@ -91,7 +97,7 @@ export function SignInForm({ nextUrl }: { nextUrl?: string }) {
                 />
                 <Turnstile
                     ref={turnstileRef}
-                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+                    siteKey={siteKey}
                     onError={handleTurnstileError}
                     onExpire={handleTurnstileExpire}
                     onSuccess={handleTurnstileSuccess}
