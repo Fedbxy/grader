@@ -2,12 +2,7 @@ import { validateRequest } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SubmitForm } from "./form";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -46,10 +41,17 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <div className="container mx-auto flex justify-center py-10">
-      <Card className="w-full max-w-lg md:max-w-xl">
+      <Card className="w-full max-w-xl md:max-w-3xl">
         <CardHeader>
           <CardTitle>
-            Submit <a href={`/api/problem/${problem.id}/statement`} target="_blank" className="hover:underline">{problem.title}</a>
+            Submit{" "}
+            <a
+              href={`/api/problem/${problem.id}/statement`}
+              target="_blank"
+              className="hover:underline"
+            >
+              {problem.title}
+            </a>
           </CardTitle>
         </CardHeader>
         <CardContent>

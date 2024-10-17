@@ -8,6 +8,8 @@ import { Path } from "@/components/path";
 import { Verdict } from "./verdict";
 import { LocalTime } from "@/components/local-time";
 import { Score } from "./score";
+import { CodeEditor } from "@/components/code-editor";
+import { CopyButton } from "./copy";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -26,11 +28,13 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   const data = {
-    Score: <Score
-      submissionId={submission.id}
-      problemScore={submission.problem.score}
-      testcases={submission.problem.testcases}
-    />,
+    Score: (
+      <Score
+        submissionId={submission.id}
+        problemScore={submission.problem.score}
+        testcases={submission.problem.testcases}
+      />
+    ),
     Problem: (
       <a
         href={`/api/problem/${submission.problem.id}/statement`}
@@ -76,8 +80,15 @@ export default async function Page({ params }: { params: { id: string } }) {
               </TableBody>
             </Table>
             <Verdict submissionId={submission.id} />
-            <div className="overflow-x-auto rounded-md bg-secondary p-4">
-              <pre>{submission.code}</pre>
+            <div className="relative overflow-x-auto rounded-md border">
+              <div className="absolute right-2 top-2 z-20">
+                <CopyButton code={submission.code} />
+              </div>
+              <CodeEditor
+                code={submission.code}
+                language={submission.language}
+                readOnly
+              />
             </div>
           </div>
         </CardContent>
