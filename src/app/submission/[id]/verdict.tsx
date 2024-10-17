@@ -3,6 +3,7 @@
 import { maps } from "@/config/messages";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/local-storage";
+import { useSubmission } from "@/hooks/submission";
 
 import {
   Accordion,
@@ -18,50 +19,43 @@ import {
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StyleSwitcher } from "./switcher";
+import { LoadingSpinner } from "@/components/ui/spinner";
 
-export function Verdict({
-  verdict,
-  error,
-  time,
-  memory,
-}: {
-  verdict: string[];
-  error: string | null;
-  time: number[];
-  memory: number[];
-}) {
-  const isRunning =
-    verdict.length === 1 && !(verdict[0] in maps.submission.verdict);
-  const isError = verdict.length === 1 && error;
-
+export function Verdict({ submissionId }: { submissionId: number }) {
   const [verdictStyle] = useLocalStorage("verdictStyle", "accordion");
   const [isLoading, setIsLoading] = useState(true);
 
+  
   useEffect(() => {
     if (verdictStyle) {
       setIsLoading(false);
     }
   }, [verdictStyle]);
+  
+  const { data, isLoading: isSubmissionLoading, isRunning } = useSubmission(submissionId);
 
-  if (isLoading) {
+  if (isLoading || isSubmissionLoading) {
     return <Skeleton className="h-96 rounded-md" />;
   }
+
+  const { verdict, error, time, memory } = data;
+
+  const isError = verdict.length === 1 && error;
 
   const accordion = (
     <div className="relative rounded-md bg-secondary p-4">
       <div className="absolute right-2 top-2">
         <StyleSwitcher />
       </div>
-      {verdict.length === 1 &&
-        !(
-          (verdict[0] as keyof typeof maps.submission.verdict) in
-          maps.submission.verdict
-        ) ? (
-        <pre>{verdict[0]}</pre>
+      {isRunning ? (
+        <pre className="flex items-center">
+          <LoadingSpinner className="mr-2 h-5 w-5" />
+          {verdict[0]}
+        </pre>
       ) : (
         <div className="max-h-96 overflow-y-auto">
           <Accordion type="multiple" className="space-y-2">
-            {verdict.map((v, i) => (
+            {verdict.map((v: string, i: number) => (
               <AccordionItem
                 key={i}
                 value={`item-${i}`}
@@ -111,7 +105,10 @@ export function Verdict({
         <StyleSwitcher />
       </div>
       {isRunning ? (
-        <pre>{verdict[0]}</pre>
+        <pre className="flex items-center">
+          <LoadingSpinner className="mr-2 h-5 w-5" />
+          {verdict[0]}
+        </pre>
       ) : isError ? (
         <div className="items-start">
           <Popover>
@@ -130,7 +127,7 @@ export function Verdict({
           </Popover>
         </div>
       ) : (
-        verdict.map((v, i) => (
+        verdict.map((v: string, i: number) => (
           <pre
             className={`${v === "AC" ? "text-constructive" : "text-destructive"}`}
             key={i}

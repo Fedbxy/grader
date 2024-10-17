@@ -5,9 +5,11 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
-import { Progress } from "@/components/ui/progress";
 import { Verdict } from "./verdict";
-import { SubmitTime } from "./submit-time";
+import { LocalTime } from "@/components/local-time";
+import { Score } from "./score";
+import { CodeEditor } from "@/components/code-editor";
+import { CopyButton } from "./copy";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -27,17 +29,11 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const data = {
     Score: (
-      <div className="flex flex-col">
-        <span className="text-xs">
-          {(submission.score * submission.problem.score) /
-            submission.problem.testcases}{" "}
-          pts.
-        </span>
-        <Progress
-          className="h-2 w-32"
-          value={(submission.score * 100) / submission.problem.testcases}
-        />
-      </div>
+      <Score
+        submissionId={submission.id}
+        problemScore={submission.problem.score}
+        testcases={submission.problem.testcases}
+      />
     ),
     Problem: (
       <a
@@ -56,7 +52,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         {submission.user.displayName}
       </Link>
     ),
-    "Submission Time": <SubmitTime date={submission.createdAt.toISOString()} />,
+    "Submission Time": <LocalTime date={submission.createdAt.toISOString()} />,
     Language: submission.language,
   };
 
@@ -83,9 +79,16 @@ export default async function Page({ params }: { params: { id: string } }) {
                 ))}
               </TableBody>
             </Table>
-            <Verdict verdict={submission.verdict} error={submission.error} time={submission.time} memory={submission.memory} />
-            <div className="overflow-x-auto rounded-md bg-secondary p-4">
-              <pre>{submission.code}</pre>
+            <Verdict submissionId={submission.id} />
+            <div className="relative overflow-x-auto rounded-md border">
+              <div className="absolute right-2 top-2 z-20">
+                <CopyButton code={submission.code} />
+              </div>
+              <CodeEditor
+                code={submission.code}
+                language={submission.language}
+                readOnly
+              />
             </div>
           </div>
         </CardContent>

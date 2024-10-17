@@ -6,6 +6,7 @@ import { Language } from "@/types/submission";
 import { messages } from "@/config/messages";
 import { redirect } from "next/navigation";
 import { submitSchema } from "@/lib/zod/judge";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const protocol = process.env.BACKEND_PROTOCOL;
 const endpoint = process.env.BACKEND_ENDPOINT;
@@ -15,6 +16,15 @@ export async function submitCode(data: FormData) {
     let submissionId: number;
 
     try {
+        const token = data.get("turnstileToken") as string;
+
+        const captchaResult = await verifyTurnstile(token);
+        if (!captchaResult.success) {
+            return {
+                error: captchaResult.error,
+            };
+        }
+
         const accessResult = await allowAccess("user", "action");
         if (accessResult) {
             return accessResult;
@@ -23,7 +33,7 @@ export async function submitCode(data: FormData) {
         const problemId = Number(data.get("problemId"));
         const userId = Number(data.get("userId"));
         const language = data.get("language") as string;
-        const code = data.get("code") as string;
+        const code = (data.get("code") as string).trim();
 
         const parsed = submitSchema.safeParse({
             language,

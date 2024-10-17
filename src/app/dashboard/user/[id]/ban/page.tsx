@@ -31,6 +31,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ConfirmButton } from "./confirmButton";
+import { LocalTime } from "@/components/local-time";
 
 export default async function Page({ params }: { params: { id: string } }) {
   await allowAccess("admin");
@@ -53,8 +54,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     "Display Name": user.displayName,
     Bio: user.bio || "",
     Role: user.role,
-    Created: user.createdAt.toLocaleString(),
-    Updated: user.updatedAt.toLocaleString(),
+    Created: <LocalTime date={user.createdAt.toISOString()} />,
+    Updated: <LocalTime date={user.updatedAt.toISOString()} />,
   };
 
   const { isBanned } = user;

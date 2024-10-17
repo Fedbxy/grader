@@ -109,13 +109,13 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
                             <DropdownMenuItem><FileText className="h-4 w-4 mr-1" />View</DropdownMenuItem>
                         </a>
                         <DropdownMenuSeparator />
-                        <a href={`/submit/${problem.id}`} target="_blank">
+                        <Link href={`/submit/${problem.id}`}>
                             <DropdownMenuItem><Send className="h-4 w-4 mr-1" />Submit</DropdownMenuItem>
-                        </a>
+                        </Link>
                         {latestSubmissionId && (
-                            <a href={`/submission/${latestSubmissionId}`} target="_blank">
+                            <Link href={`/submission/${latestSubmissionId}`}>
                                 <DropdownMenuItem><FileCheck2 className="h-4 w-4 mr-1" />Latest Submission</DropdownMenuItem>
-                            </a>
+                            </Link>
                         )}
                     </DropdownMenuContent>
                 </DropdownMenu>

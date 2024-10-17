@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Submission } from "@/types/submission";
 import Link from "next/link";
-import { maps } from "@/config/messages";
 
 import { Eye, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,8 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
 import { RejudgeButton } from "./rejudge";
+import { ScoreCell } from "@/components/table/submission/score-cell";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -61,24 +60,14 @@ export const columns: ColumnDef<Submission>[] = [
       <DataTableColumnHeader column={column} title="Score" />
     ),
     cell: ({ row }) => {
-      const verdict = row.original.verdict;
-
-      if (verdict.length === 1 && !(verdict[0] in maps.submission.verdict)) {
-        return verdict[0];
-      }
-
-      const score = row.original.score;
-      const maxScore = row.original.problem.score;
-      const testcases = row.original.problem.testcases;
+      const submission = row.original;
 
       return (
-        <div className="flex flex-col">
-          <span>{(score * maxScore) / testcases} pts.</span>
-          <Progress
-            className="h-2 w-16 md:w-32"
-            value={(score * 100) / testcases}
-          />
-        </div>
+        <ScoreCell
+          submissionId={submission.id}
+          problemScore={submission.problem.score}
+          testcases={submission.problem.testcases}
+        />
       );
     },
   },

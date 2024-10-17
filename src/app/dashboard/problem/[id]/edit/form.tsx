@@ -183,7 +183,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                     name="timeLimit"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Time Limit</FormLabel>
+                            <FormLabel>Time Limit (ms)</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -196,7 +196,7 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
                     name="memoryLimit"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Memory Limit</FormLabel>
+                            <FormLabel>Memory Limit (MB)</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>

@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { NavigationTabs } from "./tabs";
+import { LocalTime } from "@/components/local-time";
 
 export default async function Page() {
   await allowAccess("admin");
@@ -14,7 +15,7 @@ export default async function Page() {
   const problems = await prisma.problem.count();
   const submissions = await prisma.submission.count();
 
-  const timestamp = new Date().toLocaleString();
+  const timestamp = <LocalTime date={new Date().toISOString()} />;
 
   return (
     <div className="container mx-auto flex flex-col space-y-2 py-10">

@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from "@/lib/zod/user";
 import { signup } from "@/actions/auth";
+import { useTurnstile } from "@/hooks/turnstile";
+import { handleTurnstileStatus } from "@/utils/turnstile";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export function SignUpForm({ nextUrl }: { nextUrl?: string }) {
     const form = useForm<z.infer<typeof signUpSchema>>({
@@ -28,8 +31,23 @@ export function SignUpForm({ nextUrl }: { nextUrl?: string }) {
         },
     });
 
+    const {
+        turnstileRef,
+        turnstileToken,
+        turnstileStatus,
+        handleTurnstileError,
+        handleTurnstileExpire,
+        handleTurnstileSuccess,
+        resetTurnstile,
+    } = useTurnstile();
+    
     async function onSubmit(values: z.infer<typeof signUpSchema>) {
+        if (handleTurnstileStatus(turnstileStatus)) {
+            return;
+        }
+
         const data = new FormData();
+        data.append("turnstileToken", turnstileToken as string);
         data.append("username", values.username);
         data.append("password", values.password);
         data.append("confirmPassword", values.confirmPassword);
@@ -37,6 +55,7 @@ export function SignUpForm({ nextUrl }: { nextUrl?: string }) {
         const response = await signup(data, nextUrl);
 
         if (response?.error) {
+            resetTurnstile();
             return toast.error(response.error);
         }
 
@@ -84,6 +103,13 @@ export function SignUpForm({ nextUrl }: { nextUrl?: string }) {
                             <FormMessage />
                         </FormItem>
                     )}
+                />
+                <Turnstile
+                    ref={turnstileRef}
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string}
+                    onError={handleTurnstileError}
+                    onExpire={handleTurnstileExpire}
+                    onSuccess={handleTurnstileSuccess}
                 />
                 <Button
                     type="submit"
