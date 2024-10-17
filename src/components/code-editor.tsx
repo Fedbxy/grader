@@ -16,15 +16,6 @@ export function CodeEditor({
   readOnly?: boolean;
 }) {
   const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-
   const { resolvedTheme } = useTheme();
   const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "vs";
 
@@ -36,6 +27,14 @@ export function CodeEditor({
     editor.updateOptions({
       theme: editorTheme,
     });
+  }
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
   }
 
   return (
