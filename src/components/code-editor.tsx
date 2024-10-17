@@ -14,8 +14,8 @@ export function CodeEditor({
   onChange?: (value: string) => void;
   readOnly?: boolean;
 }) {
-  const { theme } = useTheme();
-  const editorTheme = theme === "dark" ? "vs-dark" : "vs";
+  const { resolvedTheme } = useTheme();
+  const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "vs";
 
   if (language === "py") {
     language = "python";
