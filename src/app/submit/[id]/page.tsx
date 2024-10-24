@@ -2,7 +2,13 @@ import { validateRequest } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { SubmitForm } from "./form";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -53,6 +59,9 @@ export default async function Page({ params }: { params: { id: string } }) {
               {problem.title}
             </a>
           </CardTitle>
+          <CardDescription>
+            ({problem.timeLimit / 1000} seconds, {problem.memoryLimit} MB)
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <SubmitForm
