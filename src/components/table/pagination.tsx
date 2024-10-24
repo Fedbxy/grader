@@ -27,6 +27,8 @@ export function DataTablePagination<TData>({
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
+    const pageSizes = [10, 20, 50, 100];
+
     const [page, setPage] = useState(() => {
         const pageParam = searchParams.get("page");
         return pageParam && !isNaN(Number(pageParam)) ? Math.round(Number(pageParam)) : 1;
@@ -34,7 +36,8 @@ export function DataTablePagination<TData>({
 
     const [pageSize, setPageSize] = useState(() => {
         const pageSizeParam = searchParams.get("pageSize");
-        return pageSizeParam && !isNaN(Number(pageSizeParam)) ? Math.round(Number(pageSizeParam)) : 10;
+        const size = pageSizeParam && !isNaN(Number(pageSizeParam)) ? Math.round(Number(pageSizeParam)) : 10;
+        return pageSizes.includes(size) ? size : 10;
     });
 
     useEffect(() => {
@@ -67,7 +70,7 @@ export function DataTablePagination<TData>({
                             <SelectValue placeholder={table.getState().pagination.pageSize} />
                         </SelectTrigger>
                         <SelectContent side="top">
-                            {[10, 20, 50, 100, 250].map((pageSize) => (
+                            {pageSizes.map((pageSize) => (
                                 <SelectItem key={pageSize} value={`${pageSize}`}>
                                     {pageSize}
                                 </SelectItem>
