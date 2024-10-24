@@ -2,6 +2,7 @@ import { useSubmission } from "@/hooks/submission";
 
 import { Progress } from "@/components/ui/progress";
 import { LoadingSpinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ScoreCell({
     submissionId,
@@ -15,7 +16,7 @@ export function ScoreCell({
     const { data, isLoading, isRunning } = useSubmission(submissionId);
 
     if (isLoading) {
-        return null;
+        return <Skeleton className="h-9" />;
     }
 
     const { score, verdict } = data;
