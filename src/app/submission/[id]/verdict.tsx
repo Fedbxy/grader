@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StyleSwitcher } from "./switcher";
 import { LoadingSpinner } from "@/components/ui/spinner";
 
 export function Verdict({ submissionId }: { submissionId: number }) {
@@ -43,10 +42,7 @@ export function Verdict({ submissionId }: { submissionId: number }) {
   const isError = verdict.length === 1 && error;
 
   const accordion = (
-    <div className="relative rounded-md bg-secondary p-4">
-      <div className="absolute right-2 top-2">
-        <StyleSwitcher />
-      </div>
+    <div className="rounded-md bg-secondary p-4">
       {isRunning ? (
         <pre className="flex items-center">
           <LoadingSpinner className="mr-2 h-5 w-5" />
@@ -100,10 +96,7 @@ export function Verdict({ submissionId }: { submissionId: number }) {
   );
 
   const classic = (
-    <div className="relative flex flex-col overflow-x-auto rounded-md bg-secondary p-4">
-      <div className="absolute top-2 right-2">
-        <StyleSwitcher />
-      </div>
+    <div className="flex flex-col overflow-x-auto rounded-md bg-secondary p-4">
       {isRunning ? (
         <pre className="flex items-center">
           <LoadingSpinner className="mr-2 h-5 w-5" />
