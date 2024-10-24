@@ -6,7 +6,11 @@ import { toast } from "sonner";
 
 export function RejudgeButton({ id }: { id: number }) {
     async function handleRejudge() {
-        await rejudge(id);
+        const result = await rejudge(id);
+
+        if (result?.error) {
+            return toast.error(result.error);
+        }
 
         return toast.success(`Requested rejudging for submission #${id}.`);
     }
