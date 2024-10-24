@@ -48,7 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             <a
               href={`/api/problem/${problem.id}/statement`}
               target="_blank"
-              className="hover:underline"
+              className="link"
             >
               {problem.title}
             </a>

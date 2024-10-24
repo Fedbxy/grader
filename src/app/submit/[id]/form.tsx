@@ -164,7 +164,7 @@ export function SubmitForm({
                   ? "Couldn't use the code editor?"
                   : "Use the code editor instead?"}{" "}
                 <span
-                  className="text-primary underline"
+                  className="text-primary link"
                   onClick={() => setIsCodeEditor((prev) => !prev)}
                 >
                   Click here

@@ -63,3 +63,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.link {
+  @apply hover:text-primary hover:underline; 
+}
