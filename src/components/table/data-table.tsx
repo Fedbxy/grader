@@ -11,7 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DataTablePagination } from "@/components/table/pagination";
 
 import {
@@ -22,6 +22,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -32,6 +33,8 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
+    const [mounted, setMounted] = useState(false);
+
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         []
@@ -50,7 +53,13 @@ export function DataTable<TData, TValue>({
             sorting,
             columnFilters,
         },
-    })
+    });
+
+    useEffect(() => setMounted(true), []);
+
+    if (!mounted) {
+        return <Skeleton className="h-96" />;
+    }
 
     return (
         <div>

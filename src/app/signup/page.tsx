@@ -42,7 +42,7 @@ export default async function Page({
                     />
                     <div className="mt-4 text-center text-sm">
                         Already have an account?{" "}
-                        <Link href={`/signin${nextUrl ? `?nextUrl=${nextUrl}` : ""}`} className="underline">
+                        <Link href={`/signin${nextUrl ? `?nextUrl=${nextUrl}` : ""}`} className="underline link">
                             Sign In
                         </Link>
                     </div>

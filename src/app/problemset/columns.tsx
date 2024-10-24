@@ -4,122 +4,152 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Problem } from "@/types/problem";
 import Link from "next/link";
 
-import { FileText, MoreHorizontal, Send, FileCheck2, Check, X } from "lucide-react";
+import {
+  FileText,
+  MoreHorizontal,
+  Send,
+  FileCheck2,
+  Check,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AcceptedUsersDialog } from "./acceptedUsers";
+import { Badge } from "@/components/ui/badge";
 
 type ProblemWithAccepted = Problem & {
-    accepted: number;
-    isUserAccepted?: boolean;
-    latestSubmissionId?: number;
+  accepted: number;
+  isUserAccepted?: boolean;
+  latestSubmissionId?: number;
 };
 
 export const columns: ColumnDef<ProblemWithAccepted>[] = [
-    {
-        accessorKey: "id",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="#" />
-        ),
-    },
-    {
-        accessorKey: "title",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Title" />
-        ),
-    },
-    {
-        id: "limits",
-        header: "Limits",
-        cell: ({ row }) => {
-            const time = row.original.timeLimit;
-            const memory = row.original.memoryLimit;
-            const formatted = `${time}ms | ${memory}MB`;
+  {
+    accessorKey: "id",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
+  },
+  {
+    accessorKey: "title",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Title" />
+    ),
+    cell: ({ row }) => {
+      const { title, id } = row.original;
 
-            return formatted;
-        },
-    },
-    {
-        accessorKey: "score",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Score" />
-        ),
-    },
-    {
-        accessorKey: "author",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Author" />
-        ),
-        cell: ({ row }) => {
-            const author = row.original.author;
+      return (
+        <a href={`/api/problem/${id}/statement`} target="_blank" className="link">
+          {title}
+        </a>
+      );
+    }
+  },
+  {
+    id: "limits",
+    header: "Limits",
+    cell: ({ row }) => {
+      const { timeLimit, memoryLimit } = row.original;
+      const time = `${timeLimit / 1000} ${timeLimit === 1000 ? "second" : "seconds"}`;
+      const memory = `${memoryLimit} MB`;
 
-            return (
-                <Link href={`/user/${author.id}/profile`} className="hover:underline">
-                    {author.displayName}
-                </Link>
-            );
-        },
+      return (
+        <div className="flex flex-col items-start gap-1 whitespace-nowrap md:flex-row">
+          <Badge variant="outline">{time}</Badge>
+          <Badge variant="outline">{memory}</Badge>
+        </div>
+      );
     },
-    {
-        accessorKey: "accepted",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Accepted" />
-        ),
-        cell: ({ row }) => {
-            const accepted = row.original.accepted;
+  },
+  {
+    accessorKey: "author",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Author" />
+    ),
+    cell: ({ row }) => {
+      const author = row.original.author;
 
-            return accepted ? (
-                <AcceptedUsersDialog accepted={accepted} problemId={row.original.id} />
-            ) : (
-                <span>{accepted}</span>
-            );
-        },
+      return (
+        <Link href={`/user/${author.id}/profile`} className="link">
+          {author.displayName}
+        </Link>
+      );
     },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const problem = row.original;
-            const isUserAccepted = problem.isUserAccepted;
-            const latestSubmissionId = problem.latestSubmissionId;
+  },
+  {
+    accessorKey: "accepted",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Accepted" />
+    ),
+    cell: ({ row }) => {
+      const accepted = row.original.accepted;
 
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className={`h-8 w-8 p-0 ${isUserAccepted !== undefined ? (isUserAccepted ? "bg-constructive/15 text-constructive" : "bg-destructive/15 text-destructive") : ""}`}>
-                            {isUserAccepted !== undefined ? (
-                                isUserAccepted ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />
-                            ) : (
-                                <MoreHorizontal className="h-4 w-4" />
-                            )}
-                            <span className="sr-only">Open menu</span>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <a href={`/api/problem/${problem.id}/statement`} target="_blank">
-                            <DropdownMenuItem><FileText className="h-4 w-4 mr-1" />View</DropdownMenuItem>
-                        </a>
-                        <DropdownMenuSeparator />
-                        <Link href={`/submit/${problem.id}`}>
-                            <DropdownMenuItem><Send className="h-4 w-4 mr-1" />Submit</DropdownMenuItem>
-                        </Link>
-                        {latestSubmissionId && (
-                            <Link href={`/submission/${latestSubmissionId}`}>
-                                <DropdownMenuItem><FileCheck2 className="h-4 w-4 mr-1" />Latest Submission</DropdownMenuItem>
-                            </Link>
-                        )}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
+      return accepted ? (
+        <AcceptedUsersDialog accepted={accepted} problemId={row.original.id} />
+      ) : (
+        <span>{accepted}</span>
+      );
     },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const problem = row.original;
+      const isUserAccepted = problem.isUserAccepted;
+      const latestSubmissionId = problem.latestSubmissionId;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className={`h-8 w-8 p-0 ${isUserAccepted !== undefined ? (isUserAccepted ? "bg-constructive/15 text-constructive" : "bg-destructive/15 text-destructive") : ""}`}
+            >
+              {isUserAccepted !== undefined ? (
+                isUserAccepted ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <X className="h-4 w-4" />
+                )
+              ) : (
+                <MoreHorizontal className="h-4 w-4" />
+              )}
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <a href={`/api/problem/${problem.id}/statement`} target="_blank">
+              <DropdownMenuItem>
+                <FileText className="mr-1 h-4 w-4" />
+                View
+              </DropdownMenuItem>
+            </a>
+            <DropdownMenuSeparator />
+            <Link href={`/submit/${problem.id}`}>
+              <DropdownMenuItem>
+                <Send className="mr-1 h-4 w-4" />
+                Submit
+              </DropdownMenuItem>
+            </Link>
+            {latestSubmissionId && (
+              <Link href={`/submission/${latestSubmissionId}`}>
+                <DropdownMenuItem>
+                  <FileCheck2 className="mr-1 h-4 w-4" />
+                  Latest Submission
+                </DropdownMenuItem>
+              </Link>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];

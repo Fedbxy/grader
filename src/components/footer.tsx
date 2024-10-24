@@ -12,7 +12,7 @@ export function Footer() {
                 </span>
                 <span className="text-sm text-text/50">
                     Built with <Heart strokeWidth={0} fill="red" className="inline h-4 w-4" /> by {" "}
-                    <Link href={siteConfig.links.github} className="underline">
+                    <Link href={siteConfig.links.github} className="underline link">
                         {siteConfig.creator}
                     </Link>
                 </span>

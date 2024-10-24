@@ -31,7 +31,7 @@ export const columns: ColumnDef<Submission>[] = [
       const user = row.original.user;
 
       return (
-        <Link href={`/user/${user.id}/profile`} className="hover:underline">
+        <Link href={`/user/${user.id}/profile`} className="link">
           {user.displayName}
         </Link>
       );
@@ -46,7 +46,7 @@ export const columns: ColumnDef<Submission>[] = [
       const problem = row.original.problem;
 
       return (
-        <Link href={`/submit/${problem.id}`} className="hover:underline">
+        <Link href={`/submit/${problem.id}`} className="link">
           {problem.title}
         </Link>
       );

@@ -39,7 +39,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <a
         href={`/api/problem/${submission.problem.id}/statement`}
         target="_blank"
-        className="hover:underline"
+        className="link"
       >
         {submission.problem.title}
       </a>
@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     User: (
       <Link
         href={`/user/${submission.user.id}/profile`}
-        className="hover:underline"
+        className="link"
       >
         {submission.user.displayName}
       </Link>

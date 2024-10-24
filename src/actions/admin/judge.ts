@@ -71,12 +71,18 @@ export async function rejudgeAllSubmission(problemId: number) {
         const submissions = await prisma.submission.findMany({
             where: { problemId },
             orderBy: {
-                id: "asc"
+                id: "asc",
             },
         });
 
         for (const submission of submissions) {
-            await rejudge(submission.id);
+            const result = await rejudge(submission.id);
+
+            if (result?.error) {
+                return {
+                    error: result.error,
+                };
+            }
         }
     } catch (error) {
         console.error(error);

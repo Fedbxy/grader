@@ -75,7 +75,7 @@ export const columns: ColumnDef<Problem>[] = [
             const author = row.getValue("author") as User;
 
             return (
-                <Link href={`/dashboard/user/${author.id}`} className="hover:underline">
+                <Link href={`/dashboard/user/${author.id}`} className="link">
                     {author.displayName}
                 </Link>
             );

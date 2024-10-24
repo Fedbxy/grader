@@ -12,7 +12,11 @@ export function ConfirmButton({ id }: { id: number }) {
   async function handleClick() {
     setSubmitting(true);
 
-    await rejudgeAllSubmission(id);
+    const result = await rejudgeAllSubmission(id);
+    if (result?.error) {
+      setSubmitting(false);
+      return toast.error(result.error);
+    }
 
     return toast.success(`Requested rejudging all submissions for problem #${id}.`);
   }

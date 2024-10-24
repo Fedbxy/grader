@@ -3,6 +3,7 @@
 import { useSubmission } from "@/hooks/submission";
 
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function Score({
     submissionId,
@@ -16,7 +17,7 @@ export function Score({
     const { data, isLoading } = useSubmission(submissionId);
 
     if (isLoading) {
-        return null
+        return <Skeleton className="h-9" />;
     }
 
     const { score } = data;
