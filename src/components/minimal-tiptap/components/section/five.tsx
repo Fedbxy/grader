@@ -3,7 +3,7 @@ import type { Editor } from '@tiptap/react'
 import type { FormatAction } from '../../types'
 import type { toggleVariants } from '@/components/ui/toggle'
 import type { VariantProps } from 'class-variance-authority'
-import { CaretDownIcon, CodeIcon, DividerHorizontalIcon, PlusIcon, QuoteIcon } from '@radix-ui/react-icons'
+import { ChevronDown, CodeXml, Minus, Plus, Quote } from 'lucide-react'
 import { LinkEditPopover } from '../link/link-edit-popover'
 import { ImageEditDialog } from '../image/image-edit-dialog'
 import { ToolbarSection } from '../toolbar-section'
@@ -17,7 +17,7 @@ const formatActions: InsertElement[] = [
   {
     value: 'codeBlock',
     label: 'Code block',
-    icon: <CodeIcon className="size-5" />,
+    icon: <CodeXml className="size-5" />,
     action: editor => editor.chain().focus().toggleCodeBlock().run(),
     isActive: editor => editor.isActive('codeBlock'),
     canExecute: editor => editor.can().chain().focus().toggleCodeBlock().run(),
@@ -26,7 +26,7 @@ const formatActions: InsertElement[] = [
   {
     value: 'blockquote',
     label: 'Blockquote',
-    icon: <QuoteIcon className="size-5" />,
+    icon: <Quote className="size-5" />,
     action: editor => editor.chain().focus().toggleBlockquote().run(),
     isActive: editor => editor.isActive('blockquote'),
     canExecute: editor => editor.can().chain().focus().toggleBlockquote().run(),
@@ -35,7 +35,7 @@ const formatActions: InsertElement[] = [
   {
     value: 'horizontalRule',
     label: 'Divider',
-    icon: <DividerHorizontalIcon className="size-5" />,
+    icon: <Minus className="size-5" />,
     action: editor => editor.chain().focus().setHorizontalRule().run(),
     isActive: () => false,
     canExecute: editor => editor.can().chain().focus().setHorizontalRule().run(),
@@ -67,8 +67,8 @@ export const SectionFive: React.FC<SectionFiveProps> = ({
         mainActionCount={mainActionCount}
         dropdownIcon={
           <>
-            <PlusIcon className="size-5" />
-            <CaretDownIcon className="size-5" />
+            <Plus className="size-5" />
+            <ChevronDown className="size-5" />
           </>
         }
         dropdownTooltip="Insert elements"

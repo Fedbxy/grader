@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/shadcn'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ClipboardCopyIcon, DotsHorizontalIcon, DownloadIcon, Link2Icon, SizeIcon } from '@radix-ui/react-icons'
+import { ClipboardCopy, Ellipsis, Download, Link as LinkIcon, MoveDiagonal, Link } from 'lucide-react'
 
 interface ImageActionsProps {
   shouldMerge?: boolean
@@ -69,10 +69,10 @@ const ActionItems: Array<{
   tooltip: string
   isLink?: boolean
 }> = [
-  { key: 'onView', icon: <SizeIcon className="size-4" />, tooltip: 'View image' },
-  { key: 'onDownload', icon: <DownloadIcon className="size-4" />, tooltip: 'Download image' },
-  { key: 'onCopy', icon: <ClipboardCopyIcon className="size-4" />, tooltip: 'Copy image to clipboard' },
-  { key: 'onCopyLink', icon: <Link2Icon className="size-4" />, tooltip: 'Copy image link', isLink: true }
+  { key: 'onView', icon: <MoveDiagonal className="size-4" />, tooltip: 'View image' },
+  { key: 'onDownload', icon: <Download className="size-4" />, tooltip: 'Download image' },
+  { key: 'onCopy', icon: <ClipboardCopy className="size-4" />, tooltip: 'Copy image to clipboard' },
+  { key: 'onCopyLink', icon: <LinkIcon className="size-4" />, tooltip: 'Copy image link', isLink: true }
 ]
 
 export const ImageActions: React.FC<ImageActionsProps> = React.memo(
@@ -93,7 +93,7 @@ export const ImageActions: React.FC<ImageActionsProps> = React.memo(
           <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
               <ActionButton
-                icon={<DotsHorizontalIcon className="size-4" />}
+                icon={<Ellipsis className="size-4" />}
                 tooltip="Open menu"
                 onClick={e => e.preventDefault()}
               />

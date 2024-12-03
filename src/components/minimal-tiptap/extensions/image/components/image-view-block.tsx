@@ -3,12 +3,12 @@ import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react'
 import type { ElementDimensions } from '../hooks/use-drag-resize'
 import { useDragResize } from '../hooks/use-drag-resize'
 import { ResizeHandle } from './resize-handle'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/shadcn'
 import { Controlled as ControlledZoom } from 'react-medium-image-zoom'
 import { ActionButton, ActionWrapper, ImageActions } from './image-actions'
 import { useImageActions } from '../hooks/use-image-actions'
 import { blobUrlToBase64, randomId } from '../../../utils'
-import { InfoCircledIcon, TrashIcon } from '@radix-ui/react-icons'
+import { Info, Trash } from 'lucide-react'
 import { ImageOverlay } from './image-overlay'
 import { Spinner } from '../../../components/spinner'
 import type { UploadReturnType } from '../image'
@@ -211,7 +211,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
 
               {imageState.error && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <InfoCircledIcon className="size-8 text-destructive" />
+                  <Info className="size-8 text-destructive" />
                   <p className="mt-2 text-sm text-muted-foreground">Failed to load image</p>
                 </div>
               )}
@@ -263,7 +263,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
 
           {imageState.error && (
             <ActionWrapper>
-              <ActionButton icon={<TrashIcon className="size-4" />} tooltip="Remove image" onClick={onRemoveImg} />
+              <ActionButton icon={<Trash className="size-4" />} tooltip="Remove image" onClick={onRemoveImg} />
             </ActionWrapper>
           )}
 
