@@ -68,4 +68,14 @@ export const limits = {
             ".py",
         ],
     },
+    announcement: {
+        title: {
+            min: 3,
+            max: 100,
+        },
+        content: {
+            min: 1,
+            max: 100 * 1024 * 1024,
+        },
+    },
 };
