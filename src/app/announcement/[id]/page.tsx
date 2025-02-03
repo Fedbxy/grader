@@ -49,7 +49,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             By <Link href={`/user/${announcement.author.id}/profile`} className="link font-bold">{announcement.author.displayName}</Link>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="select-auto">
           <AnnouncementEditor
             content={announcement.content}
             readOnly
