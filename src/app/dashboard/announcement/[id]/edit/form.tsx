@@ -26,7 +26,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { AnnouncementEditor } from "@/components/announcement-editor";
+import { AnnouncementEditor } from "@/components/announcement/editor";
 import {
   Tooltip,
   TooltipContent,

@@ -117,3 +117,31 @@ export async function editAnnouncement(id: number, data: FormData) {
     }
     redirect("/dashboard/announcement");
 }
+
+export async function changeVisibility(id: number, visibility: Visibility) {
+    try {
+        const accessResult = await allowAccess("admin", "action");
+        if (accessResult) {
+            return accessResult;
+        }
+
+        const announcement = await prisma.announcement.findUnique({
+            where: { id },
+        });
+        if (!announcement) {
+            return {
+                error: messages.database.noAnnouncement,
+            };
+        }
+
+        await prisma.announcement.update({
+            where: { id },
+            data: { visibility },
+        });
+    } catch (error) {
+        console.error("Error: ", error);
+        return {
+            error: messages.form.unexpected,
+        };
+    }
+}

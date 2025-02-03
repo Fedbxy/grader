@@ -4,14 +4,16 @@ import { validateRequest } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
-import { AnnouncementEditor } from "@/components/announcement-editor";
+import { AnnouncementEditor } from "@/components/announcement/editor";
 import {
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { LocalTime } from "@/components/local-time";
 
 export const metadata: Metadata = {
   title: "Announcements",
@@ -55,6 +57,11 @@ export default async function Page({ params }: { params: { id: string } }) {
             readOnly
           />
         </CardContent>
+        <CardFooter>
+          <p className="text-sm text-gray-500">
+            Updated: <LocalTime date={announcement.updatedAt.toISOString()} />
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );

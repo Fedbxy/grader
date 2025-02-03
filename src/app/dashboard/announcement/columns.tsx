@@ -16,6 +16,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "@/components/table/column-header";
+import { ToggleVisibility } from "./toggle-visibility";
+import { Toggle } from "@radix-ui/react-toggle";
 
 export const columns: ColumnDef<Announcement>[] = [
     {
@@ -78,6 +80,7 @@ export const columns: ColumnDef<Announcement>[] = [
                         <Link href={`/dashboard/announcement/${announcement.id}/edit`}>
                             <DropdownMenuItem><FolderCog className="h-4 w-4 mr-1" />Edit</DropdownMenuItem>
                         </Link>
+                        <ToggleVisibility id={announcement.id} visibility={announcement.visibility} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
