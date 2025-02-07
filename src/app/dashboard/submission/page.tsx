@@ -5,30 +5,31 @@ import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
 import { Path } from "@/components/path";
 import { NavigationTabs } from "../tabs";
+import { DashboardCard } from "../card";
 
 export default async function Page() {
-    await allowAccess("admin");
+  await allowAccess("admin");
 
-    const data = await prisma.submission.findMany({
-        orderBy: {
-            id: "desc",
-        },
+  const data = await prisma.submission.findMany({
+    orderBy: {
+      id: "desc",
+    },
+    include: {
+      problem: {
         include: {
-            problem: {
-                include: {
-                    author: true,
-                }
-            },
-            user: true,
+          author: true,
         },
-    });
+      },
+      user: true,
+    },
+  });
 
-    return (
-        <div className="container flex flex-col space-y-2 mx-auto py-10">
-            <NavigationTabs page="submissions" />
-            <h1 className="text-2xl font-semibold">Submissions</h1>
-            <Path path="/dashboard/submission" />
-            <DataTable columns={columns} data={data} />
-        </div>
-    );
+  return (
+    <DashboardCard
+      title="Submissions"
+      path="/dashboard/submission"
+      columns={columns}
+      data={data}
+    />
+  );
 }

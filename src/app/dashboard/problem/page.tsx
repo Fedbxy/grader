@@ -8,6 +8,7 @@ import { DataTable } from "@/components/table/data-table";
 import { Path } from "@/components/path";
 import { Button } from "@/components/ui/button";
 import { NavigationTabs } from "../tabs";
+import { DashboardCard } from "../card";
 
 export default async function Page() {
     await allowAccess("admin");
@@ -22,16 +23,11 @@ export default async function Page() {
     });
 
     return (
-        <div className="container flex flex-col space-y-2 mx-auto py-10">
-            <NavigationTabs page="problems" />
-            <h1 className="text-2xl font-semibold">Problems</h1>
-            <div className="flex justify-between items-center">
-                <Path path="/dashboard/problem" />
-                <Link href="/dashboard/problem/create">
-                    <Button size="icon"><Plus /></Button>
-                </Link>
-            </div>
-            <DataTable columns={columns} data={data} />
-        </div>
+        <DashboardCard
+            title="Problems"
+            path="/dashboard/problem"
+            columns={columns}
+            data={data}
+        />
     );
 }
