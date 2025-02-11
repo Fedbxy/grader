@@ -63,6 +63,17 @@ export const messages = {
             required: "Code is required",
             max: `Code must be less than ${limits.code.max} characters`,
         },
+        announcement: {
+            title: {
+                required: "Title is required",
+                min: `Title must be more than ${limits.announcement.title.min} characters`,
+                max: `Title must be less than ${limits.announcement.title.max} characters`,
+            },
+            content: {
+                required: "Content is required",
+                max: `Content must be less than ${limits.announcement.content.max / 1024 / 1024}MB`,
+            },
+        },
     },
     form: {
         invalid: "Your request is invalid.",
@@ -84,6 +95,7 @@ export const messages = {
         noUser: "User not found.",
         noProblem: "Problem not found.",
         noSubmission: "Submission not found.",
+        noAnnouncement: "Announcement not found.",
         banSelf: "You cannot ban yourself.",
     },
 };

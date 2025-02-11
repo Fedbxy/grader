@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -52,9 +53,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <main className="min-h-screen-minus-header-footer">
-            {children}
-          </main>
+          <TooltipProvider>
+            <main className="min-h-screen-minus-header-footer">
+              {children}
+            </main>
+          </TooltipProvider>
           <Toaster
             richColors
             closeButton

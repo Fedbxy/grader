@@ -1,5 +1,9 @@
 "use client";
 
 export function LocalTime({ date }: { date: string }) {
-    return <span>{new Date(date).toLocaleString()}</span>;
+  return (
+    <time dateTime={date} suppressHydrationWarning>
+      {new Date(date).toLocaleString()}
+    </time>
+  );
 }

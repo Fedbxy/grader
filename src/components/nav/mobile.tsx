@@ -9,47 +9,54 @@ import { cn } from "@/lib/shadcn";
 
 import { Button } from "@/components/ui/button";
 import {
-    Drawer,
-    DrawerContent,
-    DrawerTrigger,
+  Drawer,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 
 export function MobileNav() {
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    return (
-        <Drawer>
-            <DrawerTrigger asChild>
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button
+          variant="ghost"
+          className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+        >
+          <Menu />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Navigation Menu</DrawerTitle>
+        </DrawerHeader>
+        <DrawerFooter className="flex flex-col gap-2">
+          {navConfig.map((item) => {
+            const Icon = iconMap[item.icon as IconName];
+            return (
+              <Link key={item.href} href={item.href}>
                 <Button
-                    variant="ghost"
-                    className="px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+                  variant="outline"
+                  className={cn(
+                    "w-full transition-colors hover:text-foreground/80",
+                    pathname === item.href
+                      ? "text-foreground"
+                      : "text-foreground/50",
+                  )}
                 >
-                    <Menu />
-                    <span className="sr-only">Toggle Menu</span>
+                  <Icon className="mr-1 inline-block h-5 w-5" />
+                  {item.title}
                 </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-                <div className="mx-auto w-full max-w-md">
-                    <div className="p-4 grid gap-6 text-lg font-medium">
-                        {navConfig.map((item) => {
-                            const Icon = iconMap[item.icon as IconName];
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={cn(
-                                        "transition-colors hover:text-foreground/80",
-                                        pathname === item.href ? "text-foreground" : "text-foreground/60"
-                                    )}
-                                >
-                                    <Icon className="inline-block h-6 w-6 mr-2" />
-                                    {item.title}
-                                </Link>
-                            )
-                        })}
-                    </div>
-                </div>
-            </DrawerContent>
-        </Drawer>
-    )
+              </Link>
+            );
+          })}
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
 }
