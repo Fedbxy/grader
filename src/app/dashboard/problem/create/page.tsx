@@ -13,7 +13,7 @@ export default async function Page() {
     await allowAccess("admin");
 
     return (
-        <div className="container mx-auto py-10 flex justify-center">
+        <div className="container flex flex-col items-center">
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle>Create a Problem</CardTitle>

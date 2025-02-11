@@ -5,7 +5,7 @@ import { Problem } from "@/types/problem";
 import { User } from "@/types/user";
 import Link from "next/link";
 
-import { MoreHorizontal, Eye, FolderCog, RefreshCcw } from "lucide-react";
+import { MoreHorizontal, Eye, FolderCog, RefreshCcw, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -83,6 +83,14 @@ export const columns: ColumnDef<Problem>[] = [
     },
     {
         id: "actions",
+        header: () => (
+            <Link href="/dashboard/problem/create">
+                <Button className="h-8 w-8 p-0">
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Create problem</span>
+                </Button>
+            </Link>
+        ),
         cell: ({ row }) => {
             const problem = row.original;
 

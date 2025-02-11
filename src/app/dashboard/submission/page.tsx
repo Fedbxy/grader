@@ -2,9 +2,6 @@ import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
 
 import { columns } from "./columns";
-import { DataTable } from "@/components/table/data-table";
-import { Path } from "@/components/path";
-import { NavigationTabs } from "../tabs";
 import { DashboardCard } from "../card";
 
 export default async function Page() {

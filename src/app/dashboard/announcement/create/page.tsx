@@ -8,7 +8,7 @@ export default async function Page() {
   await allowAccess("admin");
 
   return (
-    <div className="container mx-auto flex justify-center py-10">
+    <div className="container flex flex-col items-center">
       <Card className="w-full max-w-lg md:max-w-xl">
         <CardHeader>
           <CardTitle>Create an Announcement</CardTitle>

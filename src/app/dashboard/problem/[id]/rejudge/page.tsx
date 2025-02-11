@@ -56,7 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     };
 
     return (
-        <div className="container mx-auto flex justify-center py-10">
+        <div className="container flex flex-col items-center">
             <Card className="w-full max-w-lg md:max-w-xl">
                 <CardHeader>
                     <CardTitle className="text-destructive">Rejudge All Submissions</CardTitle>

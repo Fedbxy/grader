@@ -1,7 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Content } from "@tiptap/react";
+
 import { MinimalTiptapEditor } from "@/components/minimal-tiptap";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnnouncementEditor({
   content,
@@ -12,6 +15,16 @@ export function AnnouncementEditor({
   onChange?: (value: string) => void;
   readOnly?: boolean;
 }) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <Skeleton className="w-full h-96" />;
+  }
+
   return (
     <MinimalTiptapEditor
       value={content}

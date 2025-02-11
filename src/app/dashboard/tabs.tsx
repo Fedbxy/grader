@@ -45,7 +45,7 @@ export function NavigationTabs() {
   );
 
   return (
-    <>
+    <div className="mx-auto">
       <Drawer>
         <DrawerTrigger asChild>
           <Button variant="outline" className="md:hidden">
@@ -84,6 +84,6 @@ export function NavigationTabs() {
           ))}
         </TabsList>
       </Tabs>
-    </>
+    </div>
   );
 }
