@@ -12,6 +12,7 @@ import { Info, Trash } from 'lucide-react'
 import { ImageOverlay } from './image-overlay'
 import { Spinner } from '../../../components/spinner'
 import type { UploadReturnType } from '../image'
+import Image from 'next/image'
 
 const MAX_HEIGHT = 600
 const MIN_HEIGHT = 120
@@ -220,7 +221,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
                 isZoomed={imageState.isZoomed}
                 onZoomChange={() => setImageState(prev => ({ ...prev, isZoomed: false }))}
               >
-                <img
+                <Image
                   className={cn('h-auto rounded object-contain transition-shadow', {
                     'opacity-0': !imageState.imageLoaded || imageState.error
                   })}
