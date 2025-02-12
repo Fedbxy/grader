@@ -60,7 +60,7 @@ export default async function Page() {
               <div className="flex flex-col space-y-2">
                 <div className="text-4xl font-bold">{stat.count}</div>
                 <p className="text-xs text-muted-foreground">{timestamp}</p>
-                <Link href="/dashboard/user">
+                <Link href={stat.href}>
                   <Button variant="outline" size="sm">
                     View {stat.title}
                   </Button>
