@@ -1,4 +1,4 @@
-FROM imbios/bun-node:1-20-alpine AS base
+FROM oven/bun:1 AS base
 
 
 FROM base AS deps
@@ -18,22 +18,21 @@ RUN bunx prisma generate
 RUN bun run build
 
 
-FROM node:20-alpine AS runner
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 --ingroup bun nextjs
 
 COPY --from=builder /app/public ./public
 
 RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN chown nextjs:bun .next
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:bun /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:bun /app/prisma ./prisma
 
 USER nextjs
 
@@ -41,4 +40,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" npx prisma migrate deploy && node server.js
+CMD HOSTNAME="0.0.0.0" bunx prisma migrate deploy && bun server.js
