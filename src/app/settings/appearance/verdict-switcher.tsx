@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function VerdictStyleSwitcher() {
   const [verdictStyle, setVerdictStyle] = useLocalStorage(
     "verdictStyle",
-    "accordion",
+    "table",
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,7 +41,7 @@ export function VerdictStyleSwitcher() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent align="end">
-        <SelectItem value="accordion">Accordion</SelectItem>
+        <SelectItem value="table">Table</SelectItem>
         <SelectItem value="classic">Classic</SelectItem>
       </SelectContent>
     </Select>

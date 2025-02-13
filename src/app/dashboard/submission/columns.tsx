@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RejudgeButton } from "./rejudge";
 import { ScoreCell } from "@/components/table/submission/score-cell";
+import { ActionsButton } from "@/components/table/submission/actions-button";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -78,11 +79,11 @@ export const columns: ColumnDef<Submission>[] = [
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Open menu</span>
-            </Button>
+          <DropdownMenuTrigger>
+            <ActionsButton
+              submissionId={submission.id}
+              testcases={submission.problem.testcases}
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>

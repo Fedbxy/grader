@@ -4,18 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Submission } from "@/types/submission";
 import Link from "next/link";
 
-import { Eye, MoreHorizontal } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ScoreCell } from "@/components/table/submission/score-cell";
+import { ActionsButton } from "@/components/table/submission/actions-button";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -75,23 +68,12 @@ export const columns: ColumnDef<Submission>[] = [
       const submission = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/submission/${submission.id}`}>
-              <DropdownMenuItem>
-                <Eye className="mr-1 h-4 w-4" />
-                View
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link href={`/submission/${submission.id}`}>
+          <ActionsButton
+            submissionId={submission.id}
+            testcases={submission.problem.testcases}
+          />
+        </Link>
       );
     },
   },

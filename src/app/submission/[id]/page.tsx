@@ -45,10 +45,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </a>
     ),
     User: (
-      <Link
-        href={`/user/${submission.user.id}/profile`}
-        className="link"
-      >
+      <Link href={`/user/${submission.user.id}/profile`} className="link">
         {submission.user.displayName}
       </Link>
     ),
@@ -79,8 +76,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 ))}
               </TableBody>
             </Table>
-            <Verdict submissionId={submission.id} />
-            <div className="relative overflow-x-auto rounded-md border">
+            <Card className="relative overflow-hidden">
               <div className="absolute right-2 top-2 z-20">
                 <CopyButton code={submission.code} />
               </div>
@@ -89,7 +85,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                 language={submission.language}
                 readOnly
               />
-            </div>
+            </Card>
+            <Card>
+              <Verdict submissionId={submission.id} />
+            </Card>
           </div>
         </CardContent>
       </Card>

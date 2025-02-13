@@ -5,38 +5,54 @@ import { LoadingSpinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ScoreCell({
-    submissionId,
-    problemScore,
-    testcases,
+  submissionId,
+  problemScore,
+  testcases,
 }: {
-    submissionId: number;
-    problemScore: number;
-    testcases: number;
+  submissionId: number;
+  problemScore: number;
+  testcases: number;
 }) {
-    const { data, isLoading, isRunning } = useSubmission(submissionId);
+  const { data, isLoading, isRunning } = useSubmission(submissionId);
 
-    if (isLoading) {
-        return <Skeleton className="h-9" />;
-    }
+  if (isLoading) {
+    return <Skeleton className="h-9" />;
+  }
 
-    const { score, verdict } = data;
+  const { score, verdict } = data;
 
-    if (isRunning) {
-        return (
-            <span className="flex items-center">
-                <LoadingSpinner className="mr-1 h-4 w-4" />
-                {verdict[0]}
-            </span>
-        );
-    }
-
+  if (isRunning) {
     return (
-        <div className="flex flex-col">
-            <span>{(score * problemScore) / testcases} pts.</span>
-            <Progress
-                className="h-2 w-16 md:w-32"
-                value={(score * 100) / testcases}
-            />
-        </div>
+      <span className="flex items-center text-nowrap">
+        {verdict[0]}
+      </span>
     );
+  }
+
+  return (
+    <div className="flex flex-col">
+      <span
+        className={
+          score === testcases
+            ? "text-constructive"
+            : score === 0
+              ? "text-destructive"
+              : "text-warning"
+        }
+      >
+        {(score * problemScore) / testcases} / {problemScore}
+      </span>
+      <Progress
+        className="h-2 w-16 md:w-32"
+        variant={
+          score === testcases
+            ? "constructive"
+            : score === 0
+              ? "destructive"
+              : "warning"
+        }
+        value={(score * 100) / testcases}
+      />
+    </div>
+  );
 }

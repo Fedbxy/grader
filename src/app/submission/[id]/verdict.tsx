@@ -6,32 +6,37 @@ import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
 
 export function Verdict({ submissionId }: { submissionId: number }) {
-  const [verdictStyle] = useLocalStorage("verdictStyle", "accordion");
+  const [verdictStyle] = useLocalStorage("verdictStyle", "table");
   const [isLoading, setIsLoading] = useState(true);
 
-  
   useEffect(() => {
     if (verdictStyle) {
       setIsLoading(false);
     }
   }, [verdictStyle]);
-  
-  const { data, isLoading: isSubmissionLoading, isRunning } = useSubmission(submissionId);
+
+  const {
+    data,
+    isLoading: isSubmissionLoading,
+    isRunning,
+  } = useSubmission(submissionId);
 
   if (isLoading || isSubmissionLoading) {
     return <Skeleton className="h-96 rounded-md" />;
@@ -41,98 +46,82 @@ export function Verdict({ submissionId }: { submissionId: number }) {
 
   const isError = verdict.length === 1 && error;
 
-  const accordion = (
-    <div className="rounded-md bg-secondary p-4">
-      {isRunning ? (
-        <pre className="flex items-center">
-          <LoadingSpinner className="mr-2 h-5 w-5" />
-          {verdict[0]}
-        </pre>
-      ) : (
-        <div className="max-h-96 overflow-y-auto">
-          <Accordion type="multiple" className="space-y-2">
-            {verdict.map((v: string, i: number) => (
-              <AccordionItem
-                key={i}
-                value={`item-${i}`}
-                className={`rounded-md px-4 text-xs ${v === "AC" ? "bg-constructive text-constructive-foreground" : "bg-destructive text-destructive-foreground"}`}
+  if (isRunning) {
+    return (
+      <pre className="flex items-center p-4">
+        <LoadingSpinner className="mr-2 h-5 w-5" />
+        {verdict[0]}
+      </pre>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Popover>
+        <PopoverTrigger>
+          <pre className="text-destructive hover:underline p-4">
+            {
+              maps.submission.verdict[
+                verdict[0] as keyof typeof maps.submission.verdict
+              ]
+            }
+          </pre>
+        </PopoverTrigger>
+        <PopoverContent className="w-full max-w-md overflow-x-auto md:max-w-xl">
+          <pre className="text-destructive">{error}</pre>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  const table = (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[100px]">#</TableHead>
+          <TableHead>Verdict</TableHead>
+          <TableHead className="text-right">Time Used</TableHead>
+          <TableHead className="text-right">Memory Used</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {verdict.map((v: string, i: number) => (
+          <TableRow key={i}>
+            <TableCell>{i + 1}</TableCell>
+            <TableCell>
+              <Badge
+                variant={v === "AC" ? "constructive" : "destructive"}
+                className="capitalize"
               >
-                <AccordionTrigger>
-                  {!error && `#${i + 1} `}
-                  {
-                    maps.submission.verdict[
+                {
+                  maps.submission.verdict[
                     v as keyof typeof maps.submission.verdict
-                    ]
-                  }
-                </AccordionTrigger>
-                <AccordionContent>
-                  <Table className="text-xs">
-                    <TableBody>
-                      {error && (
-                        <TableRow>
-                          <TableCell>Error</TableCell>
-                          <TableCell>
-                            <pre>{error}</pre>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      <TableRow>
-                        <TableCell>Time</TableCell>
-                        <TableCell>{time[i]}ms</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Memory</TableCell>
-                        <TableCell>{memory[i]}KB</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      )}
-    </div>
+                  ]
+                }
+              </Badge>
+            </TableCell>
+            <TableCell className="text-right">{time[i]} ms</TableCell>
+            <TableCell className="text-right">{memory[i]} KB</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 
   const classic = (
-    <div className="flex flex-col overflow-x-auto rounded-md bg-secondary p-4">
-      {isRunning ? (
-        <pre className="flex items-center">
-          <LoadingSpinner className="mr-2 h-5 w-5" />
-          {verdict[0]}
+    <div className="flex flex-col overflow-x-auto p-4 bg-secondary">
+      {verdict.map((v: string, i: number) => (
+        <pre
+          className={`${v === "AC" ? "text-constructive" : "text-destructive"}`}
+          key={i}
+        >
+          #{i + 1}{" "}
+          {maps.submission.verdict[v as keyof typeof maps.submission.verdict]} (
+          {time[i]}ms, {memory[i]}KB)
         </pre>
-      ) : isError ? (
-        <div className="items-start">
-          <Popover>
-            <PopoverTrigger>
-              <pre className="text-destructive hover:underline">
-                {
-                  maps.submission.verdict[
-                  verdict[0] as keyof typeof maps.submission.verdict
-                  ]
-                }
-              </pre>
-            </PopoverTrigger>
-            <PopoverContent className="w-full max-w-md overflow-x-auto md:max-w-xl">
-              <pre className="text-destructive">{error}</pre>
-            </PopoverContent>
-          </Popover>
-        </div>
-      ) : (
-        verdict.map((v: string, i: number) => (
-          <pre
-            className={`${v === "AC" ? "text-constructive" : "text-destructive"}`}
-            key={i}
-          >
-            #{i + 1}{" "}
-            {maps.submission.verdict[v as keyof typeof maps.submission.verdict]}{" "}
-            ({time[i]}ms, {memory[i]}KB)
-          </pre>
-        ))
-      )}
+      ))}
     </div>
   );
 
-  return verdictStyle === "accordion" ? accordion : classic;
+  return verdictStyle === "table" ? table : classic;
 }
