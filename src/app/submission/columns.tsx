@@ -4,11 +4,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Submission } from "@/types/submission";
 import Link from "next/link";
 
-import { Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 import { ScoreCell } from "@/components/table/submission/score-cell";
 import { ActionsButton } from "@/components/table/submission/actions-button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -59,6 +63,58 @@ export const columns: ColumnDef<Submission>[] = [
           problemScore={submission.problem.score}
           testcases={submission.problem.testcases}
         />
+      );
+    },
+  },
+  {
+    accessorKey: "time",
+    header: () => (
+      <Tooltip>
+        <TooltipTrigger className="flex items-center space-x-1">
+          <span>Execution Time</span>
+          <Info className="h-4 w-4" />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>The maximum time taken by any testcase.</p>
+        </TooltipContent>
+      </Tooltip>
+    ),
+    cell: ({ row }) => {
+      const submission = row.original;
+
+      const maxTime = Math.max(...submission.time);
+      const isExceeded = maxTime >= submission.problem.timeLimit;
+
+      return (
+        <span className={isExceeded ? "text-destructive" : ""}>
+          {maxTime} ms
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "memory",
+    header: () => (
+      <Tooltip>
+        <TooltipTrigger className="flex items-center space-x-1">
+          <span>Memory Used</span>
+          <Info className="h-4 w-4" />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>The maximum memory used by any testcase.</p>
+        </TooltipContent>
+      </Tooltip>
+    ),
+    cell: ({ row }) => {
+      const submission = row.original;
+
+      const maxMemory = Math.max(...submission.memory);
+      const isExceeded = maxMemory >= submission.problem.memoryLimit * 1024;
+
+      return (
+        <span className={isExceeded ? "text-destructive" : ""}>
+          {maxMemory} KB
+        </span>
       );
     },
   },
