@@ -59,7 +59,7 @@ export function Verdict({ submissionId }: { submissionId: number }) {
     return (
       <Popover>
         <PopoverTrigger>
-          <pre className="text-destructive hover:underline p-4">
+          <pre className="p-4 text-destructive hover:underline">
             {
               maps.submission.verdict[
                 verdict[0] as keyof typeof maps.submission.verdict
@@ -80,8 +80,8 @@ export function Verdict({ submissionId }: { submissionId: number }) {
         <TableRow>
           <TableHead className="w-[100px]">#</TableHead>
           <TableHead>Verdict</TableHead>
-          <TableHead className="text-right">Time Used</TableHead>
-          <TableHead className="text-right">Memory Used</TableHead>
+          <TableHead className="text-nowrap text-right">Execution Time</TableHead>
+          <TableHead className="text-nowrap text-right">Memory Used</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -109,7 +109,7 @@ export function Verdict({ submissionId }: { submissionId: number }) {
   );
 
   const classic = (
-    <div className="flex flex-col overflow-x-auto p-4 bg-secondary">
+    <div className="flex flex-col overflow-x-auto bg-secondary p-4">
       {verdict.map((v: string, i: number) => (
         <pre
           className={`${v === "AC" ? "text-constructive" : "text-destructive"}`}

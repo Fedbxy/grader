@@ -70,7 +70,7 @@ export const columns: ColumnDef<Submission>[] = [
     accessorKey: "time",
     header: () => (
       <Tooltip>
-        <TooltipTrigger className="flex items-center space-x-1">
+        <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
           <span>Execution Time</span>
           <Info className="h-4 w-4" />
         </TooltipTrigger>
@@ -96,7 +96,7 @@ export const columns: ColumnDef<Submission>[] = [
     accessorKey: "memory",
     header: () => (
       <Tooltip>
-        <TooltipTrigger className="flex items-center space-x-1">
+        <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
           <span>Memory Used</span>
           <Info className="h-4 w-4" />
         </TooltipTrigger>

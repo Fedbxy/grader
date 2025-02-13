@@ -85,7 +85,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     {
       label: (
         <Tooltip>
-          <TooltipTrigger className="flex items-center space-x-1">
+          <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
             <span>Execution Time</span>
             <Info className="h-4 w-4" />
           </TooltipTrigger>
@@ -103,7 +103,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     {
       label: (
         <Tooltip>
-          <TooltipTrigger className="flex items-center space-x-1">
+          <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
             <span>Memory Used</span>
             <Info className="h-4 w-4" />
           </TooltipTrigger>
