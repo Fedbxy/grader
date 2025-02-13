@@ -8,7 +8,9 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
 import { Verdict } from "./verdict";
 import { LocalTime } from "@/components/local-time";
-import { Score } from "./score";
+import { ScoreCell } from "@/components/submission/score-cell";
+import { TimeCell } from "@/components/submission/time-cell";
+import { MemoryCell } from "@/components/submission/memory-cell";
 import { CodeEditor } from "@/components/code-editor";
 import { CopyButton, RejudgeButton } from "./buttons";
 import {
@@ -75,7 +77,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     {
       label: "Score",
       value: (
-        <Score
+        <ScoreCell
           submissionId={submission.id}
           problemScore={submission.problem.score}
           testcases={submission.problem.testcases}
@@ -95,9 +97,10 @@ export default async function Page({ params }: { params: { id: string } }) {
         </Tooltip>
       ),
       value: (
-        <span className={isTimeLimitExceeded ? "text-destructive" : ""}>
-          {maxTime} ms
-        </span>
+        <TimeCell
+          submissionId={submission.id}
+          timeLimit={submission.problem.timeLimit}
+        />
       ),
     },
     {
@@ -113,9 +116,10 @@ export default async function Page({ params }: { params: { id: string } }) {
         </Tooltip>
       ),
       value: (
-        <span className={isMemoryLimitExceeded ? "text-destructive" : ""}>
-          {maxMemory} MB
-        </span>
+        <MemoryCell
+          submissionId={submission.id}
+          memoryLimit={submission.problem.memoryLimit}
+        />
       ),
     },
   ];

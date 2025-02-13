@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useSubmission } from "@/hooks/submission";
 import { cn } from "@/lib/shadcn";
@@ -17,7 +19,7 @@ export function ActionsButton({
   const { data, isLoading, isRunning } = useSubmission(submissionId);
 
   if (isLoading) {
-    return <Skeleton className="h-9" />;
+    return <Skeleton className="h-8 w-8" />;
   }
 
   const { score } = data;
