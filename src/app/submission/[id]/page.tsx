@@ -86,7 +86,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 readOnly
               />
             </Card>
-            <Card>
+            <Card className="overflow-hidden">
               <Verdict submissionId={submission.id} />
             </Card>
           </div>
