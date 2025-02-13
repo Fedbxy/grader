@@ -91,7 +91,7 @@ export function Verdict({ submissionId }: { submissionId: number }) {
             <TableCell>
               <Badge
                 variant={v === "AC" ? "constructive" : "destructive"}
-                className="capitalize"
+                className="capitalize text-nowrap"
               >
                 {
                   maps.submission.verdict[
