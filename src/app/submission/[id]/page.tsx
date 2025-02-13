@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { validateRequest } from "@/lib/auth";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -9,7 +10,7 @@ import { Verdict } from "./verdict";
 import { LocalTime } from "@/components/local-time";
 import { Score } from "./score";
 import { CodeEditor } from "@/components/code-editor";
-import { CopyButton } from "./copy";
+import { CopyButton, RejudgeButton } from "./buttons";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -26,6 +27,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   if (!submission) {
     notFound();
   }
+
+  const { user } = await validateRequest();
 
   const data = {
     Score: (
@@ -76,8 +79,14 @@ export default async function Page({ params }: { params: { id: string } }) {
                 ))}
               </TableBody>
             </Table>
+            <Card className="overflow-hidden">
+              <Verdict submissionId={submission.id} />
+            </Card>
             <Card className="relative overflow-hidden">
-              <div className="absolute right-2 top-2 z-20">
+              <div className="absolute right-2 top-2 z-20 flex space-x-2">
+                {user?.role === "admin" && (
+                  <RejudgeButton id={submission.id} />
+                )}
                 <CopyButton code={submission.code} />
               </div>
               <CodeEditor
@@ -85,9 +94,6 @@ export default async function Page({ params }: { params: { id: string } }) {
                 language={submission.language}
                 readOnly
               />
-            </Card>
-            <Card className="overflow-hidden">
-              <Verdict submissionId={submission.id} />
             </Card>
           </div>
         </CardContent>
