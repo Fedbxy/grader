@@ -2,6 +2,7 @@ import { validateRequest } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import { Metadata } from "next";
 
 import {
   Card,
@@ -17,6 +18,8 @@ import { SubmitForm } from "./form";
 import { Statement } from "./statement";
 import { SquareSplitHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Submission } from "./submission";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { user } = await validateRequest();
@@ -67,7 +70,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <Tabs defaultValue="statement" className="px-4 py-4 md:px-32 md:py-8">
-      <Card>
+      <Card className="overflow-x-auto">
         <CardHeader>
           <CardTitle>{problem.title}</CardTitle>
           <CardDescription>
@@ -90,13 +93,21 @@ export default async function Page({ params }: { params: { id: string } }) {
           </span>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <TabsList>
-            <TabsTrigger value="statement">Statement</TabsTrigger>
-            <TabsTrigger value="submit">Submit</TabsTrigger>
-            <TabsTrigger value="split" className="hidden md:block">
-              <SquareSplitHorizontal className="h-5 w-5" />
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex space-x-2">
+            <TabsList>
+              <TabsTrigger value="split" className="hidden md:block">
+                <SquareSplitHorizontal className="h-5 w-5" />
+              </TabsTrigger>
+              <Separator
+                orientation="vertical"
+                className="ml-1 mr-1 hidden md:block"
+              />
+              <TabsTrigger value="statement">Statement</TabsTrigger>
+              <TabsTrigger value="submit">Submit</TabsTrigger>
+              <Separator orientation="vertical" className="ml-1 mr-1" />
+              <TabsTrigger value="submission">Submission</TabsTrigger>
+            </TabsList>
+          </div>
           <a
             href={`/api/problem/${problem.id}/statement`}
             className="link"
@@ -128,6 +139,9 @@ export default async function Page({ params }: { params: { id: string } }) {
           latestLanguage={latestLanguage}
           formDisabled={!user}
         />
+      </TabsContent>
+      <TabsContent value="submission">
+        <Submission problemId={problem.id} />
       </TabsContent>
     </Tabs>
   );

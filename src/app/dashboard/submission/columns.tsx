@@ -18,7 +18,7 @@ import { RejudgeButton } from "./rejudge";
 import { Eye } from "lucide-react";
 
 export const columns: ColumnDef<Submission>[] = [
-  ...mainColumns,
+  ...mainColumns.slice(0, -1),
   {
     id: "actions",
     cell: ({ row }) => {
