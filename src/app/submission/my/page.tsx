@@ -4,7 +4,7 @@ import { validateRequest } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import { columns } from "../../../components/submission/columns";
+import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 

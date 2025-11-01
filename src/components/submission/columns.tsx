@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
+import { ActionsButton } from "./actions-button";
 
 export const columns: ColumnDef<Submission>[] = [
   {
@@ -44,7 +45,7 @@ export const columns: ColumnDef<Submission>[] = [
       const problem = row.original.problem;
 
       return (
-        <Link href={`/submit/${problem.id}`} className="link">
+        <Link href={`/problem/${problem.id}/statement`} className="link">
           {problem.title}
         </Link>
       );
@@ -112,6 +113,21 @@ export const columns: ColumnDef<Submission>[] = [
           submissionId={submission.id}
           memoryLimit={submission.problem.memoryLimit}
         />
+      );
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const submission = row.original;
+
+      return (
+        <Link href={`/submission/${submission.id}`}>
+          <ActionsButton
+            submissionId={submission.id}
+            testcases={submission.problem.testcases}
+          />
+        </Link>
       );
     },
   },

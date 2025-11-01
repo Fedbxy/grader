@@ -1,6 +1,7 @@
 "use server";
 
 import { allowAccess } from "@/utils/access";
+import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Language } from "@/types/submission";
 import { messages } from "@/config/messages";
@@ -31,7 +32,6 @@ export async function submitCode(data: FormData) {
         }
 
         const problemId = Number(data.get("problemId"));
-        const userId = Number(data.get("userId"));
         const language = data.get("language") as string;
         const code = (data.get("code") as string).trim();
 
@@ -39,7 +39,7 @@ export async function submitCode(data: FormData) {
             language,
             code,
         });
-        if (!parsed.success || isNaN(problemId) || isNaN(userId)) {
+        if (!parsed.success || isNaN(problemId)) {
             return {
                 error: messages.form.invalid,
             };
@@ -51,22 +51,25 @@ export async function submitCode(data: FormData) {
         if (!problem) {
             return {
                 error: messages.database.noProblem,
-            }
+            };
+        }
+        if (problem.visibility === "private") {
+            return {
+                error: messages.database.privateProblem,
+            };
         }
 
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-        });
+        const { user } = await validateRequest();
         if (!user) {
             return {
-                error: messages.database.noUser,
-            }
+                error: messages.auth.unauthenticated,
+            };
         }
 
         const submission = await prisma.submission.create({
             data: {
                 problemId: problemId,
-                userId: userId,
+                userId: user.id,
                 language: language as Language,
                 code: code,
                 verdict: [
@@ -80,7 +83,6 @@ export async function submitCode(data: FormData) {
         data.append("timeLimit", problem.timeLimit.toString());
         data.append("memoryLimit", problem.memoryLimit.toString());
         data.append("testcases", problem.testcases.toString());
-        data.delete("userId");
 
         const response = await fetch(`${protocol}://${endpoint}:${port}/submit`, {
             method: "POST",

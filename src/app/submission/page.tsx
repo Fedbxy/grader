@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
 
-import { columns } from "./columns";
+import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 

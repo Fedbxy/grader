@@ -52,5 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const headers = new Headers();
     headers.set("Content-Type", "application/pdf");
 
-    return new NextResponse(statement, { headers });
+    const body = new Uint8Array(statement);
+
+    return new NextResponse(body, { headers });
 }

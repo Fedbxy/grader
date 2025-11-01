@@ -4,14 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Problem } from "@/types/problem";
 import Link from "next/link";
 
-import {
-  FileText,
-  MoreHorizontal,
-  Send,
-  FileCheck2,
-  Check,
-  X,
-} from "lucide-react";
+import { FileText, MoreHorizontal, FileCheck2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
@@ -20,7 +13,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AcceptedUsersDialog } from "./acceptedUsers";
@@ -46,11 +38,11 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const { title, id } = row.original;
 
       return (
-        <a href={`/api/problem/${id}/statement`} target="_blank" className="link">
+        <Link href={`/problem/${id}/statement`} className="link">
           {title}
-        </a>
+        </Link>
       );
-    }
+    },
   },
   {
     id: "limits",
@@ -126,17 +118,10 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <a href={`/api/problem/${problem.id}/statement`} target="_blank">
+            <Link href={`/problem/${problem.id}/statement`}>
               <DropdownMenuItem>
                 <FileText className="mr-1 h-4 w-4" />
-                View
-              </DropdownMenuItem>
-            </a>
-            <DropdownMenuSeparator />
-            <Link href={`/submit/${problem.id}`}>
-              <DropdownMenuItem>
-                <Send className="mr-1 h-4 w-4" />
-                Submit
+                Open
               </DropdownMenuItem>
             </Link>
             {latestSubmissionId && (

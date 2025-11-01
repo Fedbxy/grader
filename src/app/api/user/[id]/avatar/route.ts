@@ -46,5 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const headers = new Headers();
     headers.set("Content-Type", `image/${user.avatar.split("/")[2].split(".")[1]}`);
 
-    return new NextResponse(avatar, { headers });
+    const body = new Uint8Array(avatar);
+
+    return new NextResponse(body, { headers });
 }
