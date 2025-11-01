@@ -1,12 +1,20 @@
 import prisma from "@/lib/prisma";
-import { columns } from "@/components/submission/columns";
+import { notFound } from "next/navigation";
+import { getProblemData } from "@/utils/problem";
 
+import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
 
-export async function Submission({ problemId }: { problemId: number }) {
+export default async function Page({ params }: { params: { id: string } }) {
+  if (isNaN(Number(params.id))) {
+    notFound();
+  }
+
+  const { problem } = await getProblemData(Number(params.id));
+
   const data = await prisma.submission.findMany({
     where: {
-      problemId: problemId,
+      problemId: problem.id,
     },
     orderBy: {
       id: "desc",

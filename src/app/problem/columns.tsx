@@ -4,13 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Problem } from "@/types/problem";
 import Link from "next/link";
 
-import {
-  FileText,
-  MoreHorizontal,
-  FileCheck2,
-  Check,
-  X,
-} from "lucide-react";
+import { FileText, MoreHorizontal, FileCheck2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
@@ -44,10 +38,7 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const { title, id } = row.original;
 
       return (
-        <Link
-          href={`/problem/${id}`}
-          className="link"
-        >
+        <Link href={`/problem/${id}/statement`} className="link">
           {title}
         </Link>
       );
@@ -127,14 +118,7 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {/* <a href={`/api/problem/${problem.id}/statement`} target="_blank">
-              <DropdownMenuItem>
-                <FileText className="mr-1 h-4 w-4" />
-                View
-              </DropdownMenuItem>
-            </a>
-            <DropdownMenuSeparator /> */}
-            <Link href={`/problem/${problem.id}`}>
+            <Link href={`/problem/${problem.id}/statement`}>
               <DropdownMenuItem>
                 <FileText className="mr-1 h-4 w-4" />
                 Open

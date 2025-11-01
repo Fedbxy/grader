@@ -125,18 +125,17 @@ export function SubmitForm({
     <div className="relative">
       {disabled && (
         <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
-          <Link
-            href={`/signin?nextUrl=problem/${problemId}`}
-            className="link text-foreground/60"
-          >
-            You need to be signed in to submit a solution.
+          <Link href={`/signin?nextUrl=problem/${problemId}/statement`}>
+            <Button variant="outline">
+              You need to be signed in to submit a solution.
+            </Button>
           </Link>
         </div>
       )}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className={`space-y-4 ${disabled ? "opacity-50" : ""}`}
+          className={`space-y-4 ${disabled ? "p-2 opacity-50" : ""}`}
         >
           <FormField
             control={form.control}

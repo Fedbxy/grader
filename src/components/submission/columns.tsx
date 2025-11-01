@@ -45,7 +45,7 @@ export const columns: ColumnDef<Submission>[] = [
       const problem = row.original.problem;
 
       return (
-        <Link href={`/submit/${problem.id}`} className="link">
+        <Link href={`/problem/${problem.id}/statement`} className="link">
           {problem.title}
         </Link>
       );
