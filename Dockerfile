@@ -1,5 +1,8 @@
 FROM oven/bun:1 AS base
 
+RUN apt-get update -y && \
+    apt-get install -y openssl1.1 && \
+    rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
 WORKDIR /app
@@ -21,7 +24,7 @@ RUN bun run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN adduser --system --uid 1001 --ingroup bun nextjs
 
@@ -40,4 +43,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" bunx prisma migrate deploy && bun server.js
+CMD ["sh", "-c", "HOSTNAME=\"0.0.0.0\" bunx prisma migrate deploy && bun server.js"]
