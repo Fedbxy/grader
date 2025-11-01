@@ -7,7 +7,6 @@ import Link from "next/link";
 import {
   FileText,
   MoreHorizontal,
-  Send,
   FileCheck2,
   Check,
   X,
@@ -20,7 +19,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AcceptedUsersDialog } from "./acceptedUsers";
@@ -46,11 +44,14 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const { title, id } = row.original;
 
       return (
-        <a href={`/api/problem/${id}/statement`} target="_blank" className="link">
+        <Link
+          href={`/problem/${id}`}
+          className="link"
+        >
           {title}
-        </a>
+        </Link>
       );
-    }
+    },
   },
   {
     id: "limits",
@@ -126,17 +127,17 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <a href={`/api/problem/${problem.id}/statement`} target="_blank">
+            {/* <a href={`/api/problem/${problem.id}/statement`} target="_blank">
               <DropdownMenuItem>
                 <FileText className="mr-1 h-4 w-4" />
                 View
               </DropdownMenuItem>
             </a>
-            <DropdownMenuSeparator />
-            <Link href={`/submit/${problem.id}`}>
+            <DropdownMenuSeparator /> */}
+            <Link href={`/problem/${problem.id}`}>
               <DropdownMenuItem>
-                <Send className="mr-1 h-4 w-4" />
-                Submit
+                <FileText className="mr-1 h-4 w-4" />
+                Open
               </DropdownMenuItem>
             </Link>
             {latestSubmissionId && (
