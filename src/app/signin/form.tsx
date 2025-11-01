@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Turnstile } from "@marsidev/react-turnstile";
+import { TurnstileWithSkeleton } from "@/components/turnstile";
 
 export function SignInForm({
     nextUrl,
@@ -95,8 +95,8 @@ export function SignInForm({
                         </FormItem>
                     )}
                 />
-                <Turnstile
-                    ref={turnstileRef}
+                <TurnstileWithSkeleton
+                    turnstileRef={turnstileRef}
                     siteKey={siteKey}
                     onError={handleTurnstileError}
                     onExpire={handleTurnstileExpire}

@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Turnstile } from "@marsidev/react-turnstile";
+import { TurnstileWithSkeleton } from "@/components/turnstile";
 import { CodeEditor } from "@/components/code-editor";
 import { Card } from "@/components/ui/card";
 
@@ -220,8 +220,8 @@ export function SubmitForm({
               <FormMessage />
             </FormItem>
           </div>
-          <Turnstile
-            ref={turnstileRef}
+          <TurnstileWithSkeleton
+            turnstileRef={turnstileRef}
             siteKey={siteKey}
             onError={handleTurnstileError}
             onExpire={handleTurnstileExpire}
