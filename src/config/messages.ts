@@ -97,6 +97,7 @@ export const messages = {
         noSubmission: "Submission not found.",
         noAnnouncement: "Announcement not found.",
         banSelf: "You cannot ban yourself.",
+        privateProblem: "You are not allowed to access this problem.",
     },
 };
 
