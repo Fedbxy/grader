@@ -4,6 +4,7 @@ import { maps } from "@/config/messages";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
+import Decimal from "decimal.js";
 
 import {
   Table,
@@ -102,10 +103,13 @@ export function Verdict({
     <div>
       <Separator className="" />
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
-        const subtaskWeight = weights ? weights[subtask] : 1;
-        const subtaskFullScore = (subtaskWeight / weight) * problemScore;
-        const subtaskScore =
-          (scores[subtask] / subtaskWeight) * subtaskFullScore;
+        const subtaskWeightDecimal = new Decimal(weights?.[subtask] ?? 1);
+        const weightDecimal = new Decimal(weight);
+        const problemScoreDecimal = new Decimal(problemScore);
+        const subtaskScoreDecimal = new Decimal(scores[subtask]);
+
+        const subtaskFullScore = subtaskWeightDecimal.div(weightDecimal).mul(problemScoreDecimal).toDecimalPlaces(2).toNumber()
+        const subtaskScore = subtaskScoreDecimal.div(subtaskWeightDecimal).mul(subtaskFullScore).toDecimalPlaces(2).toNumber()
 
         return (
           <Accordion type="single" collapsible key={subtask}>
@@ -174,10 +178,13 @@ export function Verdict({
   const classic = (
     <div className="flex flex-col overflow-x-auto rounded-lg border bg-secondary p-4">
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
-        const subtaskWeight = weights ? weights[subtask] : 1;
-        const subtaskFullScore = (subtaskWeight / weight) * problemScore;
-        const subtaskScore =
-          (scores[subtask] / subtaskWeight) * subtaskFullScore;
+        const subtaskWeightDecimal = new Decimal(weights?.[subtask] ?? 1);
+        const weightDecimal = new Decimal(weight);
+        const problemScoreDecimal = new Decimal(problemScore);
+        const subtaskScoreDecimal = new Decimal(scores[subtask]);
+
+        const subtaskFullScore = subtaskWeightDecimal.div(weightDecimal).mul(problemScoreDecimal).toDecimalPlaces(2).toNumber()
+        const subtaskScore = subtaskScoreDecimal.div(subtaskWeightDecimal).mul(subtaskFullScore).toDecimalPlaces(2).toNumber()
 
         return (
           <div key={subtask} className="mb-4">
