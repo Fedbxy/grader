@@ -11,4 +11,5 @@ ALTER TABLE "submissions" DROP COLUMN "memory",
 DROP COLUMN "time",
 DROP COLUMN "verdict",
 ADD COLUMN     "result" JSONB DEFAULT '[]',
-ADD COLUMN     "status" TEXT DEFAULT 'Pending';
+ADD COLUMN     "status" TEXT DEFAULT 'Pending',
+ADD COLUMN     "errorCode" TEXT,
