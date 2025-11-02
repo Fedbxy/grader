@@ -20,12 +20,14 @@ export function ScoreCell({
     return <Skeleton className="h-8" />;
   }
 
-  const { score, verdict } = data;
+  const { score, result, status } = data;
+  const { weights } = result;
+  const weight = weights?.reduce((a: number, b: number) => a + b, 0) || testcases;
 
   if (isRunning) {
     return (
       <span className="flex items-center text-nowrap">
-        {verdict[0]}
+        {status}
       </span>
     );
   }
@@ -34,25 +36,25 @@ export function ScoreCell({
     <div className="flex flex-col">
       <span
         className={
-          score === testcases
+          score === weight
             ? "text-constructive"
             : score === 0
               ? "text-destructive"
               : "text-warning"
         }
       >
-        {(score * problemScore) / testcases} / {problemScore}
+        {(score * problemScore) / weight} / {problemScore}
       </span>
       <Progress
         className="h-2 w-16 md:w-32"
         variant={
-          score === testcases
+          score === weight
             ? "constructive"
             : score === 0
               ? "destructive"
               : "warning"
         }
-        value={(score * 100) / testcases}
+        value={(score * 100) / weight}
       />
     </div>
   );

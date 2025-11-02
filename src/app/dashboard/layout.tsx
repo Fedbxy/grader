@@ -6,7 +6,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="container mx-auto flex flex-col space-y-2 py-10">
+    <div className="flex flex-col space-y-2 px-4 py-4 md:px-12 md:py-8">
       <NavigationTabs />
       {children}
     </div>

@@ -93,9 +93,9 @@ model Submission {
   code        String
   language    Language
   score       Int           @default(0)
-  verdict     String[]
-  time        Int[]
-  memory      Int[]
+  result      Json?         @default("[]")
+  status      String?       @default("Pending")
+  errorCode   String?
   error       String?
   problemId   Int
   userId      Int

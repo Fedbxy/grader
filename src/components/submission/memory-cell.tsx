@@ -13,17 +13,17 @@ export function MemoryCell({
 }) {
   const { data, isLoading, isRunning } = useSubmission(submissionId);
 
-  if (isLoading) {
+  if (isLoading || isRunning) {
     return <Skeleton className="h-8" />;
   }
 
-  const { memory } = data;
-
-  if (isRunning) {
-    return <Skeleton className="h-8" />;
+  let maxMemory = 0;
+  const { result } = data;
+  if (result?.memory) {
+    const memory = result.memory.flat();
+    maxMemory = Math.max(...memory);
   }
 
-  const maxMemory = Math.max(...memory);
   const isExceeded = maxMemory >= memoryLimit * 1024;
 
   return (

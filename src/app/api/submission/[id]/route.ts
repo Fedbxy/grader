@@ -16,10 +16,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         select: {
             id: true,
             score: true,
-            verdict: true,
+            result: true,
+            status: true,
+            errorCode: true,
             error: true,
-            time: true,
-            memory: true,
         },
     })
     if (!submission) {

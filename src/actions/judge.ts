@@ -45,6 +45,13 @@ export async function submitCode(data: FormData) {
             };
         }
 
+        const { user } = await validateRequest();
+        if (!user) {
+            return {
+                error: messages.auth.unauthenticated,
+            };
+        }
+
         const problem = await prisma.problem.findUnique({
             where: { id: problemId },
         });
@@ -53,16 +60,9 @@ export async function submitCode(data: FormData) {
                 error: messages.database.noProblem,
             };
         }
-        if (problem.visibility === "private") {
+        if (problem.visibility === "private" && user.role !== "admin") {
             return {
                 error: messages.database.privateProblem,
-            };
-        }
-
-        const { user } = await validateRequest();
-        if (!user) {
-            return {
-                error: messages.auth.unauthenticated,
             };
         }
 
@@ -72,9 +72,6 @@ export async function submitCode(data: FormData) {
                 userId: user.id,
                 language: language as Language,
                 code: code,
-                verdict: [
-                    "Pending"
-                ],
             },
         });
         submissionId = submission.id;
@@ -121,7 +118,22 @@ export async function getSubmission(id: number) {
 
             const json = await response.json();
 
-            if (json.error) {
+            if (json.errorCode) {
+                const score = json.score;
+                const errorCode = json.errorCode;
+                const error = json.error;
+
+                await prisma.submission.update({
+                    where: { id },
+                    data: {
+                        score,
+                        status: null,
+                        result: [],
+                        errorCode,
+                        error,
+                    },
+                });
+
                 clearInterval(interval);
                 return {
                     error: json.error
@@ -129,22 +141,17 @@ export async function getSubmission(id: number) {
             }
 
             if (json.result) {
+                const score = json.score;
                 const result = json.result;
-                const error = result[0].error;
-                const score = json.score ?? 0;
-
-                const verdict = result.map((item: any) => item.verdict);
-                const time = result.map((item: any) => Number(item.time ?? 0));
-                const memory = result.map((item: any) => Number(item.memory ?? 0));
 
                 await prisma.submission.update({
                     where: { id },
                     data: {
                         score,
-                        verdict,
-                        time,
-                        memory,
-                        error,
+                        status: null,
+                        result,
+                        errorCode: null,
+                        error: null,
                     },
                 });
 
@@ -205,9 +212,7 @@ export async function getSubmission(id: number) {
             await prisma.submission.update({
                 where: { id },
                 data: {
-                    verdict: [
-                        json.verdict
-                    ],
+                    status: json.status,
                 },
             });
         } catch (error) {
