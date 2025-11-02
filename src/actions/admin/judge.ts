@@ -91,5 +91,5 @@ export async function rejudgeAllSubmission(problemId: number) {
         };
     }
 
-    redirect(`/dashboard/submission`);
+    redirect(`/problem/${problemId}/submission`);
 }

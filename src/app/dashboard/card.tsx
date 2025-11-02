@@ -1,11 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Path } from "@/components/path";
 import { DataTable } from "@/components/table/data-table";
 
@@ -21,14 +15,12 @@ export function DashboardCard<TData, TValue>({
   data: TData[];
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+    <div className="flex flex-col space-y-4">
+      <div>
+        <h1 className="text-2xl font-semibold">{title}</h1>
         <Path path={path} />
-      </CardHeader>
-      <CardContent>
-        <DataTable columns={columns} data={data} />
-      </CardContent>
-    </Card>
+      </div>
+      <DataTable columns={columns} data={data} />
+    </div>
   );
 }

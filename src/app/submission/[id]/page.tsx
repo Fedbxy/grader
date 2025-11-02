@@ -38,10 +38,19 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const { user } = await validateRequest();
 
-  const maxTime = Math.max(...submission.time);
+  const result: any = submission.result || {};
+  let maxTime = 0;
+  if (result && result.times) {
+    const times = (result.times as number[][]).flat();
+    maxTime = times.length ? Math.max(...times) : 0;
+  }
   const isTimeLimitExceeded = maxTime >= submission.problem.timeLimit;
 
-  const maxMemory = Math.max(...submission.memory);
+  let maxMemory = 0;
+  if (result && result.memories) {
+    const memories = (result.memories as number[][]).flat();
+    maxMemory = memories.length ? Math.max(...memories) : 0;
+  }
   const isMemoryLimitExceeded =
     maxMemory >= submission.problem.memoryLimit * 1024;
 
@@ -147,9 +156,11 @@ export default async function Page({ params }: { params: { id: string } }) {
                 ))}
               </TableBody>
             </Table>
-            <Card className="overflow-hidden">
-              <Verdict submissionId={submission.id} />
-            </Card>
+            <Verdict
+              submissionId={submission.id}
+              testcases={submission.problem.testcases}
+              problemScore={submission.problem.score}
+            />
             <Card className="relative overflow-hidden">
               <div className="absolute right-2 top-2 z-20 flex space-x-2">
                 {user?.role === "admin" && <RejudgeButton id={submission.id} />}

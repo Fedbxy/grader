@@ -13,17 +13,17 @@ export function TimeCell({
 }) {
   const { data, isLoading, isRunning } = useSubmission(submissionId);
 
-  if (isLoading) {
+  if (isLoading || isRunning) {
     return <Skeleton className="h-8" />;
   }
 
-  const { time } = data;
-
-  if (isRunning) {
-    return <Skeleton className="h-8" />;
+  let maxTime = 0;
+  const { result } = data;
+  if (result?.times) {
+    const times = result.times.flat();
+    maxTime = Math.max(...times);
   }
 
-  const maxTime = Math.max(...time);
   const isExceeded = maxTime >= timeLimit;
 
   return (
