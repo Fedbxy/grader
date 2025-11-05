@@ -1,0 +1,24 @@
+name: Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-check:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Verify Docker Compose Build
+        run: docker compose -f docker-compose.prod.yaml build
