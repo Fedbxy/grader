@@ -2,6 +2,7 @@ FROM oven/bun:1 AS base
 
 RUN apt-get update -y && \
     apt-get install -y openssl1.1 && \
+    apt-get install -y adduser && \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
@@ -17,7 +18,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN bunx prisma generate
+RUN bunx prisma@5 generate
 RUN bun run build
 
 
@@ -43,4 +44,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["sh", "-c", "HOSTNAME=\"0.0.0.0\" bunx prisma migrate deploy && bun server.js"]
+CMD ["sh", "-c", "HOSTNAME=\"0.0.0.0\" bunx prisma@5 migrate deploy && bun server.js"]
