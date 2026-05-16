@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
+import { maps } from "@/config/messages";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -58,13 +59,12 @@ export default async function Page({ params }: { params: { id: string } }) {
     {
       label: "Problem",
       value: (
-        <a
-          href={`/api/problem/${submission.problem.id}/statement`}
-          target="_blank"
+        <Link
+          href={`/problem/${submission.problem.id}/statement`}
           className="link"
         >
           {submission.problem.title}
-        </a>
+        </Link>
       ),
     },
     {
@@ -81,7 +81,9 @@ export default async function Page({ params }: { params: { id: string } }) {
     },
     {
       label: "Language",
-      value: submission.language,
+      value:
+        maps.language[submission.language as keyof typeof maps.language] ||
+        submission.language,
     },
     {
       label: "Score",

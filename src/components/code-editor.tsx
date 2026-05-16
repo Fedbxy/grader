@@ -19,7 +19,7 @@ export function CodeEditor({
   const { resolvedTheme } = useTheme();
   const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "vs";
 
-  if (language === "py") {
+  if (language === "py" || language === "pypy") {
     language = "python";
   }
 

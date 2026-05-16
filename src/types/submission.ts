@@ -19,4 +19,4 @@ export type Submission = {
     updatedAt: Date;
 }   
 
-export type Language = "c" | "cpp" | "py";
+export type Language = "c" | "cpp" | "py" | "pypy";

@@ -16,6 +16,7 @@ enum Language {
   c
   cpp
   py
+  pypy
 }
 
 enum Visibility {
