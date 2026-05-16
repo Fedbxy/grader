@@ -23,7 +23,7 @@ export default async function Page() {
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </Link>
-        <Link href="/problemset">
+        <Link href="/problem">
           <Button variant="secondary" className="text-lg font-semibold">
             Problems
             <ArrowRight className="ml-2 h-5 w-5" />
