@@ -12,6 +12,7 @@ import { useTurnstile } from "@/hooks/turnstile";
 import { handleTurnstileStatus } from "@/utils/turnstile";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { maps } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -195,9 +196,11 @@ export function SubmitForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="cpp">C++</SelectItem>
-                      <SelectItem value="c">C</SelectItem>
-                      <SelectItem value="py">Python</SelectItem>
+                      {Object.entries(maps.language).map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />

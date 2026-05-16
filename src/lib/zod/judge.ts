@@ -2,7 +2,7 @@ import { z } from "zod";
 import { messages } from "@/config/messages";
 import { limits } from "@/config/limits";
 
-export const languageSchema = z.enum(["c", "cpp", "py"]).optional()
+export const languageSchema = z.enum(["c", "cpp", "py", "pypy"]).optional()
     .refine((value) => value !== undefined, {
         message: messages.schema.language.required
     });

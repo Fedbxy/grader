@@ -114,5 +114,11 @@ export const maps = {
             JE: "Judge Error",
             SE: "System Error",
         },
-    }
+    },
+    language: {
+        cpp: "C++17 (GCC, -O2)",
+        c: "C11 (GCC, -O2)",
+        py: "Python3 (CPython)",
+        pypy: "Python3 (PyPy3)",
+    },
 }
