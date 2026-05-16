@@ -81,6 +81,8 @@ jobs:
           service_token_secret: ${{ secrets.CLOUDFLARE_SERVICE_TOKEN_SECRET }}
           commands: |
             cd ~/Desktop/grader
+            git fetch origin main
+            git reset --hard origin/main
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
             docker compose -f docker-compose.prod.yaml pull
             docker compose -f docker-compose.prod.yaml up -d --force-recreate
