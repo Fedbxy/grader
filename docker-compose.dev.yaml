@@ -10,6 +10,8 @@ services:
       - 5432:5432
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - grader-network
     restart: unless-stopped
 
   minio:
@@ -24,8 +26,17 @@ services:
     volumes:
       - minio-data:/data
     command: server --address ":9001" --console-address ":9000" /data
+    networks:
+      - grader-network
     restart: unless-stopped
 
 volumes:
   postgres-data:
   minio-data:
+
+# Named to match docker-compose.prod.yaml, so it resolves to
+# grader_grader-network: the external network the judge attaches to. Without
+# it the judge lands on its own network and cannot resolve postgres-db.
+networks:
+  grader-network:
+    driver: bridge
