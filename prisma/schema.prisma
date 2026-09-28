@@ -24,6 +24,13 @@ enum Visibility {
   private
 }
 
+enum JudgeStatus {
+  pending
+  judging
+  done
+  failed
+}
+
 model User {
   id           Int            @id @default(autoincrement())
   username     String         @unique
@@ -70,6 +77,8 @@ model Problem {
   Submission  Submission[]
   UserProblem UserProblem[]
 
+  testcaseVersion String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -104,9 +113,14 @@ model Submission {
   user        User          @relation(fields: [userId], references: [id])
   UserProblem UserProblem[]
 
+  judgeStatus JudgeStatus @default(pending)
+  priority    Int         @default(0)
+  attempts    Int         @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([judgeStatus, priority, id])
   @@map("submissions")
 }
 
