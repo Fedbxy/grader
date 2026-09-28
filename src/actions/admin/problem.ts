@@ -62,7 +62,10 @@ export async function editProblem(id: number, data: FormData) {
         }
 
         if (testcase) {
-            await uploadTestcase(id, testcase);
+            const uploadError = await uploadTestcase(id, testcase);
+            if (uploadError) {
+                return { error: uploadError };
+            }
         }
 
         if (visibility !== problem.visibility) {
@@ -160,7 +163,10 @@ export async function createProblem(data: FormData) {
         }
 
         if (testcase) {
-            await uploadTestcase(newProblem.id, testcase);
+            const uploadError = await uploadTestcase(newProblem.id, testcase);
+            if (uploadError) {
+                return { error: uploadError };
+            }
         }
     } catch (error) {
         console.error("Error: ", error);
