@@ -9,7 +9,7 @@ import { allowAccess } from "@/utils/access";
 // the queue is ordered by id, and rejudged rows are by definition older.
 const requeue = {
     judgeStatus: "pending",
-    status: "Pending",
+    status: "In queue",
     priority: 1,
     attempts: 0,
     score: 0,

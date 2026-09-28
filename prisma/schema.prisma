@@ -104,7 +104,7 @@ model Submission {
   language    Language
   score       Int           @default(0)
   result      Json?         @default("[]")
-  status      String?       @default("Pending")
+  status      String?       @default("In queue")
   errorCode   String?
   error       String?
   problemId   Int
