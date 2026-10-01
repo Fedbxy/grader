@@ -12,7 +12,10 @@ env:
 jobs:
   build-and-push-image:
     name: Build and Push Docker Image
-    runs-on: ubuntu-latest
+    # The production host is arm64, and images built on ubuntu-latest are
+    # amd64-only: the host could never pull them ("no matching manifest for
+    # linux/arm64/v8"), so deploys silently ran images built on the host.
+    runs-on: ubuntu-24.04-arm
 
     permissions:
       contents: read
