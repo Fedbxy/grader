@@ -10,9 +10,9 @@ import { limits } from "@/config/limits";
 import { Language } from "@/types/submission";
 import { useTurnstile } from "@/hooks/turnstile";
 import { handleTurnstileStatus } from "@/utils/turnstile";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { maps } from "@/config/messages";
+import { maps, messages } from "@/config/messages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +51,7 @@ export function SubmitForm({
   latestLanguage?: Language;
   disabled?: boolean;
 }) {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -114,12 +115,15 @@ export function SubmitForm({
 
     const response = await submitCode(data);
 
-    if (response?.error) {
+    // Saved only when the action says where to go next. No result at all is
+    // what a request blocked before reaching the server (by a firewall) gives.
+    if (!response?.redirectTo) {
       resetTurnstile();
-      return toast.error(response.error);
+      return toast.error(response?.error ?? messages.form.noResponse);
     }
 
-    return toast.success("Your solution has been submitted.");
+    toast.success("Your solution has been submitted.");
+    router.push(response.redirectTo);
   }
 
   return (

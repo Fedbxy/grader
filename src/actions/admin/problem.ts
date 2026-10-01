@@ -5,12 +5,13 @@ import { validateRequest } from "@/lib/auth";
 import { allowAccess } from "@/utils/access";
 import { editProblemSchema, createProblemSchema } from "@/lib/zod/problem";
 import { Visibility } from "@/types/problem";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { messages } from "@/config/messages";
 import { uploadFile } from "@/lib/minio";
 import { uploadTestcase } from "@/utils/uploadTestcase";
+import { ActionResult } from "@/types/action";
 
-export async function editProblem(id: number, data: FormData) {
+export async function editProblem(id: number, data: FormData): Promise<ActionResult> {
     try {
         const accessResult = await allowAccess("admin", "action");
         if (accessResult) {
@@ -104,10 +105,11 @@ export async function editProblem(id: number, data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/dashboard/problem");
+    revalidatePath("/dashboard/problem");
+    return { redirectTo: "/dashboard/problem" };
 }
 
-export async function createProblem(data: FormData) {
+export async function createProblem(data: FormData): Promise<ActionResult> {
     try {
         const accessResult = await allowAccess("admin", "action");
         if (accessResult) {
@@ -174,5 +176,6 @@ export async function createProblem(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/dashboard/problem");
+    revalidatePath("/dashboard/problem");
+    return { redirectTo: "/dashboard/problem" };
 }

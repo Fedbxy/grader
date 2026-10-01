@@ -5,11 +5,12 @@ import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Language } from "@/types/submission";
 import { messages } from "@/config/messages";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { submitSchema } from "@/lib/zod/judge";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { ActionResult } from "@/types/action";
 
-export async function submitCode(data: FormData) {
+export async function submitCode(data: FormData): Promise<ActionResult> {
     let submissionId: number;
 
     try {
@@ -18,7 +19,7 @@ export async function submitCode(data: FormData) {
         const captchaResult = await verifyTurnstile(token);
         if (!captchaResult.success) {
             return {
-                error: captchaResult.error,
+                error: captchaResult.error ?? messages.form.unexpected,
             };
         }
 
@@ -80,5 +81,6 @@ export async function submitCode(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect(`/submission/${submissionId}`);
+    revalidatePath(`/submission/${submissionId}`);
+    return { redirectTo: `/submission/${submissionId}` };
 }

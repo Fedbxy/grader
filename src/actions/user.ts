@@ -4,12 +4,14 @@ import { changePasswordSchema, editAccountSchema } from "@/lib/zod/user";
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { messages } from "@/config/messages";
 import { compare, hash } from "bcrypt";
 import { lucia } from "@/lib/auth";
 import { uploadFile, deleteFile } from "@/lib/minio";
+import { ActionResult } from "@/types/action";
 
-export async function editAccount(data: FormData) {
+export async function editAccount(data: FormData): Promise<ActionResult> {
     try {
         const avatar = data.get("avatar") as File || undefined;
         const displayName = data.get("displayName") as string;
@@ -65,7 +67,8 @@ export async function editAccount(data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/settings");
+    revalidatePath("/settings");
+    return { redirectTo: "/settings" };
 }
 
 export async function changePassword(data: FormData) {

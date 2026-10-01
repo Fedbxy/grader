@@ -21,8 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import type { User } from "lucia";
+import { useRouter } from "next/navigation";
 
 export function EditAccountForm({ user }: { user: User }) {
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof editAccountSchema>>({
         resolver: zodResolver(editAccountSchema),
         defaultValues: {
@@ -57,11 +60,14 @@ export function EditAccountForm({ user }: { user: User }) {
 
         const response = await editAccount(data);
 
-        if (response?.error) {
-            return toast.error(response.error);
+        // Saved only when the action says where to go next. No result at all is
+        // what a request blocked before reaching the server (by a firewall) gives.
+        if (!response?.redirectTo) {
+            return toast.error(response?.error ?? messages.form.noResponse);
         }
 
-        return toast.success("Your profile has been updated.");
+        toast.success("Your profile has been updated.");
+        router.push(response.redirectTo);
     }
 
     return (
