@@ -1,0 +1,12 @@
+-- Mark every problem that exists at the switch-over as 'legacy'.
+--
+-- These problems' testcases live in the judge volume's flat layout, where the
+-- old HTTP judge read them. The worker serves 'legacy' problems from there, so
+-- the deploy does not depend on first migrating testcases to MinIO;
+-- scripts/migrate_testcases.py can do that later, replacing the marker with a
+-- real version.
+--
+-- Only problems that exist now are marked. One created after this point has no
+-- testcases until an admin uploads some, and must not fall back to the volume:
+-- a directory there named after its id could belong to a deleted problem.
+UPDATE "problems" SET "testcaseVersion" = 'legacy' WHERE "testcaseVersion" IS NULL;

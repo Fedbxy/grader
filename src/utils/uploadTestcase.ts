@@ -1,17 +1,26 @@
-const protocol = process.env.BACKEND_PROTOCOL;
-const endpoint = process.env.BACKEND_ENDPOINT;
-const port = process.env.BACKEND_PORT;
+"use server";
 
-export async function uploadTestcase(id: number, file: File) {
-    const data = new FormData();
-    data.append("file", file);
+import { uploadFile } from "@/lib/minio";
+import prisma from "@/lib/prisma";
+import { messages } from "@/config/messages";
 
-    const response = await fetch(`${protocol}://${endpoint}:${port}/testcase/${id}/upload`, {
-        method: "POST",
-        body: data,
-    });
+/**
+ * Publish a problem's testcases.
+ *
+ * MinIO holds the archive; the database holds the version token the judge
+ * compares against its local cache. The judge picks the change up on its next
+ * submission for this problem, so nothing needs to be notified here.
+ */
+export async function uploadTestcase(problemId: number, file: File) {
+    try {
+        const version = await uploadFile(`problem/${problemId}/testcase.zip`, file);
 
-    if (!response.ok) {
-        return "Failed to upload testcase.";
+        await prisma.problem.update({
+            where: { id: problemId },
+            data: { testcaseVersion: version },
+        });
+    } catch (error) {
+        console.error(error);
+        return messages.form.unexpected;
     }
 }

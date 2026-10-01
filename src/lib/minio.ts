@@ -17,8 +17,12 @@ export async function uploadFile(fileName: string, sourceFile: File) {
         await minioClient.makeBucket(bucket);
     }
 
-    const fileBuffer = Buffer.from(await sourceFile.arrayBuffer());
-    await minioClient.putObject(bucket, fileName, fileBuffer);
+    // Streamed rather than buffered: testcase archives run to ~100MB, and
+    // Buffer.from(await file.arrayBuffer()) would hold all of it in the heap.
+    const stream = Readable.fromWeb(sourceFile.stream() as any);
+    const info = await minioClient.putObject(bucket, fileName, stream, sourceFile.size);
+
+    return info.etag;
 }
 
 export async function getFile(fileName: string) {

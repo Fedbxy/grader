@@ -30,6 +30,30 @@ import {
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 
+/**
+ * Convert a subtask's passed-case count into displayed points.
+ *
+ * result.scores[i] is a count of cases, not points: the weighting lives here so
+ * that changing a problem's max score never requires a rejudge. Rounded once,
+ * at the end — rounding subtaskFullScore first and then multiplying by it
+ * compounds the error.
+ */
+function subtaskDisplay(
+  passed: number,
+  caseCount: number,
+  subtaskWeight: number,
+  totalWeight: number,
+  problemScore: number,
+) {
+  const full = new Decimal(subtaskWeight).div(totalWeight).mul(problemScore);
+  const earned = new Decimal(passed).div(caseCount || 1).mul(full);
+
+  return {
+    subtaskScore: earned.toDecimalPlaces(2).toNumber(),
+    subtaskFullScore: full.toDecimalPlaces(2).toNumber(),
+  };
+}
+
 export function Verdict({
   submissionId,
   testcases,
@@ -103,13 +127,9 @@ export function Verdict({
     <div>
       <Separator className="" />
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
-        const subtaskWeightDecimal = new Decimal(weights?.[subtask] ?? 1);
-        const weightDecimal = new Decimal(weight);
-        const problemScoreDecimal = new Decimal(problemScore);
-        const subtaskScoreDecimal = new Decimal(scores[subtask]);
-
-        const subtaskFullScore = subtaskWeightDecimal.div(weightDecimal).mul(problemScoreDecimal).toDecimalPlaces(2).toNumber()
-        const subtaskScore = subtaskScoreDecimal.div(subtaskWeightDecimal).mul(subtaskFullScore).toDecimalPlaces(2).toNumber()
+        const { subtaskScore, subtaskFullScore } = subtaskDisplay(
+          scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
+        );
 
         return (
           <Accordion type="single" collapsible key={subtask}>
@@ -178,13 +198,9 @@ export function Verdict({
   const classic = (
     <div className="flex flex-col overflow-x-auto rounded-lg border bg-secondary p-4">
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
-        const subtaskWeightDecimal = new Decimal(weights?.[subtask] ?? 1);
-        const weightDecimal = new Decimal(weight);
-        const problemScoreDecimal = new Decimal(problemScore);
-        const subtaskScoreDecimal = new Decimal(scores[subtask]);
-
-        const subtaskFullScore = subtaskWeightDecimal.div(weightDecimal).mul(problemScoreDecimal).toDecimalPlaces(2).toNumber()
-        const subtaskScore = subtaskScoreDecimal.div(subtaskWeightDecimal).mul(subtaskFullScore).toDecimalPlaces(2).toNumber()
+        const { subtaskScore, subtaskFullScore } = subtaskDisplay(
+          scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
+        );
 
         return (
           <div key={subtask} className="mb-4">
