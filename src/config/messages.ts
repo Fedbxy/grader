@@ -78,6 +78,7 @@ export const messages = {
     form: {
         invalid: "Your request is invalid.",
         unexpected: "An unexpected error occurred. Please try again later.",
+        noResponse: "Your request did not reach the server, so nothing was saved. Please try again.",
         noChanges: "No changes were made.",
         samePassword: "New password must be different from the current password.",
         invalidPassword: "Your current password is invalid.",

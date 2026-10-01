@@ -28,8 +28,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 export function EditUserForm({ user }: { user: User }) {
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof editUserSchema>>({
         resolver: zodResolver(editUserSchema),
         defaultValues: {
@@ -80,11 +83,14 @@ export function EditUserForm({ user }: { user: User }) {
 
         const response = await editUser(user.id, data);
 
-        if (response?.error) {
-            return toast.error(response.error);
+        // Saved only when the action says where to go next. No result at all is
+        // what a request blocked before reaching the server (by a firewall) gives.
+        if (!response?.redirectTo) {
+            return toast.error(response?.error ?? messages.form.noResponse);
         }
 
-        return toast.success("You have successfully edited the user.");
+        toast.success("You have successfully edited the user.");
+        router.push(response.redirectTo);
     }
 
     return (

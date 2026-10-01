@@ -27,8 +27,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 export function EditProblemForm({ problem }: { problem: Problem }) {
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof editProblemSchema>>({
         resolver: zodResolver(editProblemSchema),
         defaultValues: {
@@ -92,11 +95,14 @@ export function EditProblemForm({ problem }: { problem: Problem }) {
 
         const response = await editProblem(problem.id, data);
 
-        if (response?.error) {
-            return toast.error(response.error);
+        // Saved only when the action says where to go next. No result at all is
+        // what a request blocked before reaching the server (by a firewall) gives.
+        if (!response?.redirectTo) {
+            return toast.error(response?.error ?? messages.form.noResponse);
         }
 
-        return toast.success("You have successfully edited the problem.");
+        toast.success("You have successfully edited the problem.");
+        router.push(response.redirectTo);
     }
 
     return (

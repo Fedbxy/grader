@@ -7,10 +7,12 @@ import { editUserSchema } from "@/lib/zod/user";
 import { Role } from "@/types/user";
 import { hash } from "bcrypt";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { messages } from "@/config/messages";
 import { uploadFile, deleteFile } from "@/lib/minio";
+import { ActionResult } from "@/types/action";
 
-export async function editUser(id: number, data: FormData) {
+export async function editUser(id: number, data: FormData): Promise<ActionResult> {
     try {
         const accessResult = await allowAccess("admin", "action");
         if (accessResult) {
@@ -104,7 +106,8 @@ export async function editUser(id: number, data: FormData) {
             error: messages.form.unexpected,
         };
     }
-    redirect("/dashboard/user");
+    revalidatePath("/dashboard/user");
+    return { redirectTo: "/dashboard/user" };
 }
 
 export async function banUser(id: number) {
