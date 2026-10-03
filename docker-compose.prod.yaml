@@ -1,6 +1,8 @@
 services:
   app:
-    image: ${REGISTRY}/${IMAGE_NAME}:main
+    # The image CI publishes. Named outright rather than through .env, so a
+    # manual `docker compose` on the host runs the same image a deploy does.
+    image: ghcr.io/fedbxy/grader:main
     build:
       context: .
       dockerfile: Dockerfile
