@@ -94,13 +94,6 @@ jobs:
             # minio keep running from their cached images.
             docker compose -f docker-compose.prod.yaml pull app || { echo "pull failed; not deploying"; exit 1; }
             docker compose -f docker-compose.prod.yaml up -d --force-recreate
-
-            # Before the image name was fixed, the host ran images it built
-            # itself, tagged ghcr.io/grader:main. Nothing refers to that tag
-            # now; removing it means nothing can start the old frontend by
-            # accident. A no-op once it is gone, and refused by Docker if any
-            # container still uses it.
-            docker image rm ghcr.io/grader:main 2>/dev/null && echo "removed old image ghcr.io/grader:main" || true
             docker image prune -f
 
             # Fail the deploy unless the app comes up on the new image. The
