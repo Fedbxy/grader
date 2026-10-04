@@ -120,6 +120,10 @@ model Submission {
   // Visible only to the submitter and admins. Set at creation for admin submitters.
   hidden Boolean @default(false)
 
+  // The code is readable by anyone who can see the submission. Off until the
+  // submitter or an admin turns it on.
+  codePublic Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
