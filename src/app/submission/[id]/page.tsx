@@ -4,7 +4,11 @@ import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
 import { publicUserSelect } from "@/lib/select";
 import { maps } from "@/config/messages";
-import { canViewCode, canViewSubmission } from "@/utils/submission";
+import {
+  canShareCode,
+  canViewCode,
+  canViewSubmission,
+} from "@/utils/submission";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -15,14 +19,21 @@ import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
 import { CodeEditor } from "@/components/code-editor";
-import { CopyButton, HideButton, RejudgeButton } from "./buttons";
+import {
+  CopyButton,
+  CopyLinkButton,
+  HideButton,
+  RejudgeButton,
+  ShareSwitch,
+} from "./buttons";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { Info } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Info, Lock, Share2 } from "lucide-react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   if (isNaN(Number(params.id))) {
@@ -169,18 +180,48 @@ export default async function Page({ params }: { params: { id: string } }) {
               problemScore={submission.problem.score}
             />
             {canViewCode(user, submission) ? (
-              <Card className="relative overflow-hidden">
-                <div className="absolute right-2 top-2 z-20 flex space-x-2">
-                  {user?.role === "admin" && (
-                    <>
-                      <HideButton
-                        id={submission.id}
-                        hidden={submission.hidden}
-                      />
-                      <RejudgeButton id={submission.id} />
-                    </>
+              <Card className="overflow-hidden">
+                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-3 py-2">
+                  {submission.codePublic ? (
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Share2 className="h-3 w-3" />
+                      {user?.id === submission.userId
+                        ? "Shared"
+                        : `Shared by ${submission.user.displayName}`}
+                      {submission.hidden && " · hidden from others"}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="gap-1.5">
+                      <Lock className="h-3 w-3" />
+                      Private
+                    </Badge>
                   )}
-                  <CopyButton code={submission.code} />
+                  <div className="flex flex-wrap items-center gap-2">
+                    {canShareCode(user, submission) && (
+                      <>
+                        <ShareSwitch
+                          id={submission.id}
+                          codePublic={submission.codePublic}
+                          hidden={submission.hidden}
+                        />
+                        <Separator
+                          orientation="vertical"
+                          className="mx-1 hidden h-5 sm:block"
+                        />
+                      </>
+                    )}
+                    {submission.codePublic && <CopyLinkButton />}
+                    <CopyButton code={submission.code} />
+                    {user?.role === "admin" && (
+                      <>
+                        <HideButton
+                          id={submission.id}
+                          hidden={submission.hidden}
+                        />
+                        <RejudgeButton id={submission.id} />
+                      </>
+                    )}
+                  </div>
                 </div>
                 <CodeEditor
                   code={submission.code}
@@ -189,9 +230,15 @@ export default async function Page({ params }: { params: { id: string } }) {
                 />
               </Card>
             ) : (
-              <Card>
-                <CardContent className="p-6 text-sm text-muted-foreground">
-                  Only the submitter and admins can view this code.
+              <Card className="border-dashed shadow-none">
+                <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold">This code is private</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Only {submission.user.displayName} and admins can see it.
+                  </p>
                 </CardContent>
               </Card>
             )}

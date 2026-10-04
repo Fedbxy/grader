@@ -20,9 +20,38 @@ export function canViewSubmission(
     return !submission.hidden || viewer?.id === submission.userId;
 }
 
-// Whether the viewer may read a submission's code (only its submitter and admins).
-export function canViewCode(viewer: Viewer, submission: { userId: number }): boolean {
+// Whether the viewer may read a submission's code: admins, the submitter, or
+// anyone once the code is shared. Never beyond canViewSubmission, so a hidden
+// submission or one on a private problem stays closed even if its code is shared.
+export function canViewCode(
+    viewer: Viewer,
+    submission: {
+        userId: number;
+        hidden: boolean;
+        codePublic: boolean;
+        problem: { visibility: string };
+    },
+): boolean {
+    if (!canViewSubmission(viewer, submission)) {
+        return false;
+    }
+    return (
+        submission.codePublic ||
+        (viewer !== null && (viewer.role === "admin" || viewer.id === submission.userId))
+    );
+}
+
+// Whether the viewer may turn code sharing on or off: the submitter and admins.
+export function canShareCode(viewer: Viewer, submission: { userId: number }): boolean {
     return viewer !== null && (viewer.role === "admin" || viewer.id === submission.userId);
+}
+
+// Whether sharing may be switched on. A hidden submission can't be shared:
+// nobody else could see it anyway. Sharing that is already on stays on (the
+// submitter's choice returns if the submission is shown again) and can still
+// be switched off.
+export function canStartSharing(submission: { hidden: boolean }): boolean {
+    return !submission.hidden;
 }
 
 // The `where` fragment for submission lists: only the submissions the viewer may open.

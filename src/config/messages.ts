@@ -99,6 +99,7 @@ export const messages = {
         noAnnouncement: "Announcement not found.",
         banSelf: "You cannot ban yourself.",
         privateProblem: "You are not allowed to access this problem.",
+        hiddenSubmissionShare: "Hidden submissions can't be shared.",
     },
 };
 

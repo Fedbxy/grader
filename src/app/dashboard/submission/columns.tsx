@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { RejudgeButton } from "./rejudge";
 import { ToggleVisibility } from "./toggle-visibility";
+import { ToggleCodeShare } from "./toggle-code-share";
 import { Eye } from "lucide-react";
 
 export const columns: ColumnDef<SubmissionRow>[] = [
@@ -43,6 +44,11 @@ export const columns: ColumnDef<SubmissionRow>[] = [
             </Link>
             <DropdownMenuSeparator />
             <ToggleVisibility id={submission.id} hidden={submission.hidden} />
+            <ToggleCodeShare
+              id={submission.id}
+              codePublic={submission.codePublic}
+              hidden={submission.hidden}
+            />
             <RejudgeButton id={submission.id} />
           </DropdownMenuContent>
         </DropdownMenu>
