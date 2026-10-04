@@ -1,15 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { rejudge } from "@/actions/admin/judge";
 import { setSubmissionHidden } from "@/actions/admin/submission";
+import { setCodePublic } from "@/actions/submission";
 import { useSWRConfig } from "swr";
 
-import { Check, Clipboard } from "lucide-react";
+import { Check, Clipboard, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Eye, EyeOff, RefreshCcw } from "lucide-react";
+
+// A square icon button for the code toolbar. The tooltip doubles as its name.
+function ToolbarButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          className="h-8 w-8"
+          variant="outline"
+          size="icon"
+          aria-label={label}
+          onClick={onClick}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{label}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function CopyButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -22,14 +60,65 @@ export function CopyButton({ code }: { code: string }) {
   }
 
   return (
-    <Button
-      className="h-8 w-8"
-      variant="outline"
-      size="icon"
-      onClick={handleCopy}
-    >
+    <ToolbarButton label="Copy code" onClick={handleCopy}>
       {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-    </Button>
+    </ToolbarButton>
+  );
+}
+
+export function CopyLinkButton() {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <ToolbarButton label="Copy link" onClick={handleCopy}>
+      {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+    </ToolbarButton>
+  );
+}
+
+export function ShareSwitch({
+  id,
+  codePublic,
+}: {
+  id: number;
+  codePublic: boolean;
+}) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
+  async function handleToggle(checked: boolean) {
+    const result = await setCodePublic(id, checked);
+
+    if (result?.error) {
+      return toast.error(result.error);
+    }
+
+    startTransition(() => router.refresh());
+
+    return toast.success(
+      `Code for submission #${id} is now ${checked ? "shared" : "private"}.`,
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Switch
+        id={`share-code-${id}`}
+        checked={codePublic}
+        disabled={pending}
+        onCheckedChange={handleToggle}
+      />
+      <Label htmlFor={`share-code-${id}`} className="cursor-pointer">
+        Share code
+      </Label>
+    </div>
   );
 }
 
@@ -50,14 +139,9 @@ export function RejudgeButton({ id }: { id: number }) {
     }
 
     return (
-        <Button
-        className="h-8 w-8"
-        variant="outline"
-        size="icon"
-        onClick={handleRejudge}
-      >
-        <RefreshCcw className="h-4 w-4" />
-      </Button>
+        <ToolbarButton label="Rejudge" onClick={handleRejudge}>
+            <RefreshCcw className="h-4 w-4" />
+        </ToolbarButton>
     );
 }
 
@@ -79,14 +163,11 @@ export function HideButton({ id, hidden }: { id: number; hidden: boolean }) {
     }
 
     return (
-        <Button
-            className="h-8 w-8"
-            variant="outline"
-            size="icon"
-            title={hidden ? "Show submission" : "Hide submission"}
+        <ToolbarButton
+            label={hidden ? "Show submission" : "Hide submission"}
             onClick={handleToggle}
         >
             {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-        </Button>
+        </ToolbarButton>
     );
 }

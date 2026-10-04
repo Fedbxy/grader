@@ -41,6 +41,11 @@ export function canViewCode(
     );
 }
 
+// Whether the viewer may turn code sharing on or off: the submitter and admins.
+export function canShareCode(viewer: Viewer, submission: { userId: number }): boolean {
+    return viewer !== null && (viewer.role === "admin" || viewer.id === submission.userId);
+}
+
 // The `where` fragment for submission lists: only the submissions the viewer may open.
 export function visibleSubmissionsWhere(viewer: Viewer): Prisma.SubmissionWhereInput {
     if (viewer?.role === "admin") {
