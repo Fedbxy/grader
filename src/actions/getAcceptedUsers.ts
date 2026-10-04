@@ -2,38 +2,28 @@
 
 import prisma from "@/lib/prisma";
 import { messages } from "@/config/messages";
+import { listAcceptedUsers } from "@/utils/accepted";
 
 export async function getAcceptedUsers(problemId: number) {
-    const data = await prisma.problem.findUnique({
+    const problem = await prisma.problem.findUnique({
         where: {
             id: problemId,
         },
         select: {
             title: true,
-            // A solver whose latest submission is hidden (an admin testing) does not count.
-            UserProblem: {
-                where: { submission: { hidden: false } },
-                include: {
-                    user: {
-                        select: {
-                            id: true,
-                            displayName: true,
-                        },
-                    },
-                },
-            },
         },
     });
-    if (!data) {
+    if (!problem) {
         return {
             error: messages.database.noProblem,
         };
     }
 
-    const acceptedUsers = data.UserProblem.filter((userProblem) => userProblem.isAccepted).map((userProblem) => userProblem.user);
+    // Distinct solvers, hidden submissions excluded (an admin testing does not count).
+    const acceptedUsers = await listAcceptedUsers(problemId);
 
     return {
-        title: data.title,
+        title: problem.title,
         acceptedUsers,
     };
 }
