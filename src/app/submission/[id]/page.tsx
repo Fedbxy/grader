@@ -4,6 +4,7 @@ import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
 import { publicUserSelect } from "@/lib/select";
 import { maps } from "@/config/messages";
+import { canViewCode, canViewSubmission } from "@/utils/submission";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -34,11 +35,10 @@ export default async function Page({ params }: { params: { id: string } }) {
       user: { select: publicUserSelect },
     },
   });
-  if (!submission) {
+  const { user } = await validateRequest();
+  if (!submission || !canViewSubmission(user, submission)) {
     notFound();
   }
-
-  const { user } = await validateRequest();
 
   const result: any = submission.result || {};
   let maxTime = 0;
@@ -164,17 +164,27 @@ export default async function Page({ params }: { params: { id: string } }) {
               testcases={submission.problem.testcases}
               problemScore={submission.problem.score}
             />
-            <Card className="relative overflow-hidden">
-              <div className="absolute right-2 top-2 z-20 flex space-x-2">
-                {user?.role === "admin" && <RejudgeButton id={submission.id} />}
-                <CopyButton code={submission.code} />
-              </div>
-              <CodeEditor
-                code={submission.code}
-                language={submission.language}
-                readOnly
-              />
-            </Card>
+            {canViewCode(user, submission) ? (
+              <Card className="relative overflow-hidden">
+                <div className="absolute right-2 top-2 z-20 flex space-x-2">
+                  {user?.role === "admin" && (
+                    <RejudgeButton id={submission.id} />
+                  )}
+                  <CopyButton code={submission.code} />
+                </div>
+                <CodeEditor
+                  code={submission.code}
+                  language={submission.language}
+                  readOnly
+                />
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-6 text-sm text-muted-foreground">
+                  Only the submitter and admins can view this code.
+                </CardContent>
+              </Card>
+            )}
           </div>
         </CardContent>
       </Card>

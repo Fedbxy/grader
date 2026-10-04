@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
 import { submissionListSelect } from "@/lib/select";
+import { visibleSubmissionsWhere } from "@/utils/submission";
 
 import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
@@ -16,6 +17,7 @@ export default async function Page() {
     const { user } = await validateRequest();
 
     const data = await prisma.submission.findMany({
+        where: visibleSubmissionsWhere(user),
         orderBy: {
             id: "desc",
         },
