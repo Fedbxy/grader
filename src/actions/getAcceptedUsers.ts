@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { messages } from "@/config/messages";
+import { validateRequest } from "@/lib/auth";
 import { listAcceptedUsers } from "@/utils/accepted";
 
 export async function getAcceptedUsers(problemId: number) {
@@ -11,9 +12,12 @@ export async function getAcceptedUsers(problemId: number) {
         },
         select: {
             title: true,
+            visibility: true,
         },
     });
-    if (!problem) {
+    // A private problem doesn't exist for non-admins, as on its own page.
+    const { user } = await validateRequest();
+    if (!problem || (problem.visibility !== "public" && user?.role !== "admin")) {
         return {
             error: messages.database.noProblem,
         };
