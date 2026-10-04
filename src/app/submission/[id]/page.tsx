@@ -228,9 +228,15 @@ export default async function Page({ params }: { params: { id: string } }) {
                 />
               </Card>
             ) : (
-              <Card>
-                <CardContent className="p-6 text-sm text-muted-foreground">
-                  Only the submitter and admins can view this code.
+              <Card className="border-dashed shadow-none">
+                <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <Lock className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-semibold">This code is private</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Only {submission.user.displayName} and admins can see it.
+                  </p>
                 </CardContent>
               </Card>
             )}
