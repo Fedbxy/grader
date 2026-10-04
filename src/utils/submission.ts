@@ -46,6 +46,14 @@ export function canShareCode(viewer: Viewer, submission: { userId: number }): bo
     return viewer !== null && (viewer.role === "admin" || viewer.id === submission.userId);
 }
 
+// Whether sharing may be switched on. A hidden submission can't be shared:
+// nobody else could see it anyway. Sharing that is already on stays on (the
+// submitter's choice returns if the submission is shown again) and can still
+// be switched off.
+export function canStartSharing(submission: { hidden: boolean }): boolean {
+    return !submission.hidden;
+}
+
 // The `where` fragment for submission lists: only the submissions the viewer may open.
 export function visibleSubmissionsWhere(viewer: Viewer): Prisma.SubmissionWhereInput {
     if (viewer?.role === "admin") {

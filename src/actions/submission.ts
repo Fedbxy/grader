@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { messages } from "@/config/messages";
-import { canShareCode } from "@/utils/submission";
+import { canShareCode, canStartSharing } from "@/utils/submission";
 
 // Shares a submission's code with everyone who can see the submission, or makes
 // it private again. Allowed for the submitter and admins.
@@ -18,7 +18,7 @@ export async function setCodePublic(id: number, codePublic: boolean) {
 
         const submission = await prisma.submission.findUnique({
             where: { id },
-            select: { userId: true },
+            select: { userId: true, hidden: true },
         });
         if (!submission) {
             return {
@@ -28,6 +28,11 @@ export async function setCodePublic(id: number, codePublic: boolean) {
         if (!canShareCode(user, submission)) {
             return {
                 error: messages.auth.unauthorized,
+            };
+        }
+        if (codePublic && !canStartSharing(submission)) {
+            return {
+                error: messages.database.hiddenSubmissionShare,
             };
         }
 

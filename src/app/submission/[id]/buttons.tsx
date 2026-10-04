@@ -86,9 +86,11 @@ export function CopyLinkButton() {
 export function ShareSwitch({
   id,
   codePublic,
+  hidden,
 }: {
   id: number;
   codePublic: boolean;
+  hidden: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -107,18 +109,41 @@ export function ShareSwitch({
     );
   }
 
-  return (
+  // A hidden submission can't start sharing; sharing already on can stop.
+  const blocked = hidden && !codePublic;
+
+  const control = (
     <div className="flex items-center gap-2">
       <Switch
         id={`share-code-${id}`}
         checked={codePublic}
-        disabled={pending}
+        disabled={pending || blocked}
         onCheckedChange={handleToggle}
       />
-      <Label htmlFor={`share-code-${id}`} className="cursor-pointer">
+      <Label
+        htmlFor={`share-code-${id}`}
+        className={blocked ? "text-muted-foreground" : "cursor-pointer"}
+      >
         Share code
       </Label>
     </div>
+  );
+
+  if (!blocked) {
+    return control;
+  }
+
+  // Disabled controls don't fire pointer events, so the tooltip hangs off a
+  // wrapper.
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span tabIndex={0}>{control}</span>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Hidden submissions can&apos;t be shared.</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

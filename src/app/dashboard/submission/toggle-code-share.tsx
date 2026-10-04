@@ -8,9 +8,11 @@ import { toast } from "sonner";
 export function ToggleCodeShare({
   id,
   codePublic,
+  hidden,
 }: {
   id: number;
   codePublic: boolean;
+  hidden: boolean;
 }) {
   const router = useRouter();
 
@@ -28,7 +30,12 @@ export function ToggleCodeShare({
   }
 
   return (
-    <DropdownMenuItem onClick={handleToggle}>
+    // A hidden submission can't start sharing; sharing already on can stop.
+    <DropdownMenuItem
+      onClick={handleToggle}
+      disabled={hidden && !codePublic}
+      title={hidden && !codePublic ? "Hidden submissions can't be shared." : undefined}
+    >
       {codePublic ? (
         <Lock className="mr-1 h-4 w-4" />
       ) : (

@@ -47,6 +47,7 @@ export const columns: ColumnDef<SubmissionRow>[] = [
             <ToggleCodeShare
               id={submission.id}
               codePublic={submission.codePublic}
+              hidden={submission.hidden}
             />
             <RejudgeButton id={submission.id} />
           </DropdownMenuContent>

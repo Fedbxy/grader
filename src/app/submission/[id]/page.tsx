@@ -188,6 +188,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                       {user?.id === submission.userId
                         ? "Shared"
                         : `Shared by ${submission.user.displayName}`}
+                      {submission.hidden && " · hidden from others"}
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="gap-1.5">
@@ -201,6 +202,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <ShareSwitch
                           id={submission.id}
                           codePublic={submission.codePublic}
+                          hidden={submission.hidden}
                         />
                         <Separator
                           orientation="vertical"
