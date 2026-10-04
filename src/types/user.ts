@@ -11,3 +11,6 @@ export type User = {
 };
 
 export type Role = "user" | "admin";
+
+// The part of a user that is safe to show next to something they own.
+export type UserRef = Pick<User, "id" | "displayName">;
