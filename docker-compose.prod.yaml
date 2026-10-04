@@ -63,6 +63,11 @@ services:
     networks:
       - grader-network
     command: server --address ":9001" --console-address ":9000" /data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9001/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
     restart: unless-stopped
 
 volumes:
