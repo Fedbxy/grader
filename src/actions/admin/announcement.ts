@@ -100,6 +100,13 @@ export async function editAnnouncement(id: number, data: FormData) {
         }
 
         if (Object.keys(updateData).length > 0) {
+            // Prisma's @updatedAt bumps on every write; only edits to the text
+            // count as an update, so keep the old date when just the visibility
+            // changed.
+            if (!("title" in updateData) && !("content" in updateData)) {
+                updateData.updatedAt = announcement.updatedAt;
+            }
+
             await prisma.announcement.update({
                 where: { id },
                 data: updateData,
