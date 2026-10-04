@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -140,7 +141,10 @@ export default async function Page({ params }: { params: { id: string } }) {
     <div className="container mx-auto flex justify-center py-10">
       <Card className="w-full max-w-xl md:max-w-2xl">
         <CardHeader>
-          <CardTitle>Submission {submission.id}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span>Submission {submission.id}</span>
+            {submission.hidden && <Badge variant="secondary">Hidden</Badge>}
+          </CardTitle>
           <Path path={`/submission/${params.id}`} />
         </CardHeader>
         <CardContent>

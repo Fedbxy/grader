@@ -15,6 +15,7 @@ export const publicUserSelect = {
 // A submission as shown in a submission table: no code, no judge internals.
 export const submissionListSelect = {
     id: true,
+    hidden: true,
     problem: {
         select: {
             id: true,
