@@ -124,6 +124,10 @@ model Submission {
   updatedAt DateTime @updatedAt
 
   @@index([judgeStatus, priority, id])
+  // The viewer's latest submission and solved status per problem.
+  @@index([userId, problemId, id])
+  // Who solved a problem, and how many.
+  @@index([problemId, userId])
   @@map("submissions")
 }
 

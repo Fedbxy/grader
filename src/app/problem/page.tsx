@@ -2,6 +2,11 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { publicUserSelect } from "@/lib/select";
+import {
+  getAcceptedCounts,
+  getViewerProblemStatuses,
+  type ViewerProblemStatus,
+} from "@/utils/accepted";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
@@ -22,44 +27,26 @@ export default async function Page() {
     },
     include: {
       author: { select: publicUserSelect },
-      // A solver whose latest submission is hidden (an admin testing) does not count.
-      UserProblem: {
-        where: { submission: { hidden: false } },
-        select: {
-          isAccepted: true,
-        },
-      },
     },
   });
 
-  const { user: validateUser } = await validateRequest();
-  let user = null;
-  if (validateUser) {
-    user = await prisma.user.findUnique({
-      where: {
-        id: validateUser.id,
-      },
-      select: {
-        UserProblem: true,
-      },
-    });
-  }
+  const { user } = await validateRequest();
+
+  // Two aggregate queries for the whole list, however many problems there are.
+  const [acceptedCounts, viewerStatuses] = await Promise.all([
+    getAcceptedCounts(),
+    user ? getViewerProblemStatuses(user.id) : new Map<number, ViewerProblemStatus>(),
+  ]);
 
   const dataWithAccepted = data.map((problem) => {
-    const accepted = problem.UserProblem.filter(
-      (userProblem) => userProblem.isAccepted,
-    ).length;
-    const userProblem = user?.UserProblem.find(
-      (userProblem) => userProblem.problemId === problem.id,
-    );
-    const isUserAccepted = userProblem?.isAccepted;
-    const latestSubmissionId = userProblem?.submissionId;
+    const status = viewerStatuses.get(problem.id);
 
     return {
       ...problem,
-      accepted,
-      isUserAccepted,
-      latestSubmissionId,
+      accepted: acceptedCounts.get(problem.id) ?? 0,
+      // undefined when the viewer never submitted, else whether they ever solved it.
+      isUserAccepted: status?.isAccepted,
+      latestSubmissionId: status?.latestSubmissionId,
     };
   });
 
