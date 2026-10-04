@@ -13,7 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { EyeOff, Info } from "lucide-react";
+import { EyeOff, Info, Share2 } from "lucide-react";
 import { ActionsButton } from "./actions-button";
 
 export const columns: ColumnDef<SubmissionRow>[] = [
@@ -21,7 +21,7 @@ export const columns: ColumnDef<SubmissionRow>[] = [
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
     cell: ({ row }) => {
-      const { id, hidden } = row.original;
+      const { id, hidden, codePublic } = row.original;
 
       return (
         <span className="flex items-center gap-1">
@@ -36,6 +36,19 @@ export const columns: ColumnDef<SubmissionRow>[] = [
               </TooltipTrigger>
               <TooltipContent>
                 <p>Hidden</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+          {codePublic && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Share2
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                  aria-label="Code shared"
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Code shared</p>
               </TooltipContent>
             </Tooltip>
           )}

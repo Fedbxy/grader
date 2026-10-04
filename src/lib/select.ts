@@ -16,6 +16,7 @@ export const publicUserSelect = {
 export const submissionListSelect = {
     id: true,
     hidden: true,
+    codePublic: true,
     problem: {
         select: {
             id: true,

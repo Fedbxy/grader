@@ -5,6 +5,7 @@ import { UserRef } from "./user";
 export type SubmissionRow = {
     id: number;
     hidden: boolean;
+    codePublic: boolean;
     problem: Pick<
         Problem,
         "id" | "title" | "score" | "timeLimit" | "memoryLimit" | "testcases"
