@@ -4,7 +4,7 @@ import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
 import { publicUserSelect } from "@/lib/select";
 import { maps } from "@/config/messages";
-import { canViewCode } from "@/utils/submission";
+import { canViewCode, canViewSubmission } from "@/utils/submission";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -35,11 +35,10 @@ export default async function Page({ params }: { params: { id: string } }) {
       user: { select: publicUserSelect },
     },
   });
-  if (!submission) {
+  const { user } = await validateRequest();
+  if (!submission || !canViewSubmission(user, submission)) {
     notFound();
   }
-
-  const { user } = await validateRequest();
 
   const result: any = submission.result || {};
   let maxTime = 0;

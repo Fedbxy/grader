@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { submissionListSelect } from "@/lib/select";
+import { visibleSubmissionsWhere } from "@/utils/submission";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -21,7 +22,8 @@ export default async function Page() {
 
     const data = await prisma.submission.findMany({
         where: {
-            userId: user.id
+            userId: user.id,
+            ...visibleSubmissionsWhere(user),
         },
         orderBy: {
             id: "desc",

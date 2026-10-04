@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { validateRequest } from "@/lib/auth";
+import { canViewSubmission } from "@/utils/submission";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     if (isNaN(Number(params.id))) {
@@ -20,9 +22,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             status: true,
             errorCode: true,
             error: true,
+            problem: { select: { visibility: true } },
         },
     })
-    if (!submission) {
+    const { user } = await validateRequest();
+    if (!submission || !canViewSubmission(user, submission)) {
         return NextResponse.json({
             statusCode: 404,
             method: request.method,
@@ -31,5 +35,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         }, { status: 404 });
     }
 
-    return NextResponse.json(submission);
+    const { problem, ...body } = submission;
+    return NextResponse.json(body);
 }
