@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { UserRef } from "./user";
 
 export type Problem = {
     id: number;
@@ -9,7 +9,7 @@ export type Problem = {
     score: number;
     testcases: number;
     authorId: number;
-    author: User;
+    author: UserRef;
     createdAt: Date;
     updatedAt: Date;
 };

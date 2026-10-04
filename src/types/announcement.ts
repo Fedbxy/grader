@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { UserRef } from "./user";
 
 export type Announcement = {
     id: number;
@@ -6,7 +6,7 @@ export type Announcement = {
     content: string;
     visibility: Visibility;
     authorId: number;
-    author: User;
+    author: UserRef;
     createdAt: Date;
     updatedAt: Date;
 };

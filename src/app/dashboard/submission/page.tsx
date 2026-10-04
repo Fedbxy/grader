@@ -1,5 +1,6 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
+import { submissionListSelect } from "@/lib/select";
 
 import { columns } from "./columns";
 import { DashboardCard } from "../card";
@@ -11,14 +12,7 @@ export default async function Page() {
     orderBy: {
       id: "desc",
     },
-    include: {
-      problem: {
-        include: {
-          author: true,
-        },
-      },
-      user: true,
-    },
+    select: submissionListSelect,
   });
 
   return (

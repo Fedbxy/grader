@@ -1,5 +1,6 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
+import { adminUserSelect } from "@/lib/select";
 import { notFound } from "next/navigation";
 
 import {
@@ -20,6 +21,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     const user = await prisma.user.findUnique({
         where: { id: Number(params.id) },
+        select: adminUserSelect,
     })
 
     if (!user) {

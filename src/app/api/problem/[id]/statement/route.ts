@@ -17,8 +17,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const problem = await prisma.problem.findUnique({
         where: { id: Number(params.id) },
-        include: {
-            author: true,
+        select: {
+            visibility: true,
         },
     })
     if (!problem) {

@@ -1,22 +1,14 @@
 import { Problem } from "./problem";
-import { User } from "./user";
-import type { Prisma } from "@prisma/client";
+import { UserRef } from "./user";
 
-export type Submission = {
+// A row of a submission table. Deliberately has no code.
+export type SubmissionRow = {
     id: number;
-    code: string;
-    language: Language;
-    score: number;
-    result: Prisma.JsonValue | null;
-    status: string | null;
-    errorCode: string | null;
-    error: string | null;
-    problemId: number;
-    userId: number;
-    problem: Problem;
-    user: User;
-    createdAt: Date;
-    updatedAt: Date;
-}   
+    problem: Pick<
+        Problem,
+        "id" | "title" | "score" | "timeLimit" | "memoryLimit" | "testcases"
+    >;
+    user: UserRef;
+};
 
 export type Language = "c" | "cpp" | "py" | "pypy";
