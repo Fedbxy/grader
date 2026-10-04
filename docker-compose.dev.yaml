@@ -28,6 +28,11 @@ services:
     volumes:
       - minio-data:/data
     command: server --address ":9001" --console-address ":9000" /data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:9001/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
     networks:
       - grader-network
     restart: unless-stopped
