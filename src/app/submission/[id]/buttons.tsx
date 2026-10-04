@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { rejudge } from "@/actions/admin/judge";
+import { setSubmissionHidden } from "@/actions/admin/submission";
 import { useSWRConfig } from "swr";
 
 import { Check, Clipboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RefreshCcw } from "lucide-react";
+import { Eye, EyeOff, RefreshCcw } from "lucide-react";
 
 export function CopyButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
@@ -56,5 +58,35 @@ export function RejudgeButton({ id }: { id: number }) {
       >
         <RefreshCcw className="h-4 w-4" />
       </Button>
+    );
+}
+
+export function HideButton({ id, hidden }: { id: number; hidden: boolean }) {
+    const router = useRouter();
+
+    async function handleToggle() {
+        const result = await setSubmissionHidden(id, !hidden);
+
+        if (result?.error) {
+            return toast.error(result.error);
+        }
+
+        router.refresh();
+
+        return toast.success(
+            `Submission #${id} is now ${hidden ? "shown" : "hidden"}.`,
+        );
+    }
+
+    return (
+        <Button
+            className="h-8 w-8"
+            variant="outline"
+            size="icon"
+            title={hidden ? "Show submission" : "Hide submission"}
+            onClick={handleToggle}
+        >
+            {hidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+        </Button>
     );
 }
