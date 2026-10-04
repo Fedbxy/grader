@@ -51,13 +51,15 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-    # Only the console is published, and only on the host's loopback: reach it
-    # through an SSH tunnel (ssh -L 9000:127.0.0.1:9000 <host>). The app and the
-    # judge use the S3 API on 9001 over the Docker network, which needs no
-    # published port. A bare "9000:9000" would listen on every interface, and
-    # Docker's iptables rules bypass ufw.
+    # Only the console is published. It listens on every interface so it is
+    # reachable over Tailscale (http://<tailscale-ip>:9000); the host sits
+    # behind NAT and is served publicly only through the Cloudflare Tunnel,
+    # which does not forward this port. If the host ever gets a public IP,
+    # bind this to the Tailscale address instead: Docker's iptables rules
+    # bypass ufw. The app and the judge use the S3 API on 9001 over the Docker
+    # network, so 9001 needs no published port.
     ports:
-      - 127.0.0.1:9000:9000
+      - 9000:9000
     volumes:
       - minio-data:/data
     networks:
