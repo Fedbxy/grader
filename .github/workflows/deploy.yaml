@@ -106,3 +106,12 @@ jobs:
             done
             docker logs grader-app 2>&1 | grep -oE "Applying migration \`[0-9A-Za-z_]+\`|No pending migrations to apply|All migrations have been successfully applied|Ready in [0-9a-z.]+"
             docker logs grader-app 2>&1 | grep -q "Ready in" || { echo "app did not come up; on the host run: docker logs grader-app"; exit 1; }
+
+            # Object storage must pass its healthcheck too: the app starts
+            # without it, but every statement, avatar and testcase needs it.
+            for i in $(seq 1 30); do
+              [ "$(docker inspect -f '{{.State.Health.Status}}' minio-storage)" = healthy ] && break
+              sleep 2
+            done
+            echo "object storage: $(docker inspect -f '{{.State.Health.Status}}' minio-storage)"
+            [ "$(docker inspect -f '{{.State.Health.Status}}' minio-storage)" = healthy ] || { echo "object storage is not healthy; on the host run: docker logs minio-storage"; exit 1; }
