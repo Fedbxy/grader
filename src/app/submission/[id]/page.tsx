@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
+import { publicUserSelect } from "@/lib/select";
 import { maps } from "@/config/messages";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     where: { id: Number(params.id) },
     include: {
       problem: true,
-      user: true,
+      user: { select: publicUserSelect },
     },
   });
   if (!submission) {
