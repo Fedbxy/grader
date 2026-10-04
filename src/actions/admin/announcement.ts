@@ -134,9 +134,10 @@ export async function changeVisibility(id: number, visibility: Visibility) {
             };
         }
 
+        // Keep the date: a visibility change is not an update to the text.
         await prisma.announcement.update({
             where: { id },
-            data: { visibility },
+            data: { visibility, updatedAt: announcement.updatedAt },
         });
     } catch (error) {
         console.error("Error: ", error);
