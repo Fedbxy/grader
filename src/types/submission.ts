@@ -4,6 +4,7 @@ import { UserRef } from "./user";
 // A row of a submission table. Deliberately has no code.
 export type SubmissionRow = {
     id: number;
+    hidden: boolean;
     problem: Pick<
         Problem,
         "id" | "title" | "score" | "timeLimit" | "memoryLimit" | "testcases"

@@ -13,13 +13,35 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { EyeOff, Info } from "lucide-react";
 import { ActionsButton } from "./actions-button";
 
 export const columns: ColumnDef<SubmissionRow>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,
+    cell: ({ row }) => {
+      const { id, hidden } = row.original;
+
+      return (
+        <span className="flex items-center gap-1">
+          {id}
+          {hidden && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <EyeOff
+                  className="h-3.5 w-3.5 text-muted-foreground"
+                  aria-label="Hidden"
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Hidden</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "user",

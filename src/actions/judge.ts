@@ -65,13 +65,15 @@ export async function submitCode(data: FormData): Promise<ActionResult> {
 
         // Creating the row queues it: judgeStatus defaults to pending and a
         // trigger notifies the judge, which claims it and writes the result
-        // back to this same row.
+        // back to this same row. Admins are testing, so their submissions
+        // start hidden from everyone else.
         const submission = await prisma.submission.create({
             data: {
                 problemId: problemId,
                 userId: user.id,
                 language: language as Language,
                 code: code,
+                hidden: user.role === "admin",
             },
         });
         submissionId = submission.id;

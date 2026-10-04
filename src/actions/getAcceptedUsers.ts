@@ -10,7 +10,9 @@ export async function getAcceptedUsers(problemId: number) {
         },
         select: {
             title: true,
+            // A solver whose latest submission is hidden (an admin testing) does not count.
             UserProblem: {
+                where: { submission: { hidden: false } },
                 include: {
                     user: {
                         select: {

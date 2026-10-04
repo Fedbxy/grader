@@ -15,12 +15,13 @@ import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
 import { CodeEditor } from "@/components/code-editor";
-import { CopyButton, RejudgeButton } from "./buttons";
+import { CopyButton, HideButton, RejudgeButton } from "./buttons";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -140,7 +141,10 @@ export default async function Page({ params }: { params: { id: string } }) {
     <div className="container mx-auto flex justify-center py-10">
       <Card className="w-full max-w-xl md:max-w-2xl">
         <CardHeader>
-          <CardTitle>Submission {submission.id}</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span>Submission {submission.id}</span>
+            {submission.hidden && <Badge variant="secondary">Hidden</Badge>}
+          </CardTitle>
           <Path path={`/submission/${params.id}`} />
         </CardHeader>
         <CardContent>
@@ -168,7 +172,13 @@ export default async function Page({ params }: { params: { id: string } }) {
               <Card className="relative overflow-hidden">
                 <div className="absolute right-2 top-2 z-20 flex space-x-2">
                   {user?.role === "admin" && (
-                    <RejudgeButton id={submission.id} />
+                    <>
+                      <HideButton
+                        id={submission.id}
+                        hidden={submission.hidden}
+                      />
+                      <RejudgeButton id={submission.id} />
+                    </>
                   )}
                   <CopyButton code={submission.code} />
                 </div>

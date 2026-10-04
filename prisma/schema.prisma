@@ -117,6 +117,9 @@ model Submission {
   priority    Int         @default(0)
   attempts    Int         @default(0)
 
+  // Visible only to the submitter and admins. Set at creation for admin submitters.
+  hidden Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

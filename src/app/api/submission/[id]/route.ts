@@ -22,6 +22,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             status: true,
             errorCode: true,
             error: true,
+            userId: true,
+            hidden: true,
             problem: { select: { visibility: true } },
         },
     })
@@ -35,6 +37,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         }, { status: 404 });
     }
 
-    const { problem, ...body } = submission;
+    const { problem, userId, hidden, ...body } = submission;
     return NextResponse.json(body);
 }

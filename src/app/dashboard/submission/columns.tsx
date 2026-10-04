@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RejudgeButton } from "./rejudge";
+import { ToggleVisibility } from "./toggle-visibility";
 import { Eye } from "lucide-react";
 
 export const columns: ColumnDef<SubmissionRow>[] = [
@@ -41,6 +42,7 @@ export const columns: ColumnDef<SubmissionRow>[] = [
               </DropdownMenuItem>
             </Link>
             <DropdownMenuSeparator />
+            <ToggleVisibility id={submission.id} hidden={submission.hidden} />
             <RejudgeButton id={submission.id} />
           </DropdownMenuContent>
         </DropdownMenu>
