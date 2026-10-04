@@ -1,5 +1,6 @@
 import { validateRequest } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getLatestSubmissionCode } from "@/utils/accepted";
 import { notFound } from "next/navigation";
 import type { Language } from "@/types/submission";
 
@@ -43,24 +44,7 @@ export async function getProblemData(id: number): Promise<ProblemData> {
   let latestCode = "";
   let latestLanguage: Language | undefined = undefined;
   if (user) {
-    const UserProblem = await prisma.userProblem.findUnique({
-      where: {
-        userId_problemId: {
-          userId: user.id,
-          problemId: problem.id,
-        },
-      },
-      include: {
-        submission: {
-          select: {
-            code: true,
-            language: true,
-          },
-        },
-      },
-    });
-
-    const submission = UserProblem?.submission;
+    const submission = await getLatestSubmissionCode(user.id, problem.id);
     latestCode = submission ? submission.code : "";
     latestLanguage = submission ? submission.language : undefined;
   }
