@@ -1,5 +1,6 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
+import { publicUserSelect } from "@/lib/select";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getFile } from "@/lib/minio";
@@ -33,7 +34,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const problem = await prisma.problem.findUnique({
         where: { id: Number(params.id) },
         include: {
-            author: true,
+            author: { select: publicUserSelect },
         },
     })
     if (!problem) {

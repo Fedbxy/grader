@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
+import { publicUserSelect } from "@/lib/select";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
@@ -20,7 +21,7 @@ export default async function Page() {
       visibility: "public",
     },
     include: {
-      author: true,
+      author: { select: publicUserSelect },
       UserProblem: {
         select: {
           isAccepted: true,

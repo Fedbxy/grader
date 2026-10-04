@@ -1,5 +1,6 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
+import { publicUserSelect } from "@/lib/select";
 
 import { columns } from "./columns";
 import { DashboardCard } from "../card";
@@ -12,7 +13,7 @@ export default async function Page() {
             id: "asc",
         },
         include: {
-            author: true,
+            author: { select: publicUserSelect },
         },
     });
 
