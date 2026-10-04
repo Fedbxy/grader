@@ -19,8 +19,8 @@ export function MemoryCell({
 
   let maxMemory = 0;
   const { result } = data;
-  if (result?.memory) {
-    const memory = result.memory.flat();
+  if (result?.memories) {
+    const memory = result.memories.flat();
     maxMemory = Math.max(...memory);
   }
 
