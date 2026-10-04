@@ -2,9 +2,9 @@ import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { publicUserSelect } from "@/lib/select";
 
-// Solved status is derived from `submissions`, never from the `user_problems`
-// cache (which the judge still writes but which goes stale on rejudges and
-// compile errors). The rules live here, in one place:
+// Solved status is derived from `submissions`. (A `user_problems` cache used
+// to hold it and went stale on rejudges and compile errors.) The rules live
+// here, in one place:
 //
 //   accepted(user, problem): the user has EVER submitted to the problem a
 //     submission that is judged ("judgeStatus" = 'done'), has no error code, and
