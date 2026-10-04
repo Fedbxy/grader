@@ -15,7 +15,7 @@ The project is built with the following technologies.
 - [shadcn/ui](https://ui.shadcn.com/): UI Components
 - [PostgreSQL](https://www.postgresql.org/): Database
 - [prisma](https://www.prisma.io/orm): Database ORM
-- [MinIO](https://min.io/): Object Storage
+- [Silo](https://github.com/pgsty/silo): Object Storage (maintained MinIO fork)
 - [Lucia](https://lucia-auth.com/): Authentication
 - [Zod](https://zod.dev/): Schema Validation
 - [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/): CAPTCHA

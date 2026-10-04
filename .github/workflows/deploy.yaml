@@ -89,10 +89,10 @@ jobs:
 
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
-            # Only the app. minio/minio can no longer be pulled from Docker Hub,
-            # and one service's failed pull interrupts the others; postgres and
-            # minio keep running from their cached images.
-            docker compose -f docker-compose.prod.yaml pull app || { echo "pull failed; not deploying"; exit 1; }
+            # The app and object storage (Silo, pinned by release tag). Postgres
+            # is left out so a deploy never moves it to a newer postgres:16.x
+            # on its own; it keeps running from its cached image.
+            docker compose -f docker-compose.prod.yaml pull app minio || { echo "pull failed; not deploying"; exit 1; }
             docker compose -f docker-compose.prod.yaml up -d --force-recreate
             docker image prune -f
 
@@ -106,3 +106,12 @@ jobs:
             done
             docker logs grader-app 2>&1 | grep -oE "Applying migration \`[0-9A-Za-z_]+\`|No pending migrations to apply|All migrations have been successfully applied|Ready in [0-9a-z.]+"
             docker logs grader-app 2>&1 | grep -q "Ready in" || { echo "app did not come up; on the host run: docker logs grader-app"; exit 1; }
+
+            # Object storage must pass its healthcheck too: the app starts
+            # without it, but every statement, avatar and testcase needs it.
+            for i in $(seq 1 30); do
+              [ "$(docker inspect -f '{{.State.Health.Status}}' minio-storage)" = healthy ] && break
+              sleep 2
+            done
+            echo "object storage: $(docker inspect -f '{{.State.Health.Status}}' minio-storage)"
+            [ "$(docker inspect -f '{{.State.Health.Status}}' minio-storage)" = healthy ] || { echo "object storage is not healthy; on the host run: docker logs minio-storage"; exit 1; }
