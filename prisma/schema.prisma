@@ -43,7 +43,6 @@ model User {
   sessions     Session[]
   Problem      Problem[]
   Submission   Submission[]
-  UserProblem  UserProblem[]
   Announcement Announcement[]
 
   createdAt DateTime @default(now())
@@ -75,7 +74,6 @@ model Problem {
   authorId    Int
   author      User          @relation(fields: [authorId], references: [id])
   Submission  Submission[]
-  UserProblem UserProblem[]
 
   testcaseVersion String?
 
@@ -83,19 +81,6 @@ model Problem {
   updatedAt DateTime @updatedAt
 
   @@map("problems")
-}
-
-model UserProblem {
-  userId       Int
-  problemId    Int
-  submissionId Int
-  isAccepted   Boolean    @default(false)
-  user         User       @relation(fields: [userId], references: [id])
-  problem      Problem    @relation(fields: [problemId], references: [id])
-  submission   Submission @relation(fields: [submissionId], references: [id])
-
-  @@id([userId, problemId])
-  @@map("user_problems")
 }
 
 model Submission {
@@ -111,7 +96,6 @@ model Submission {
   userId      Int
   problem     Problem       @relation(fields: [problemId], references: [id])
   user        User          @relation(fields: [userId], references: [id])
-  UserProblem UserProblem[]
 
   judgeStatus JudgeStatus @default(pending)
   priority    Int         @default(0)
