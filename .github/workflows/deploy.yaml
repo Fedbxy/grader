@@ -89,10 +89,10 @@ jobs:
 
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
-            # Only the app. minio/minio can no longer be pulled from Docker Hub,
-            # and one service's failed pull interrupts the others; postgres and
-            # minio keep running from their cached images.
-            docker compose -f docker-compose.prod.yaml pull app || { echo "pull failed; not deploying"; exit 1; }
+            # The app and object storage (Silo, pinned by release tag). Postgres
+            # is left out so a deploy never moves it to a newer postgres:16.x
+            # on its own; it keeps running from its cached image.
+            docker compose -f docker-compose.prod.yaml pull app minio || { echo "pull failed; not deploying"; exit 1; }
             docker compose -f docker-compose.prod.yaml up -d --force-recreate
             docker image prune -f
 
