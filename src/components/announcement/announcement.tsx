@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { publicUserSelect } from "@/lib/select";
 
 import { columns } from "./columns";
 import { DataTable } from "@/components/table/data-table";
@@ -12,7 +13,7 @@ export async function Announcement() {
         visibility: "public",
     },
     include: {
-        author: true,
+        author: { select: publicUserSelect },
     },
   });
 

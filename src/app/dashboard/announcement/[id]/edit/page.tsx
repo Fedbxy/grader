@@ -1,5 +1,6 @@
 import { allowAccess } from "@/utils/access";
 import prisma from "@/lib/prisma";
+import { publicUserSelect } from "@/lib/select";
 import { notFound } from "next/navigation";
 
 import {
@@ -20,7 +21,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
     const announcement = await prisma.announcement.findUnique({
         where: { id: Number(params.id) },
-        include: { author: true },
+        include: { author: { select: publicUserSelect } },
     });
     if (!announcement) {
         notFound();

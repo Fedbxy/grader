@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
+import { publicUserSelect } from "@/lib/select";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -29,7 +30,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const announcement = await prisma.announcement.findUnique({
     where: { id: Number(params.id) },
     include: {
-      author: true,
+      author: { select: publicUserSelect },
     },
   });
   if (!announcement) {

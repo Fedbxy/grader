@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Announcement } from "@/types/announcement";
-import { User } from "@/types/user";
+import { UserRef } from "@/types/user";
 import Link from "next/link";
 
 import { MoreHorizontal, Eye, FolderCog, Plus } from "lucide-react";
@@ -52,7 +52,7 @@ export const columns: ColumnDef<Announcement>[] = [
       <DataTableColumnHeader column={column} title="Author" />
     ),
     cell: ({ row }) => {
-      const author = row.getValue("author") as User;
+      const author = row.getValue("author") as UserRef;
 
       return (
         <Link href={`/dashboard/user/${author.id}`} className="link">
