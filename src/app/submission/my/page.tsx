@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
+import { submissionListSelect } from "@/lib/select";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -25,14 +26,7 @@ export default async function Page() {
         orderBy: {
             id: "desc",
         },
-        include: {
-            problem: {
-                include: {
-                    author: true,
-                }
-            },
-            user: true,
-        },
+        select: submissionListSelect,
     });
 
     return (

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getProblemData } from "@/utils/problem";
+import { submissionListSelect } from "@/lib/select";
 
 import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
@@ -19,14 +20,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     orderBy: {
       id: "desc",
     },
-    include: {
-      problem: {
-        include: {
-          author: true,
-        },
-      },
-      user: true,
-    },
+    select: submissionListSelect,
   });
 
   return <DataTable columns={columns} data={data} />;

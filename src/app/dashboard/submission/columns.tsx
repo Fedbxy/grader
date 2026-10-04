@@ -2,7 +2,7 @@
 
 import { columns as mainColumns } from "@/components/submission/columns";
 import { ColumnDef } from "@tanstack/react-table";
-import { Submission } from "@/types/submission";
+import { SubmissionRow } from "@/types/submission";
 import Link from "next/link";
 
 import { ActionsButton } from "@/components/submission/actions-button";
@@ -17,7 +17,7 @@ import {
 import { RejudgeButton } from "./rejudge";
 import { Eye } from "lucide-react";
 
-export const columns: ColumnDef<Submission>[] = [
+export const columns: ColumnDef<SubmissionRow>[] = [
   ...mainColumns.slice(0, -1),
   {
     id: "actions",

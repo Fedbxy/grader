@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Submission } from "@/types/submission";
+import { SubmissionRow } from "@/types/submission";
 import Link from "next/link";
 
 import { DataTableColumnHeader } from "@/components/table/column-header";
@@ -16,7 +16,7 @@ import {
 import { Info } from "lucide-react";
 import { ActionsButton } from "./actions-button";
 
-export const columns: ColumnDef<Submission>[] = [
+export const columns: ColumnDef<SubmissionRow>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="#" />,

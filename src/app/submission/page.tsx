@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/lib/auth";
+import { submissionListSelect } from "@/lib/select";
 
 import { columns } from "@/components/submission/columns";
 import { DataTable } from "@/components/table/data-table";
@@ -18,14 +19,7 @@ export default async function Page() {
         orderBy: {
             id: "desc",
         },
-        include: {
-            problem: {
-                include: {
-                    author: true,
-                }
-            },
-            user: true,
-        },
+        select: submissionListSelect,
     });
 
     return (
