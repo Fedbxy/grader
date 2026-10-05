@@ -35,7 +35,7 @@ export function AnnouncementEditor({
       placeholder="Write your announcement here..."
       autofocus={true}
       editable={!readOnly}
-      editorClassName="focus:outline-none"
+      editorClassName="focus:outline-hidden"
       immediatelyRender={false}
     />
   );

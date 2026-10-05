@@ -13,8 +13,8 @@ export async function Header() {
     const titleLink = user?.role === "admin" ? "/dashboard" : "/";
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-header max-w-screen-2xl items-center">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
+            <div className="container flex h-header max-w-(--breakpoint-2xl) items-center">
                 <div className="mr-6 flex items-center space-x-2">
                     <MobileNav />
                     <Link href={titleLink}>
