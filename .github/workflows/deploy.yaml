@@ -5,6 +5,15 @@ on:
     branches:
       - main
 
+# One build-and-deploy at a time. Without this, two merges race: two deploys
+# touch the host at once, and an older build can push :main last so the newer
+# deploy ships older code. Queued runs wait instead of being cancelled, since
+# killing a deploy halfway can leave the host half-updated; GitHub keeps only
+# the newest waiting run, and the newest main contains everything.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
