@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { publicUserSelect } from "@/lib/select";
 
