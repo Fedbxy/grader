@@ -1,8 +1,7 @@
 FROM oven/bun:1 AS base
 
 RUN apt-get update -y && \
-    apt-get install -y openssl1.1 && \
-    apt-get install -y adduser && \
+    apt-get install -y openssl adduser && \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS deps
