@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Content } from "@tiptap/react";
 
 import { MinimalTiptapEditor } from "@/components/minimal-tiptap";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsClient } from "@/hooks/is-client";
 
 export function AnnouncementEditor({
   content,
@@ -15,13 +15,9 @@ export function AnnouncementEditor({
   onChange?: (value: string) => void;
   readOnly?: boolean;
 }) {
-  const [loading, setLoading] = useState(true);
+  const isClient = useIsClient();
 
-  useEffect(() => {
-    setLoading(false);
-  }, []);
-
-  if (loading) {
+  if (!isClient) {
     return <Skeleton className="w-full h-96" />;
   }
 

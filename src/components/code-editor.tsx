@@ -2,7 +2,7 @@
 
 import Editor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
+import { useIsClient } from "@/hooks/is-client";
 
 export function CodeEditor({
   code,
@@ -15,7 +15,7 @@ export function CodeEditor({
   onChange?: (value: string) => void;
   readOnly?: boolean;
 }) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsClient();
   const { resolvedTheme } = useTheme();
   const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "vs";
 
@@ -28,10 +28,6 @@ export function CodeEditor({
       theme: editorTheme,
     });
   }
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted) {
     return null;
