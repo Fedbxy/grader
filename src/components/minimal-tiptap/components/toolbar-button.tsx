@@ -1,5 +1,4 @@
 import * as React from 'react'
-import type { TooltipContentProps } from '@radix-ui/react-tooltip'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Toggle } from '@/components/ui/toggle'
 import { cn } from '@/lib/shadcn'
@@ -7,7 +6,7 @@ import { cn } from '@/lib/shadcn'
 interface ToolbarButtonProps extends React.ComponentPropsWithoutRef<typeof Toggle> {
   isActive?: boolean
   tooltip?: string
-  tooltipOptions?: TooltipContentProps
+  tooltipOptions?: React.ComponentPropsWithoutRef<typeof TooltipContent>
 }
 
 export const ToolbarButton = React.forwardRef<HTMLButtonElement, ToolbarButtonProps>(

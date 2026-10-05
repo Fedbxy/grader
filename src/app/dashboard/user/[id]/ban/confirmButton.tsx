@@ -4,7 +4,6 @@ import { banUser, unbanUser } from "@/actions/admin/user";
 import { useState } from "react";
 import { messages } from "@/config/messages";
 
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AlertDialogAction } from "@/components/ui/alert-dialog";
 
@@ -28,15 +27,12 @@ export function ConfirmButton({ unban, validateId, id }: { unban: boolean, valid
   }
 
   return (
-    <Button
+    <AlertDialogAction
       variant="destructive"
       disabled={submitting}
       onClick={() => handleClick()}
-      asChild
     >
-      <AlertDialogAction>
-        {submitting ? (unban ? "Unbanning..." : "Banning...") : (unban ? "Unban" : "Ban")}
-      </AlertDialogAction>
-    </Button>
+      {submitting ? (unban ? "Unbanning..." : "Banning...") : (unban ? "Unban" : "Ban")}
+    </AlertDialogAction>
   );
 }
