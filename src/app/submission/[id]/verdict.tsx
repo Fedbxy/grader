@@ -1,7 +1,7 @@
 "use client";
 
 import { maps } from "@/config/messages";
-import { useState, useEffect } from "react";
+import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
 import Decimal from "decimal.js";
@@ -64,13 +64,7 @@ export function Verdict({
   problemScore: number;
 }) {
   const [verdictStyle] = useLocalStorage("verdictStyle", "table");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (verdictStyle) {
-      setIsLoading(false);
-    }
-  }, [verdictStyle]);
+  const isClient = useIsClient();
 
   const {
     data,
@@ -78,7 +72,7 @@ export function Verdict({
     isRunning,
   } = useSubmission(submissionId);
 
-  if (isLoading || isSubmissionLoading) {
+  if (!isClient || isSubmissionLoading) {
     return <Skeleton className="h-96 rounded-md" />;
   }
 
