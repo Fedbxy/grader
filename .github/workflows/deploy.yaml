@@ -110,6 +110,10 @@ jobs:
             docker compose -f docker-compose.prod.yaml up -d --no-deps --force-recreate app
             docker image prune -f
 
+            # The app must be running the image just pulled: otherwise the
+            # "Ready" check below could pass on the previous container's logs.
+            [ "$(docker inspect -f '{{.Image}}' grader-app)" = "$(docker image inspect -f '{{.Id}}' ghcr.io/fedbxy/grader:main)" ] || { echo "app is not running the new image"; exit 1; }
+
             # Fail the deploy unless the app comes up on the new image. The
             # container runs migrations before starting the server, so "Ready"
             # also means they applied. Only fixed status text is printed;
