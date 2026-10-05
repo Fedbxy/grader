@@ -6,5 +6,5 @@ import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 // rules-of-hooks / exhaustive-deps. They are all enabled.
 export default defineConfig([
     ...nextCoreWebVitals,
-    globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+    globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "src/generated/**"]),
 ]);
