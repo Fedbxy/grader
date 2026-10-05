@@ -102,7 +102,12 @@ jobs:
             # is left out so a deploy never moves it to a newer postgres:16.x
             # on its own; it keeps running from its cached image.
             docker compose -f docker-compose.prod.yaml pull app minio || { echo "pull failed; not deploying"; exit 1; }
-            docker compose -f docker-compose.prod.yaml up -d --force-recreate
+            # Postgres and storage are recreated only if their definition in
+            # the compose file changed (image tag, env, ports, volumes...);
+            # otherwise they keep running, so a deploy doesn't drop every
+            # database connection. The app always restarts on the new image.
+            docker compose -f docker-compose.prod.yaml up -d postgres minio
+            docker compose -f docker-compose.prod.yaml up -d --no-deps --force-recreate app
             docker image prune -f
 
             # Fail the deploy unless the app comes up on the new image. The
