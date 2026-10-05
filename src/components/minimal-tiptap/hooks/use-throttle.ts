@@ -1,11 +1,15 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 
 export function useThrottle<T extends (...args: any[]) => void>(
   callback: T,
   delay: number
 ): (...args: Parameters<T>) => void {
-  const lastRan = useRef(Date.now())
+  const lastRan = useRef(0)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    lastRan.current = Date.now()
+  }, [])
 
   return useCallback(
     (...args: Parameters<T>) => {
