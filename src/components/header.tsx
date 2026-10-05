@@ -15,7 +15,7 @@ export async function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
             <div className="container flex h-header max-w-(--breakpoint-2xl) items-center">
-                <div className="mr-6 flex items-center space-x-2">
+                <div className="mr-6 flex items-center [&>*+*]:ml-2">
                     <MobileNav />
                     <Link href={titleLink}>
                         <span className="font-bold">
