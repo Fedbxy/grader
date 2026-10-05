@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { submitSchema } from "@/lib/zod/judge";
@@ -75,6 +75,7 @@ export function SubmitForm({
       code: latestCode,
     },
   });
+  const language = useWatch({ control: form.control, name: "language" });
 
   const [fileInput, setFileInput] = useState<File | null>(null);
   const {
@@ -153,7 +154,7 @@ export function SubmitForm({
                     <Card className="gap-0 overflow-hidden py-0">
                       <CodeEditor
                         code={field.value}
-                        language={form.watch("language")}
+                        language={language}
                         onChange={(code) => form.setValue("code", code)}
                         readOnly={disabled}
                       />
