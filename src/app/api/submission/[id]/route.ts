@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { canViewSubmission } from "@/utils/submission";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     if (isNaN(Number(params.id))) {
         return NextResponse.json({
             statusCode: 400,

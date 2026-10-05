@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { getFile } from "@/lib/minio";
 import { validateRequest } from "@/lib/auth";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     const { user } = await validateRequest();
 
     if (isNaN(Number(params.id))) {

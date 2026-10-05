@@ -68,7 +68,7 @@ export async function signup(data: FormData, nextUrl?: string) {
 
         const newSession = await lucia.createSession(newUser.id, {});
         const sessionCookie = lucia.createSessionCookie(newSession.id);
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+        (await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
     } catch (error) {
         console.error("Error: ", error);
         return {
@@ -134,7 +134,7 @@ export async function signin(data: FormData, nextUrl?: string) {
         await lucia.invalidateUserSessions(user.id);
         const newSession = await lucia.createSession(user.id, {});
         const sessionCookie = lucia.createSessionCookie(newSession.id);
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+        (await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
     } catch (error) {
         console.error("Error: ", error);
         return {
@@ -156,7 +156,7 @@ export async function signout() {
         await lucia.invalidateSession(session.id);
 
         const sessionCookie = lucia.createBlankSessionCookie();
-        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+        (await cookies()).set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
     } catch (error) {
         console.error("Error: ", error);
         return {

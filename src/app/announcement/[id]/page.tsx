@@ -20,7 +20,8 @@ export const metadata: Metadata = {
   title: "Announcements",
 };
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { user } = await validateRequest();
 
   if (isNaN(Number(params.id))) {

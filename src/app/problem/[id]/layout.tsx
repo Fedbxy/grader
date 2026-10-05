@@ -14,13 +14,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProblemTabs } from "./tabs";
 
-export default async function DashboardLayout({
-  params,
-  children,
-}: {
-  params: { id: string };
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout(
+  props: {
+    params: Promise<{ id: string }>;
+    children: React.ReactNode;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   if (isNaN(Number(params.id))) {
     notFound();
   }

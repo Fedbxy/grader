@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getFile } from "@/lib/minio";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     if (isNaN(Number(params.id))) {
         return NextResponse.json({
             statusCode: 400,
