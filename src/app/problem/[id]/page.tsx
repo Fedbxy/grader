@@ -20,7 +20,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   );
 
   return (
-    <ResizablePanelGroup direction="horizontal">
+    <ResizablePanelGroup orientation="horizontal">
       <ResizablePanel className="mr-4">
         <Statement problemId={problem.id} withSplitLayout />
       </ResizablePanel>
