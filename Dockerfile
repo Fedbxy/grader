@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN bunx prisma@5 generate
+RUN bunx prisma@6 generate
 RUN bun run build
 
 
@@ -43,4 +43,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["sh", "-c", "HOSTNAME=\"0.0.0.0\" bunx prisma@5 migrate deploy && bun server.js"]
+CMD ["sh", "-c", "HOSTNAME=\"0.0.0.0\" bunx prisma@6 migrate deploy && bun server.js"]
