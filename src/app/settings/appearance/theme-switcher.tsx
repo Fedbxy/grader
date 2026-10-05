@@ -1,8 +1,8 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useState, useEffect } from "react";
 
+import { useIsClient } from "@/hooks/is-client";
 import {
   Select,
   SelectContent,
@@ -13,10 +13,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ThemeSwitcher() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const { theme, setTheme } = useTheme();
-
-  useEffect(() => setMounted(true), []);
 
   if (!mounted) {
     return <Skeleton className="h-9" />;
