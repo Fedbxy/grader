@@ -103,13 +103,13 @@ export function useDragResize({
   )
 
   const initiateResize = useCallback(
-    (direction: ResizeDirection) => (event: React.PointerEvent<HTMLDivElement>) => {
+    (direction: ResizeDirection, maxWidthAtStart = maxWidth) => (event: React.PointerEvent<HTMLDivElement>) => {
       event.preventDefault()
       event.stopPropagation()
 
-      setBoundaryWidth(maxWidth)
+      setBoundaryWidth(maxWidthAtStart)
       setInitialDimensions({
-        width: Math.max(widthConstraint(dimensions.width, maxWidth), minWidth),
+        width: Math.max(widthConstraint(dimensions.width, maxWidthAtStart), minWidth),
         height: Math.max(dimensions.height, minHeight)
       })
       setResizeOrigin(event.pageX)

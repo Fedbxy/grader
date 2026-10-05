@@ -1,23 +1,36 @@
-import { useEffect, useState } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
+
+const listeners = new Set<() => void>();
+
+function subscribe(onChange: () => void) {
+    listeners.add(onChange);
+    window.addEventListener("storage", onChange);
+
+    return () => {
+        listeners.delete(onChange);
+        window.removeEventListener("storage", onChange);
+    };
+}
 
 export function useLocalStorage<T>(key: string, defaultValue: T) {
-    const [value, setValue] = useState<T>(defaultValue);
-    const [isInitialized, setIsInitialized] = useState(false);
+    const stored = useSyncExternalStore(
+        subscribe,
+        () => localStorage.getItem(key),
+        () => null,
+    );
 
-    useEffect(() => {
-        const localstorageValue = localStorage.getItem(key);
+    const value = useMemo(
+        () => (stored === null ? defaultValue : (JSON.parse(stored) as T)),
+        [stored, defaultValue],
+    );
 
-        if (localstorageValue !== null) {
-            setValue(JSON.parse(localstorageValue) as T);
-        }
-        setIsInitialized(true);
-    }, [key]);
-
-    useEffect(() => {
-        if (isInitialized) {
-            localStorage.setItem(key, JSON.stringify(value));
-        }
-    }, [isInitialized, key, value]);
+    const setValue = useCallback(
+        (next: T) => {
+            localStorage.setItem(key, JSON.stringify(next));
+            listeners.forEach((listener) => listener());
+        },
+        [key],
+    );
 
     return [value, setValue] as const;
 }

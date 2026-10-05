@@ -57,14 +57,16 @@ export function DataTablePagination<TData>({
     return pageSizes.includes(size) ? size : 10;
   });
 
+  // Clamp an out-of-range page while rendering: React re-renders right away
+  // with the corrected state, before any effect runs.
+  const pageCount = Math.ceil(table.getRowCount() / pageSize);
+  const pageValid = Math.max(1, Math.min(page, pageCount));
+
+  if (page !== pageValid) {
+    setPage(pageValid);
+  }
+
   useEffect(() => {
-    const pageCount = Math.ceil(table.getRowCount() / pageSize);
-    const pageValid = Math.max(1, Math.min(page, pageCount));
-
-    if (page !== pageValid) {
-      setPage(pageValid);
-    }
-
     table.setPageSize(pageSize);
     table.setPageIndex(page - 1);
 
