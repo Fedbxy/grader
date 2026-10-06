@@ -4,6 +4,24 @@ on:
   push:
     branches:
       - main
+  # "Run workflow" on the Actions tab. Restarting everything also pulls a fresh
+  # Postgres image, e.g. to take a postgres:16 patch release; normal deploys
+  # never do.
+  workflow_dispatch:
+    inputs:
+      restart_all:
+        description: Pull fresh images and restart every container, Postgres and storage included
+        type: boolean
+        default: false
+
+# One build-and-deploy at a time. Without this, two merges race: two deploys
+# touch the host at once, and an older build can push :main last so the newer
+# deploy ships older code. Queued runs wait instead of being cancelled, since
+# killing a deploy halfway can leave the host half-updated; GitHub keeps only
+# the newest waiting run, and the newest main contains everything.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 env:
   REGISTRY: ghcr.io
@@ -89,12 +107,27 @@ jobs:
 
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
-            # The app and object storage (Silo, pinned by release tag). Postgres
-            # is left out so a deploy never moves it to a newer postgres:16.x
-            # on its own; it keeps running from its cached image.
-            docker compose -f docker-compose.prod.yaml pull app minio || { echo "pull failed; not deploying"; exit 1; }
-            docker compose -f docker-compose.prod.yaml up -d --force-recreate
+            if [ "${{ github.event.inputs.restart_all }}" = "true" ]; then
+              # Manual run: fresh images for everything, every container restarted.
+              docker compose -f docker-compose.prod.yaml pull || { echo "pull failed; not deploying"; exit 1; }
+              docker compose -f docker-compose.prod.yaml up -d --force-recreate
+            else
+              # The app and object storage (Silo, pinned by release tag). Postgres
+              # is left out so a deploy never moves it to a newer postgres:16.x
+              # on its own; it keeps running from its cached image.
+              docker compose -f docker-compose.prod.yaml pull app minio || { echo "pull failed; not deploying"; exit 1; }
+              # Postgres and storage are recreated only if their definition in
+              # the compose file changed (image tag, env, ports, volumes...);
+              # otherwise they keep running, so a deploy doesn't drop every
+              # database connection. The app always restarts on the new image.
+              docker compose -f docker-compose.prod.yaml up -d postgres minio
+              docker compose -f docker-compose.prod.yaml up -d --no-deps --force-recreate app
+            fi
             docker image prune -f
+
+            # The app must be running the image just pulled: otherwise the
+            # "Ready" check below could pass on the previous container's logs.
+            [ "$(docker inspect -f '{{.Image}}' grader-app)" = "$(docker image inspect -f '{{.Id}}' ghcr.io/fedbxy/grader:main)" ] || { echo "app is not running the new image"; exit 1; }
 
             # Fail the deploy unless the app comes up on the new image. The
             # container runs migrations before starting the server, so "Ready"
