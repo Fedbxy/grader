@@ -19,3 +19,22 @@ jobs:
 
       - name: Verify Docker Compose Build
         run: docker compose -f docker-compose.prod.yaml build
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Next 16 no longer lints during `next build`, so the Docker build above
+      # stopped catching lint errors; run ESLint on its own.
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: bun run lint
