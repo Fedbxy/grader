@@ -35,7 +35,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Info, Lock, Share2 } from "lucide-react";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (isNaN(Number(params.id))) {
     notFound();
   }

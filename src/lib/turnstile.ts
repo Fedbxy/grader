@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 export async function verifyTurnstile(token: string) {
     const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
     const secret = process.env.NEXT_PRIVATE_TURNSTILE_SECRET_KEY as string;
-    const ip = headers().get("x-forwarded-for") as string;
+    const ip = (await headers()).get("x-forwarded-for") as string;
 
     const formData = new FormData();
     formData.append("secret", secret);
