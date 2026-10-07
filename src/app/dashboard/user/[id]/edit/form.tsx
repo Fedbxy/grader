@@ -81,7 +81,12 @@ export function EditUserForm({ user }: { user: User }) {
             return toast.error(messages.form.noChanges);
         }
 
-        const response = await editUser(user.id, data);
+        // The action throws when the server answers with an error of its own
+        // instead of a result, e.g. a body over the size limit.
+        const response = await editUser(user.id, data).catch(() => null);
+        if (response === null) {
+            return toast.error(messages.form.rejected);
+        }
 
         // Saved only when the action says where to go next. No result at all is
         // what a request blocked before reaching the server (by a firewall) gives.
