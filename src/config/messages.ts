@@ -79,6 +79,7 @@ export const messages = {
         invalid: "Your request is invalid.",
         unexpected: "An unexpected error occurred. Please try again later.",
         noResponse: "Your request did not reach the server, so nothing was saved. Please try again.",
+        rejected: "The server could not process your request, so nothing was saved. If you attached files, check their size and try again.",
         noChanges: "No changes were made.",
         samePassword: "New password must be different from the current password.",
         invalidPassword: "Your current password is invalid.",
