@@ -1,3 +1,5 @@
+@reference "../../../app/globals.css";
+
 @import './partials/code.css';
 @import './partials/placeholder.css';
 @import './partials/lists.css';
@@ -130,7 +132,7 @@
 }
 
 .minimal-tiptap-editor .ProseMirror p {
-  @apply break-words;
+  @apply wrap-break-word;
 }
 
 .minimal-tiptap-editor .ProseMirror li .text-node:has(+ .list-node),
@@ -154,7 +156,7 @@
 }
 
 .minimal-tiptap-editor .ProseMirror-focused hr.ProseMirror-selectednode {
-  @apply rounded-full outline outline-2 outline-offset-1 outline-muted-foreground;
+  @apply rounded-full outline-solid outline-2 outline-offset-1 outline-muted-foreground;
 }
 
 .minimal-tiptap-editor .ProseMirror .ProseMirror-gapcursor {

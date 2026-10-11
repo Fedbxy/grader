@@ -129,7 +129,7 @@ export function SubmitForm({
   return (
     <div className="relative">
       {disabled && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-xs">
           <Link href={`/signin?nextUrl=problem/${problemId}/statement`}>
             <Button variant="outline">
               You need to be signed in to submit a solution.

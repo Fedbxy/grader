@@ -9,7 +9,7 @@
 }
 
 .minimal-tiptap-editor .ProseMirror code {
-  @apply break-words leading-[1.7em];
+  @apply wrap-break-word leading-[1.7em];
 }
 
 .minimal-tiptap-editor .ProseMirror pre code {
