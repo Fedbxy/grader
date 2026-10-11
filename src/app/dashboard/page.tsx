@@ -49,8 +49,8 @@ export default async function Page() {
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card key={index} className="gap-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
                 Total {stat.title}
               </CardTitle>

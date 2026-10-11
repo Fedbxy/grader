@@ -150,7 +150,7 @@ export function SubmitForm({
                 <FormLabel>Code</FormLabel>
                 <FormControl>
                   {isCodeEditor ? (
-                    <Card className="overflow-hidden">
+                    <Card className="gap-0 overflow-hidden py-0">
                       <CodeEditor
                         code={field.value}
                         language={form.watch("language")}

@@ -181,7 +181,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
               problemScore={submission.problem.score}
             />
             {canViewCode(user, submission) ? (
-              <Card className="overflow-hidden">
+              <Card className="gap-0 overflow-hidden py-0">
                 <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-3 py-2">
                   {submission.codePublic ? (
                     <Badge variant="secondary" className="gap-1.5">
@@ -231,7 +231,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 />
               </Card>
             ) : (
-              <Card className="border-dashed shadow-none">
+              <Card className="border-dashed py-0 shadow-none">
                 <CardContent className="flex flex-col items-center px-6 py-12 text-center">
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                     <Lock className="h-5 w-5 text-muted-foreground" />
