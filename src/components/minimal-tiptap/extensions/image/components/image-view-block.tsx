@@ -64,9 +64,6 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
 
   const aspectRatio = imageState.naturalSize.width / imageState.naturalSize.height
   const maxWidth = MAX_HEIGHT * aspectRatio
-  const containerMaxWidth = containerRef.current
-    ? parseFloat(getComputedStyle(containerRef.current).getPropertyValue('--editor-width'))
-    : Infinity
 
   const { isLink, onView, onDownload, onCopy, onCopyLink, onRemoveImg } = useImageActions({
     editor,
@@ -84,7 +81,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
     onDimensionsChange,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    maxWidth: containerMaxWidth > 0 ? containerMaxWidth : maxWidth
+    maxWidth
   })
 
   const shouldMerge = React.useMemo(() => currentWidth <= 180, [currentWidth])
@@ -121,21 +118,16 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
 
   const handleResizeStart = React.useCallback(
     (direction: 'left' | 'right') => (event: React.PointerEvent<HTMLDivElement>) => {
+      // Measure the editor width when the drag starts, not while rendering
+      const containerMaxWidth = containerRef.current
+        ? parseFloat(getComputedStyle(containerRef.current).getPropertyValue('--editor-width'))
+        : Infinity
+
       setActiveResizeHandle(direction)
-      initiateResize(direction)(event)
+      initiateResize(direction, containerMaxWidth > 0 ? containerMaxWidth : maxWidth)(event)
     },
-    [initiateResize]
+    [initiateResize, maxWidth]
   )
-
-  const handleResizeEnd = React.useCallback(() => {
-    setActiveResizeHandle(null)
-  }, [])
-
-  React.useEffect(() => {
-    if (!isResizing) {
-      handleResizeEnd()
-    }
-  }, [isResizing, handleResizeEnd])
 
   React.useEffect(() => {
     const handleImage = async () => {

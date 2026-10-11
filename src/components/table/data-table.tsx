@@ -42,6 +42,9 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  // TanStack Table has no compiler-safe API: useReactTable() returns functions
+  // the React Compiler cannot memoize, so it skips this component.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

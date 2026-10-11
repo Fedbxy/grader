@@ -28,7 +28,7 @@ export const columns: ColumnDef<SubmissionRow>[] = [
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <ActionsButton
               submissionId={submission.id}
               testcases={submission.problem.testcases}

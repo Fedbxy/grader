@@ -1,25 +1,22 @@
 import * as React from 'react'
 
+const QUERY = '(prefers-color-scheme: dark)'
+
+const subscribe = (onChange: () => void) => {
+  const darkModeMediaQuery = window.matchMedia(QUERY)
+  darkModeMediaQuery.addEventListener('change', onChange)
+
+  return () => {
+    darkModeMediaQuery.removeEventListener('change', onChange)
+  }
+}
+
 export const useTheme = () => {
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
-
-  React.useEffect(() => {
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setIsDarkMode(darkModeMediaQuery.matches)
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      const newDarkMode = e.matches
-      setIsDarkMode(newDarkMode)
-    }
-
-    darkModeMediaQuery.addEventListener('change', handleChange)
-
-    return () => {
-      darkModeMediaQuery.removeEventListener('change', handleChange)
-    }
-  }, [])
-
-  return isDarkMode
+  return React.useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(QUERY).matches,
+    () => false
+  )
 }
 
 export default useTheme

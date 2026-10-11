@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { toast } from "sonner";
 
@@ -18,15 +18,9 @@ export function VerdictStyleSwitcher() {
     "verdictStyle",
     "table",
   );
-  const [isLoading, setIsLoading] = useState(true);
+  const isClient = useIsClient();
 
-  useEffect(() => {
-    if (verdictStyle) {
-      setIsLoading(false);
-    }
-  }, [verdictStyle]);
-
-  if (isLoading) {
+  if (!isClient) {
     return <Skeleton className="h-9" />;
   }
 
