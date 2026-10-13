@@ -28,7 +28,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Separator } from "@/components/ui/separator";
 
 /**
  * Convert a subtask's passed-case count into displayed points.
@@ -118,17 +117,15 @@ export function Verdict({
   }
 
   const table = (
-    <div>
-      <Separator className="" />
+    <Accordion type="multiple">
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
         const { subtaskScore, subtaskFullScore } = subtaskDisplay(
           scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
         );
 
         return (
-          <Accordion type="single" collapsible key={subtask}>
-            <AccordionItem value={`subtask-${subtask}`}>
-              <AccordionTrigger className="p-2 px-4">
+            <AccordionItem key={subtask} value={`subtask-${subtask}`}>
+              <AccordionTrigger>
                 <span className="flex w-full items-center justify-between">
                   Subtask {subtask + 1}
                   <Badge
@@ -183,10 +180,9 @@ export function Verdict({
                 </Table>
               </AccordionContent>
             </AccordionItem>
-          </Accordion>
         );
       })}
-    </div>
+    </Accordion>
   );
 
   const classic = (
