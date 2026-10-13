@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { Role } from "@/types/user";
 
 // Who is looking: a signed-in user (id and role) or null for a visitor.

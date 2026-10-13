@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 // Prisma `select`s for rows that end up in a page payload. Server components
 // hand their query results to client components, and Next serializes every
