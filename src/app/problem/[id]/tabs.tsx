@@ -13,25 +13,25 @@ export function ProblemTabs({ problemId }: { problemId: number }) {
   return (
     <Tabs defaultValue={pathname.split("/")[3] ?? "split"}>
       <TabsList>
-        <Link href={`/problem/${problemId}`}>
-          <TabsTrigger value="split" className="hidden md:block">
+        <TabsTrigger value="split" className="hidden md:inline-flex" asChild>
+          <Link href={`/problem/${problemId}`}>
             <SquareSplitHorizontal className="h-5 w-5" />
-          </TabsTrigger>
-        </Link>
+          </Link>
+        </TabsTrigger>
         <Separator
           orientation="vertical"
           className="ml-1 mr-1 hidden md:block"
         />
-        <Link href={`/problem/${problemId}/statement`}>
-          <TabsTrigger value="statement">Statement</TabsTrigger>
-        </Link>
-        <Link href={`/problem/${problemId}/submit`}>
-          <TabsTrigger value="submit">Submit</TabsTrigger>
-        </Link>
+        <TabsTrigger value="statement" asChild>
+          <Link href={`/problem/${problemId}/statement`}>Statement</Link>
+        </TabsTrigger>
+        <TabsTrigger value="submit" asChild>
+          <Link href={`/problem/${problemId}/submit`}>Submit</Link>
+        </TabsTrigger>
         <Separator orientation="vertical" className="ml-1 mr-1" />
-        <Link href={`/problem/${problemId}/submission`}>
-          <TabsTrigger value="submission">Submission</TabsTrigger>
-        </Link>
+        <TabsTrigger value="submission" asChild>
+          <Link href={`/problem/${problemId}/submission`}>Submission</Link>
+        </TabsTrigger>
       </TabsList>
     </Tabs>
   );

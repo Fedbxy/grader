@@ -78,9 +78,9 @@ export function NavigationTabs() {
       <Tabs defaultValue={currentTab?.href} className="hidden md:flex">
         <TabsList>
           {tabs.map((tab, index) => (
-            <Link key={index} href={tab.href}>
-              <TabsTrigger value={tab.href}>{tab.label}</TabsTrigger>
-            </Link>
+            <TabsTrigger key={index} value={tab.href} asChild>
+              <Link href={tab.href}>{tab.label}</Link>
+            </TabsTrigger>
           ))}
         </TabsList>
       </Tabs>
