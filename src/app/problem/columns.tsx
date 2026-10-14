@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Problem } from "@/types/problem";
 import Link from "next/link";
 
-import { FileText, MoreHorizontal, FileCheck2, Check, X } from "lucide-react";
+import { FileText, MoreHorizontal, FileCheck2, Check, X, Send, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTableColumnHeader } from "@/components/table/column-header";
 
@@ -118,19 +118,31 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/problem/${problem.id}/statement`}>
-              <DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/problem/${problem.id}/statement`}>
                 <FileText className="mr-1 h-4 w-4" />
-                Open
-              </DropdownMenuItem>
-            </Link>
-            {latestSubmissionId && (
-              <Link href={`/submission/${latestSubmissionId}`}>
-                <DropdownMenuItem>
-                  <FileCheck2 className="mr-1 h-4 w-4" />
-                  Latest Submission
-                </DropdownMenuItem>
+                Statement
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/problem/${problem.id}/submit`}>
+                <Send className="mr-1 h-4 w-4" />
+                Submit
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/problem/${problem.id}/submission`}>
+                <ListChecks className="mr-1 h-4 w-4" />
+                Submissions
+              </Link>
+            </DropdownMenuItem>
+            {latestSubmissionId && (
+              <DropdownMenuItem asChild>
+                <Link href={`/submission/${latestSubmissionId}`}>
+                  <FileCheck2 className="mr-1 h-4 w-4" />
+                  My Latest Submission
+                </Link>
+              </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
