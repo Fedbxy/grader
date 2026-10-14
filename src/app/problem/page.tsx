@@ -2,8 +2,10 @@ import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { validateRequest } from "@/lib/auth";
 import { publicUserSelect } from "@/lib/select";
+import Decimal from "decimal.js";
 import {
   getAcceptedCounts,
+  getViewerBestFractions,
   getViewerProblemStatuses,
   type ViewerProblemStatus,
 } from "@/utils/accepted";
@@ -32,14 +34,16 @@ export default async function Page() {
 
   const { user } = await validateRequest();
 
-  // Two aggregate queries for the whole list, however many problems there are.
-  const [acceptedCounts, viewerStatuses] = await Promise.all([
+  // Aggregate queries for the whole list, however many problems there are.
+  const [acceptedCounts, viewerStatuses, bestFractions] = await Promise.all([
     getAcceptedCounts(),
     user ? getViewerProblemStatuses(user.id) : new Map<number, ViewerProblemStatus>(),
+    user ? getViewerBestFractions(user.id) : new Map<number, Decimal>(),
   ]);
 
   const dataWithAccepted = data.map((problem) => {
     const status = viewerStatuses.get(problem.id);
+    const best = bestFractions.get(problem.id);
 
     return {
       ...problem,
@@ -47,6 +51,9 @@ export default async function Page() {
       // undefined when the viewer never submitted, else whether they ever solved it.
       isUserAccepted: status?.isAccepted,
       latestSubmissionId: status?.latestSubmissionId,
+      isRunning: status?.isRunning,
+      // Rounded once, the same way a submission's score is shown.
+      bestScore: status ? (best ? best.mul(problem.score).toDecimalPlaces(2).toNumber() : null) : undefined,
     };
   });
 
@@ -59,7 +66,8 @@ export default async function Page() {
         <h2 className="text-sm text-muted-foreground">
           Select a problem to view its statement and submit a solution.
         </h2>
-        <DataTable columns={columns} data={dataWithAccepted} />
+        {/* The status column only means something to a signed-in viewer. */}
+        <DataTable columns={columns} data={dataWithAccepted} columnVisibility={{ status: !!user }} />
       </div>
     </div>
   );

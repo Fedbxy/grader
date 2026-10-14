@@ -1,6 +1,8 @@
 import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { publicUserSelect } from "@/lib/select";
+import { scoreFraction } from "@/utils/score";
+import Decimal from "decimal.js";
 
 // Solved status is derived from `submissions`. (A `user_problems` cache used
 // to hold it and went stale on rejudges and compile errors.) The rules live
@@ -38,24 +40,49 @@ export async function getAcceptedCounts(): Promise<Map<number, number>> {
     return new Map(rows.map((row) => [row.problemId, Number(row.accepted)]));
 }
 
-export type ViewerProblemStatus = { latestSubmissionId: number; isAccepted: boolean };
+export type ViewerProblemStatus = { latestSubmissionId: number; isAccepted: boolean; isRunning: boolean };
 
 // The viewer's own status per public problem they ever submitted to, in ONE
-// query: their latest submission id and whether they ever solved it (hidden
-// submissions of their own included). Problems never submitted are absent.
+// query: their latest submission id, whether they ever solved it, and whether
+// that latest submission is still queued or being judged (hidden submissions of
+// their own included). Problems never submitted are absent.
 export async function getViewerProblemStatuses(userId: number): Promise<Map<number, ViewerProblemStatus>> {
-    const rows = await prisma.$queryRaw<{ problemId: number; latestSubmissionId: number; isAccepted: boolean }[]>(Prisma.sql`
+    const rows = await prisma.$queryRaw<{ problemId: number; latestSubmissionId: number; isAccepted: boolean; isRunning: boolean }[]>(Prisma.sql`
         SELECT s."problemId",
                MAX(s."id") AS "latestSubmissionId",
-               BOOL_OR(${ACCEPTED}) AS "isAccepted"
+               BOOL_OR(${ACCEPTED}) AS "isAccepted",
+               (ARRAY_AGG(s."judgeStatus" ORDER BY s."id" DESC))[1] IN ('pending', 'judging') AS "isRunning"
         FROM "submissions" s
         JOIN "problems" p ON p."id" = s."problemId"
         WHERE s."userId" = ${userId} AND p."visibility" = 'public'
         GROUP BY s."problemId"
     `);
     return new Map(
-        rows.map((row) => [row.problemId, { latestSubmissionId: row.latestSubmissionId, isAccepted: row.isAccepted }]),
+        rows.map((row) => [
+            row.problemId,
+            { latestSubmissionId: row.latestSubmissionId, isAccepted: row.isAccepted, isRunning: row.isRunning },
+        ]),
     );
+}
+
+// The viewer's best judged result per public problem, as a fraction of the
+// problem's score (0 to 1). Only judged submissions without an error code
+// count; their own hidden ones included. Problems with none are absent. The
+// subtask weighting lives in result JSON, so the maximum is taken here rather
+// than in SQL, with the same arithmetic as a submission's score cell.
+export async function getViewerBestFractions(userId: number): Promise<Map<number, Decimal>> {
+    const rows = await prisma.submission.findMany({
+        where: { userId, judgeStatus: "done", errorCode: null, problem: { visibility: "public" } },
+        select: { problemId: true, score: true, result: true, problem: { select: { testcases: true } } },
+    });
+    const best = new Map<number, Decimal>();
+    for (const row of rows) {
+        const { earned, total } = scoreFraction(row.score, row.result, row.problem.testcases);
+        const fraction = earned.div(total);
+        const current = best.get(row.problemId);
+        if (!current || fraction.gt(current)) best.set(row.problemId, fraction);
+    }
+    return best;
 }
 
 type PublicUser = Prisma.UserGetPayload<{ select: typeof publicUserSelect }>;
