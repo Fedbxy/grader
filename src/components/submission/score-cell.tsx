@@ -1,8 +1,7 @@
 "use client";
 
-import Decimal from "decimal.js";
-
 import { useSubmission } from "@/hooks/submission";
+import { displayPoints, scoreFraction } from "@/utils/score";
 
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,30 +31,8 @@ export function ScoreCell({
     );
   }
 
-  // score and result.scores are counts of passed cases. The weighting is
-  // applied here rather than stored, so that changing problemScore or a
-  // subtask's weight needs no rejudge.
-  const weights: number[] | undefined = result?.weights;
-  const verdicts: string[][] | undefined = result?.verdicts;
-  const scores: number[] | undefined = result?.scores;
-
-  let earned: Decimal;
-  let total: Decimal;
-
-  if (weights?.length && verdicts?.length && scores?.length) {
-    total = new Decimal(weights.reduce((a: number, b: number) => a + b, 0));
-    earned = scores.reduce(
-      (sum: Decimal, passed: number, i: number) =>
-        sum.plus(new Decimal(passed).div(verdicts[i].length || 1).mul(weights[i])),
-      new Decimal(0),
-    );
-  } else {
-    // No subtasks recorded (or an errored submission): cases are the weights.
-    total = new Decimal(testcases || 1);
-    earned = new Decimal(score);
-  }
-
-  const display = earned.div(total).mul(problemScore).toDecimalPlaces(2).toNumber();
+  const { earned, total } = scoreFraction(score, result, testcases);
+  const display = displayPoints(earned, total, problemScore);
   const percent = earned.div(total).mul(100).toNumber();
 
   const variant = earned.equals(total)
