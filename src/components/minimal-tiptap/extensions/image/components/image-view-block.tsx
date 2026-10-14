@@ -225,6 +225,12 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({ editor, node, selected
                   width={currentWidth}
                   height={currentHeight}
                   src={imageState.src}
+                  // Announcement images are uploads stored as data: URLs or
+                  // links to other sites. Next's optimizer skips data: URLs
+                  // but refuses outside hosts (none are allowed in
+                  // next.config), so linked images never loaded. Load every
+                  // image as the browser would.
+                  unoptimized
                   onError={handleImageError}
                   onLoad={handleImageLoad}
                   alt={node.attrs.alt || ''}
