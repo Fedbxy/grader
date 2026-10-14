@@ -4,6 +4,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -29,6 +30,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   isPaginationSaved?: boolean;
   canSelectRowsPerPage?: boolean;
+  // Columns to hide from the start, e.g. ones that only apply when signed in.
+  columnVisibility?: VisibilityState;
 }
 
 export function DataTable<TData, TValue>({
@@ -36,6 +39,7 @@ export function DataTable<TData, TValue>({
   data,
   isPaginationSaved = true,
   canSelectRowsPerPage = true,
+  columnVisibility,
 }: DataTableProps<TData, TValue>) {
   const [mounted, setMounted] = useState(false);
 
@@ -54,6 +58,9 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      columnVisibility,
+    },
     state: {
       sorting,
       columnFilters,
@@ -75,7 +82,10 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={(header.column.columnDef.meta as { headerClassName?: string } | undefined)?.headerClassName}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -108,7 +118,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getVisibleLeafColumns().length}
                   className="h-24 text-center"
                 >
                   No results.
