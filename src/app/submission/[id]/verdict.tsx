@@ -14,11 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FileWarning, ServerCrash } from "lucide-react";
 
 /**
  * Convert a subtask's passed-case count into displayed points.
@@ -104,24 +100,7 @@ export function Verdict({
   }
 
   if (errorCode) {
-    return (
-      <div className="rounded-lg border">
-        <Popover>
-          <PopoverTrigger>
-            <pre className="p-4 text-destructive hover:underline">
-              {
-                maps.submission.verdict[
-                  errorCode as keyof typeof maps.submission.verdict
-                ]
-              }
-            </pre>
-          </PopoverTrigger>
-          <PopoverContent className="w-full max-w-md overflow-x-auto md:max-w-xl">
-            <pre className="text-destructive">{error}</pre>
-          </PopoverContent>
-        </Popover>
-      </div>
-    );
+    return <ErrorPanel errorCode={errorCode} error={error} />;
   }
 
   const failing: number[] = (verdicts ?? []).flatMap(
@@ -254,4 +233,63 @@ export function Verdict({
   );
 
   return verdictStyle === "table" ? table : classic;
+}
+
+// What each submission-wide error means and what to do about it. A compile
+// error is the submitter's to fix; the other two are not their fault. Worded
+// for any viewer, not only the submitter.
+const ERRORS: Record<
+  string,
+  { icon: typeof FileWarning; tone: string; explain: string }
+> = {
+  CE: {
+    icon: FileWarning,
+    tone: "text-amber-600 dark:text-amber-400",
+    explain:
+      "The code didn't compile, so no tests ran. The compiler's message is below; fix it and submit again.",
+  },
+  JE: {
+    icon: ServerCrash,
+    tone: "text-muted-foreground",
+    explain:
+      "The judge couldn't grade this submission because of a problem with the problem's setup, not the code. An admin needs to fix it.",
+  },
+  SE: {
+    icon: ServerCrash,
+    tone: "text-muted-foreground",
+    explain:
+      "Something went wrong in the grading system, not in the code. Submitting again later should work.",
+  },
+};
+
+// A submission that failed as a whole: which error, what it means, and the
+// message itself, all shown without a click.
+function ErrorPanel({
+  errorCode,
+  error,
+}: {
+  errorCode: string;
+  error?: string | null;
+}) {
+  const { icon: Icon, tone, explain } = ERRORS[errorCode] ?? ERRORS.SE;
+  const label =
+    maps.submission.verdict[errorCode as keyof typeof maps.submission.verdict] ??
+    errorCode;
+
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border p-4">
+      <div className="flex flex-col gap-1">
+        <span className={`flex items-center gap-1.5 font-medium ${tone}`}>
+          <Icon className="h-4 w-4" />
+          {label}
+        </span>
+        <p className="text-sm text-muted-foreground">{explain}</p>
+      </div>
+      {error && (
+        <pre className="max-h-64 overflow-auto rounded-md bg-muted/50 p-3 text-xs leading-relaxed">
+          {error}
+        </pre>
+      )}
+    </div>
+  );
 }
