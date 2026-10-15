@@ -21,14 +21,11 @@ export function ScoreCell({
     return <Skeleton className="h-8" />;
   }
 
-  const { score, result, status } = data;
+  const { score, result } = data;
 
+  // The live status ("Running on testcase 2") is shown by the verdict.
   if (isRunning) {
-    return (
-      <span className="flex items-center text-nowrap">
-        {status}
-      </span>
-    );
+    return <span className="text-muted-foreground">—</span>;
   }
 
   const { earned, total } = scoreFraction(score, result, testcases);

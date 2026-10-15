@@ -13,8 +13,13 @@ export function TimeCell({
 }) {
   const { data, isLoading, isRunning } = useSubmission(submissionId);
 
-  if (isLoading || isRunning) {
+  if (isLoading) {
     return <Skeleton className="h-8" />;
+  }
+
+  // Nothing measured yet; the verdict shows the live status.
+  if (isRunning) {
+    return <span className="text-muted-foreground">—</span>;
   }
 
   let maxTime = 0;
