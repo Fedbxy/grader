@@ -40,10 +40,12 @@ export function ScoreCell({
 
   // Written out rather than interpolated: Tailwind only emits classes it can
   // see as complete strings in the source.
+  // The theme's dark-mode green and orange are dark enough for fills but too
+  // dark for text, so the text is lighter in dark mode.
   const textClass = {
-    constructive: "text-constructive",
+    constructive: "text-constructive dark:text-green-400",
     destructive: "text-destructive",
-    warning: "text-warning",
+    warning: "text-warning dark:text-amber-400",
   }[variant];
 
   return (
