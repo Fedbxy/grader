@@ -5,8 +5,7 @@ import { validateRequest } from "@/lib/auth";
 import { submissionListSelect } from "@/lib/select";
 import { visibleSubmissionsWhere } from "@/utils/submission";
 
-import { columns } from "@/components/submission/columns";
-import { DataTable } from "@/components/table/data-table";
+import { SubmissionTable } from "@/components/submission/table";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -37,7 +36,7 @@ export default async function Page() {
                 )}
             </div>
             <h2 className="text-sm text-muted-foreground">Select a submission to view more details</h2>
-            <DataTable columns={columns} data={data} />
+            <SubmissionTable data={data} />
         </div>
     );
 }
