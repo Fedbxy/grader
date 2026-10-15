@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DataTablePagination } from "@/components/table/pagination";
+import { cn } from "@/lib/shadcn";
 
 import {
   Table,
@@ -37,6 +38,9 @@ interface DataTableProps<TData, TValue> {
   // pages cannot hand functions to this client component; wrap DataTable in a
   // client component to pass one.
   rowHref?: (row: TData) => string;
+  // On phones, where a wide table doesn't fit, each row is drawn by this as a
+  // list item instead. The table stays from the sm breakpoint up.
+  mobileRow?: (row: TData) => React.ReactNode;
 }
 
 // Links and controls inside a row keep their own click behaviour.
@@ -51,6 +55,7 @@ export function DataTable<TData, TValue>({
   canSelectRowsPerPage = true,
   columnVisibility,
   rowHref,
+  mobileRow,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -116,7 +121,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className={cn("rounded-md border", mobileRow && "hidden sm:block")}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -173,6 +178,27 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      {mobileRow && (
+        <ul className="divide-y rounded-md border sm:hidden">
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => {
+              const props = rowProps(row.original);
+
+              return (
+                <li
+                  key={row.id}
+                  {...props}
+                  className={cn("px-3 py-3 transition-colors hover:bg-muted/50", props.className)}
+                >
+                  {mobileRow(row.original)}
+                </li>
+              );
+            })
+          ) : (
+            <li className="py-8 text-center text-sm">No results.</li>
+          )}
+        </ul>
+      )}
       <div className="py-4">
         <DataTablePagination
           table={table}

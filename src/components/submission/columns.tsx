@@ -22,6 +22,46 @@ import { RelativeTime } from "@/components/relative-time";
 const PINNED =
   "sticky right-0 bg-background in-data-[slot=card]:bg-card before:pointer-events-none before:absolute before:inset-y-0 before:right-full before:w-8 before:bg-linear-to-l before:from-background in-data-[slot=card]:before:from-card before:to-transparent before:backdrop-blur-[2px] before:mask-l-from-0% before:transition-opacity";
 
+// The hidden and shared icons after a submission's number, with tooltips.
+export function SubmissionFlags({
+  hidden,
+  codePublic,
+}: {
+  hidden: boolean;
+  codePublic: boolean;
+}) {
+  return (
+    <>
+      {hidden && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <EyeOff
+              className="h-3.5 w-3.5 text-muted-foreground"
+              aria-label="Hidden"
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Hidden</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+      {codePublic && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Share2
+              className="h-3.5 w-3.5 text-muted-foreground"
+              aria-label="Code shared"
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Code shared</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </>
+  );
+}
+
 export const columns: ColumnDef<SubmissionRow>[] = [
   {
     accessorKey: "id",
@@ -32,32 +72,7 @@ export const columns: ColumnDef<SubmissionRow>[] = [
       return (
         <span className="flex items-center gap-1">
           <span className="font-medium">{id}</span>
-          {hidden && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <EyeOff
-                  className="h-3.5 w-3.5 text-muted-foreground"
-                  aria-label="Hidden"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Hidden</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {codePublic && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Share2
-                  className="h-3.5 w-3.5 text-muted-foreground"
-                  aria-label="Code shared"
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Code shared</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
+          <SubmissionFlags hidden={hidden} codePublic={codePublic} />
         </span>
       );
     },
