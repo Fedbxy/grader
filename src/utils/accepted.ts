@@ -2,6 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { publicUserSelect } from "@/lib/select";
 import { scoreFraction } from "@/utils/score";
+import type { Role } from "@/types/user";
 import Decimal from "decimal.js";
 
 // Solved status is derived from `submissions`. (A `user_problems` cache used
@@ -101,6 +102,47 @@ export async function listAcceptedUsers(problemId: number): Promise<PublicUser[]
         )
         ORDER BY u."id"
     `);
+}
+
+export type ProfileStats = {
+    solved: { id: number; title: string }[];
+    attempted: number;
+    submissions: number;
+};
+
+// What a profile page shows about one user, in ONE query grouped by problem:
+// the problems they solved (id order), how many they tried without solving,
+// and their total submissions. It counts only what the viewer may see, the
+// same rules as the submission lists: admins see everything; anyone else sees
+// public problems only, and hidden submissions only when the viewer is that
+// user. "Attempted" is a problem with a visible submission and no visible
+// accepted one, so a problem solved only by a hidden submission is attempted
+// (or absent) for a viewer who can't see it, not solved.
+export async function getProfileStats(
+    userId: number,
+    viewer: { id: number; role: Role } | null,
+): Promise<ProfileStats> {
+    // The viewer's own id is the only value interpolated, and only when signed in.
+    const hiddenOk = viewer ? Prisma.sql`s."hidden" = false OR s."userId" = ${viewer.id}` : Prisma.sql`s."hidden" = false`;
+    const visible = viewer?.role === "admin" ? Prisma.sql`TRUE` : Prisma.sql`p."visibility" = 'public' AND (${hiddenOk})`;
+    const rows = await prisma.$queryRaw<{ problemId: number; title: string; submissions: bigint; solved: boolean }[]>(Prisma.sql`
+        SELECT s."problemId",
+               p."title",
+               COUNT(*) AS submissions,
+               BOOL_OR(${ACCEPTED}) AS solved
+        FROM "submissions" s
+        JOIN "problems" p ON p."id" = s."problemId"
+        WHERE s."userId" = ${userId} AND ${visible}
+        GROUP BY s."problemId", p."title"
+        ORDER BY s."problemId"
+    `);
+    const solved = rows.filter((row) => row.solved);
+    return {
+        solved: solved.map((row) => ({ id: row.problemId, title: row.title })),
+        attempted: rows.length - solved.length,
+        // COUNT comes back as bigint.
+        submissions: rows.reduce((total, row) => total + Number(row.submissions), 0),
+    };
 }
 
 // The code and language of the user's latest submission to a problem (highest
