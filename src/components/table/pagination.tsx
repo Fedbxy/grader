@@ -31,6 +31,11 @@ export function DataTablePagination<TData>({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // The table stays mounted under an intercepting modal while pathname already
+  // is the modal's URL; writing that back would replace it with the table's
+  // query string.
+  const [tablePath] = useState(pathname);
+
   const pageSizes = [10, 20, 50, 100];
 
   const [page, setPage] = useState(() => {
@@ -77,9 +82,9 @@ export function DataTablePagination<TData>({
     window.history.replaceState(
       {},
       "",
-      `${pathname}?page=${page}&pageSize=${pageSize}`,
+      `${tablePath}?page=${page}&pageSize=${pageSize}`,
     );
-  }, [table, pathname, page, pageSize, isPaginationSaved]);
+  }, [table, tablePath, page, pageSize, isPaginationSaved]);
 
   return (
     <div className="flex items-center justify-between px-2">
