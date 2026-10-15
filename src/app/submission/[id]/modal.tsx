@@ -45,7 +45,7 @@ export function SubmissionModal({
           {/* The header centres its text on phones; the title is a flex row, so
               it has to be centred as a row. */}
           <DialogTitle className="flex items-center justify-center gap-2 sm:justify-start">
-            <span>Submission {id}</span>
+            <span>Submission #{id}</span>
             {hidden && <Badge variant="secondary">Hidden</Badge>}
           </DialogTitle>
           {/* Each part stays on one line; wrapping happens between parts. */}

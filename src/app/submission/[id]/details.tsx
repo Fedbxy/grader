@@ -32,7 +32,7 @@ import {
 } from "./buttons";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { FileText, Info, Lock, Send, Share2 } from "lucide-react";
+import { FileText, Info, Lock, Send, Share2, UserRound } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -186,20 +186,8 @@ export async function SubmissionDetails({
         id={submission.id}
         hidden={submission.hidden}
         description={[
-          <Link
-            key="problem"
-            href={`/problem/${submission.problem.id}/statement`}
-            className="link-underlined"
-          >
-            {submission.problem.title}
-          </Link>,
-          <Link
-            key="user"
-            href={`/user/${submission.user.id}/profile`}
-            className="link-underlined"
-          >
-            {submission.user.displayName}
-          </Link>,
+          <ProblemLink key="problem" problem={submission.problem} />,
+          <UserLink key="user" user={submission.user} />,
           language,
           <LocalTime key="time" date={submission.createdAt.toISOString()} />,
         ]}
@@ -291,13 +279,9 @@ export async function SubmissionDetails({
           </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          <Link href={`/problem/${problemId}/statement`} className="link-underlined">
-            {submission.problem.title}
-          </Link>
+          <ProblemLink problem={submission.problem} />
           {" · "}
-          <Link href={`/user/${submission.user.id}/profile`} className="link-underlined">
-            {submission.user.displayName}
-          </Link>
+          <UserLink user={submission.user} />
           {" · "}
           <RelativeTime date={submission.createdAt.toISOString()} />
         </p>
@@ -374,5 +358,32 @@ function InfoLabel({
         <p>{info}</p>
       </TooltipContent>
     </Tooltip>
+  );
+}
+
+// The problem and the user under a submission's title, each with its icon so
+// the two can't be told apart only by position. The icon is part of the link;
+// only the name is underlined.
+function ProblemLink({ problem }: { problem: { id: number; title: string } }) {
+  return (
+    <Link
+      href={`/problem/${problem.id}/statement`}
+      className="inline-flex items-center gap-1 align-bottom"
+    >
+      <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      <span className="link-underlined">{problem.title}</span>
+    </Link>
+  );
+}
+
+function UserLink({ user }: { user: { id: number; displayName: string } }) {
+  return (
+    <Link
+      href={`/user/${user.id}/profile`}
+      className="inline-flex items-center gap-1 align-bottom"
+    >
+      <UserRound className="h-3.5 w-3.5 shrink-0" aria-hidden />
+      <span className="link-underlined">{user.displayName}</span>
+    </Link>
   );
 }
