@@ -57,10 +57,18 @@ export function Verdict({
   submissionId,
   testcases,
   problemScore,
+  openSubtasks = "none",
+  compact = false,
 }: {
   submissionId: number;
   testcases: number;
   problemScore: number;
+  // Which subtasks start open: none, only the first one that lost points, or
+  // every one that lost points. A subtask is failing when it scored below its
+  // full score.
+  openSubtasks?: "none" | "first-failing" | "failing";
+  // Shorter column headers, for narrow places such as a phone.
+  compact?: boolean;
 }) {
   const [verdictStyle] = useLocalStorage("verdictStyle", "table");
   const isClient = useIsClient();
@@ -87,10 +95,10 @@ export function Verdict({
   if (isRunning) {
     return (
       <div className="rounded-lg border">
-        <pre className="flex items-center p-4">
+        <div className="flex items-center p-4">
           <LoadingSpinner className="mr-2 h-5 w-5" />
           {status}
-        </pre>
+        </div>
       </div>
     );
   }
@@ -116,8 +124,27 @@ export function Verdict({
     );
   }
 
+  const failing: number[] = (verdicts ?? []).flatMap(
+    (subtask_verdicts: string[], subtask: number) => {
+      const { subtaskScore, subtaskFullScore } = subtaskDisplay(
+        scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
+      );
+
+      return subtaskScore < subtaskFullScore ? [subtask] : [];
+    },
+  );
+  const opened =
+    openSubtasks === "failing"
+      ? failing
+      : openSubtasks === "first-failing"
+        ? failing.slice(0, 1)
+        : [];
+
   const table = (
-    <Accordion type="multiple">
+    <Accordion
+      type="multiple"
+      defaultValue={opened.map((subtask) => `subtask-${subtask}`)}
+    >
       {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
         const { subtaskScore, subtaskFullScore } = subtaskDisplay(
           scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
@@ -140,13 +167,13 @@ export function Verdict({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[100px]">#</TableHead>
+                      <TableHead className={compact ? "w-10" : "w-[100px]"}>#</TableHead>
                       <TableHead>Verdict</TableHead>
                       <TableHead className="text-nowrap text-right">
-                        Execution Time
+                        {compact ? "Time" : "Execution Time"}
                       </TableHead>
                       <TableHead className="text-nowrap text-right">
-                        Memory Used
+                        {compact ? "Memory" : "Memory Used"}
                       </TableHead>
                     </TableRow>
                   </TableHeader>

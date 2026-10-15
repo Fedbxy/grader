@@ -40,8 +40,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     // next-themes sets the theme class on <html> before React hydrates.
@@ -58,6 +60,7 @@ export default function RootLayout({
             <main className="min-h-screen-minus-header-footer">
               {children}
             </main>
+            {modal}
           </TooltipProvider>
           <Toaster
             richColors

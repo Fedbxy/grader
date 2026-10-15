@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Path } from "@/components/path";
 import { Verdict } from "./verdict";
+import { SubmissionModal } from "./modal";
 import { LocalTime } from "@/components/local-time";
 import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
@@ -35,9 +36,15 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Info, Lock, Share2 } from "lucide-react";
 
-// Everything the submission page shows, in its own component so that more
-// than one route can render it.
-export async function SubmissionDetails({ id }: { id: string }) {
+// The page and the intercepting modal both render this, so one fetch and one
+// permission check cover both.
+export async function SubmissionDetails({
+  id,
+  variant,
+}: {
+  id: string;
+  variant: "page" | "modal";
+}) {
   if (isNaN(Number(id))) {
     notFound();
   }
@@ -52,6 +59,161 @@ export async function SubmissionDetails({ id }: { id: string }) {
   const { user } = await validateRequest();
   if (!submission || !canViewSubmission(user, submission)) {
     notFound();
+  }
+
+  const language =
+    maps.language[submission.language as keyof typeof maps.language] ||
+    submission.language;
+
+  const stats = (
+    <div className="grid grid-cols-3 divide-x rounded-md border text-center">
+      {[
+        {
+          key: "score",
+          label: "Score",
+          value: (
+            <ScoreCell
+              submissionId={submission.id}
+              problemScore={submission.problem.score}
+              testcases={submission.problem.testcases}
+            />
+          ),
+        },
+        {
+          key: "time",
+          label: <InfoLabel info={MAX_TIME}>Time</InfoLabel>,
+          value: (
+            <TimeCell
+              submissionId={submission.id}
+              timeLimit={submission.problem.timeLimit}
+            />
+          ),
+        },
+        {
+          key: "memory",
+          label: <InfoLabel info={MAX_MEMORY}>Memory</InfoLabel>,
+          value: (
+            <MemoryCell
+              submissionId={submission.id}
+              memoryLimit={submission.problem.memoryLimit}
+            />
+          ),
+        },
+      ].map(({ key, label, value }) => (
+        <div key={key} className="flex flex-col items-center gap-1 px-2 py-3">
+          <span className="text-xs text-muted-foreground">{label}</span>
+          <div className="text-sm font-medium">{value}</div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const codeVisible = canViewCode(user, submission);
+  const code = (
+    <>
+      {codeVisible ? (
+        <Card className="gap-0 overflow-hidden py-0">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-3 py-2">
+            {submission.codePublic ? (
+              <Badge variant="secondary" className="gap-1.5">
+                <Share2 className="h-3 w-3" />
+                {user?.id === submission.userId
+                  ? "Shared"
+                  : `Shared by ${submission.user.displayName}`}
+                {submission.hidden && " · hidden from others"}
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="gap-1.5">
+                <Lock className="h-3 w-3" />
+                Private
+              </Badge>
+            )}
+            <div className="flex flex-wrap items-center gap-2">
+              {canShareCode(user, submission) && (
+                <>
+                  <ShareSwitch
+                    id={submission.id}
+                    codePublic={submission.codePublic}
+                    hidden={submission.hidden}
+                  />
+                  <Separator
+                    orientation="vertical"
+                    className="mx-1 hidden h-5 sm:block"
+                  />
+                </>
+              )}
+              {submission.codePublic && <CopyLinkButton />}
+              <CopyButton code={submission.code} />
+              {user?.role === "admin" && (
+                <>
+                  <HideButton
+                    id={submission.id}
+                    hidden={submission.hidden}
+                  />
+                  <RejudgeButton id={submission.id} />
+                </>
+              )}
+            </div>
+          </div>
+          <CodeEditor
+            code={submission.code}
+            language={submission.language}
+            readOnly
+          />
+        </Card>
+      ) : (
+        <Card className="border-dashed py-0 shadow-none">
+          <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+              <Lock className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <h3 className="font-semibold">This code is private</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Only {submission.user.displayName} and admins can see it.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+    </>
+  );
+
+  if (variant === "modal") {
+    return (
+      <SubmissionModal
+        id={submission.id}
+        hidden={submission.hidden}
+        description={[
+          <Link
+            key="problem"
+            href={`/problem/${submission.problem.id}/statement`}
+            className="link-underlined"
+          >
+            {submission.problem.title}
+          </Link>,
+          <Link
+            key="user"
+            href={`/user/${submission.user.id}/profile`}
+            className="link-underlined"
+          >
+            {submission.user.displayName}
+          </Link>,
+          language,
+          <LocalTime key="time" date={submission.createdAt.toISOString()} />,
+        ]}
+      >
+        <div className="flex flex-col space-y-4">
+          {stats}
+          <Verdict
+            submissionId={submission.id}
+            testcases={submission.problem.testcases}
+            problemScore={submission.problem.score}
+            openSubtasks="first-failing"
+            compact
+          />
+          {code}
+        </div>
+      </SubmissionModal>
+    );
   }
 
   const result: any = submission.result || {};
@@ -96,9 +258,7 @@ export async function SubmissionDetails({ id }: { id: string }) {
     },
     {
       label: "Language",
-      value:
-        maps.language[submission.language as keyof typeof maps.language] ||
-        submission.language,
+      value: language,
     },
     {
       label: "Score",
@@ -181,72 +341,34 @@ export async function SubmissionDetails({ id }: { id: string }) {
               testcases={submission.problem.testcases}
               problemScore={submission.problem.score}
             />
-            {canViewCode(user, submission) ? (
-              <Card className="gap-0 overflow-hidden py-0">
-                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b bg-muted/40 px-3 py-2">
-                  {submission.codePublic ? (
-                    <Badge variant="secondary" className="gap-1.5">
-                      <Share2 className="h-3 w-3" />
-                      {user?.id === submission.userId
-                        ? "Shared"
-                        : `Shared by ${submission.user.displayName}`}
-                      {submission.hidden && " · hidden from others"}
-                    </Badge>
-                  ) : (
-                    <Badge variant="outline" className="gap-1.5">
-                      <Lock className="h-3 w-3" />
-                      Private
-                    </Badge>
-                  )}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {canShareCode(user, submission) && (
-                      <>
-                        <ShareSwitch
-                          id={submission.id}
-                          codePublic={submission.codePublic}
-                          hidden={submission.hidden}
-                        />
-                        <Separator
-                          orientation="vertical"
-                          className="mx-1 hidden h-5 sm:block"
-                        />
-                      </>
-                    )}
-                    {submission.codePublic && <CopyLinkButton />}
-                    <CopyButton code={submission.code} />
-                    {user?.role === "admin" && (
-                      <>
-                        <HideButton
-                          id={submission.id}
-                          hidden={submission.hidden}
-                        />
-                        <RejudgeButton id={submission.id} />
-                      </>
-                    )}
-                  </div>
-                </div>
-                <CodeEditor
-                  code={submission.code}
-                  language={submission.language}
-                  readOnly
-                />
-              </Card>
-            ) : (
-              <Card className="border-dashed py-0 shadow-none">
-                <CardContent className="flex flex-col items-center px-6 py-12 text-center">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                    <Lock className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-semibold">This code is private</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Only {submission.user.displayName} and admins can see it.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            {code}
           </div>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+const MAX_TIME = "The maximum time taken by any testcase.";
+const MAX_MEMORY = "The maximum memory used by any testcase.";
+
+// A label with an ⓘ that explains it, as in the submission table's headers.
+function InfoLabel({
+  info,
+  children,
+}: {
+  info: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger className="inline-flex items-center gap-1">
+        {children}
+        <Info className="h-3.5 w-3.5" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{info}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
