@@ -4,6 +4,7 @@ import { maps } from "@/config/messages";
 import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
+import { liveStatus } from "@/components/submission/verdict-cell";
 import Decimal from "decimal.js";
 
 import {
@@ -105,7 +106,7 @@ export function Verdict({
       <div className="rounded-lg border">
         <div className="flex items-center p-4">
           <LoadingSpinner className="mr-2 h-5 w-5" />
-          {status}
+          {liveStatus(status, testcases)}
         </div>
       </div>
     );

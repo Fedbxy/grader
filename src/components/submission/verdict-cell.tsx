@@ -32,6 +32,14 @@ function firstFailure(verdicts: string[][] | undefined) {
   return skipped;
 }
 
+// The judge reports "Running on testcase 23"; add how many there are, so the
+// status shows how far along it is: "Running on testcase 23 / 50".
+export function liveStatus(status: string, testcases: number) {
+  return /^Running on testcase \d+$/.test(status) && testcases > 0
+    ? `${status} / ${testcases}`
+    : status;
+}
+
 export function VerdictCell({
   submissionId,
   testcases,
@@ -52,7 +60,7 @@ export function VerdictCell({
     return (
       <span className={`${item} text-muted-foreground`}>
         <LoadingSpinner className="h-4 w-4" />
-        {status}
+        {liveStatus(status, testcases)}
       </span>
     );
   }
