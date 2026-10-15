@@ -24,6 +24,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { FileWarning, ServerCrash } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+
+// The view most people see; Settings → Appearance can pick another.
+export const DEFAULT_VERDICT_STYLE = "grid";
 
 /**
  * Convert a subtask's passed-case count into displayed points.
@@ -66,7 +75,10 @@ export function Verdict({
   // Shorter column headers, for narrow places such as a phone.
   compact?: boolean;
 }) {
-  const [verdictStyle] = useLocalStorage("verdictStyle", "table");
+  const [verdictStyle, setVerdictStyle] = useLocalStorage(
+    "verdictStyle",
+    DEFAULT_VERDICT_STYLE,
+  );
   const isClient = useIsClient();
 
   const {
@@ -119,6 +131,22 @@ export function Verdict({
         ? failing.slice(0, 1)
         : [];
 
+  // Tests are numbered across the whole submission, as the verdict names them
+  // ("Runtime Error · test 4"): the first test of each subtask starts after
+  // the previous subtask's last.
+  const firstNumber: number[] = [];
+  (verdicts ?? []).reduce((next: number, subtask_verdicts: string[], subtask: number) => {
+    firstNumber[subtask] = next;
+    return next + subtask_verdicts.length;
+  }, 1);
+  const firstFailing = (() => {
+    for (const [subtask, subtask_verdicts] of ((verdicts ?? []) as string[][]).entries()) {
+      const i = subtask_verdicts.findIndex((v) => v !== "AC" && v !== "SKP");
+      if (i !== -1) return firstNumber[subtask] + i;
+    }
+    return null;
+  })();
+
   const table = (
     <Accordion
       type="multiple"
@@ -159,7 +187,7 @@ export function Verdict({
                   <TableBody>
                     {subtask_verdicts.map((v: string, i: number) => (
                       <TableRow key={i}>
-                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>{firstNumber[subtask] + i}</TableCell>
                         <TableCell>
                           <Badge
                             variant={
@@ -232,8 +260,107 @@ export function Verdict({
     </div>
   );
 
-  return verdictStyle === "table" ? table : classic;
+  const grid = (
+    <div className="flex flex-col divide-y">
+      {verdicts?.map((subtask_verdicts: string[], subtask: number) => {
+        const { subtaskScore, subtaskFullScore } = subtaskDisplay(
+          scores[subtask], subtask_verdicts.length, weights?.[subtask] ?? 1, weight, problemScore,
+        );
+
+        return (
+          <div key={subtask} className="flex flex-col gap-2 py-3 first:pt-0">
+            <div className="flex items-center justify-between text-sm font-medium">
+              Subtask {subtask + 1}
+              <Badge
+                className="text-nowrap"
+                variant={subtaskScore === subtaskFullScore ? "constructive" : "destructive"}
+              >
+                {subtaskScore} / {subtaskFullScore}
+              </Badge>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {subtask_verdicts.map((v: string, i: number) => {
+                const number = firstNumber[subtask] + i;
+                const name =
+                  maps.submission.verdict[v as keyof typeof maps.submission.verdict] ?? v;
+                const detail =
+                  v === "SKP"
+                    ? `Test ${number} · ${name}`
+                    : `Test ${number} · ${name} · ${times[subtask][i]} ms · ${memories[subtask][i]} KB`;
+
+                return (
+                  <Tooltip key={i}>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={detail}
+                        className={`flex h-7 min-w-7 items-center justify-center rounded-md border px-1 text-xs font-medium tabular-nums ${TEST_TONE[v] ?? TEST_TONE.WA} ${number === firstFailing ? "ring-2 ring-ring ring-offset-1 ring-offset-background" : ""}`}
+                      >
+                        {number}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{detail}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+      <p className="flex flex-wrap gap-x-3 gap-y-1 pt-3 text-xs text-muted-foreground">
+        {LEGEND.map(({ code, label }) => (
+          <span key={code} className="flex items-center gap-1">
+            <span className={`inline-block size-3 rounded-sm border ${TEST_TONE[code]}`} />
+            {label}
+          </span>
+        ))}
+      </p>
+    </div>
+  );
+
+  const view =
+    verdictStyle === "classic" ? classic : verdictStyle === "table" ? table : grid;
+
+  // Grid and table can swap in place; the choice is remembered like the
+  // setting.
+  if (verdictStyle === "classic") {
+    return view;
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {view}
+      <Button
+        variant="link"
+        size="sm"
+        className="h-auto self-start p-0 text-muted-foreground"
+        onClick={() => setVerdictStyle(verdictStyle === "table" ? "grid" : "table")}
+      >
+        {verdictStyle === "table" ? "Show as grid" : "Show as table"}
+      </Button>
+    </div>
+  );
 }
+
+// A test's square in the grid: green passed, red wrong or crashed, amber over
+// a limit, dashed grey skipped.
+const TEST_TONE: Record<string, string> = {
+  AC: "border-constructive/40 bg-constructive/15 text-constructive dark:text-green-400",
+  WA: "border-destructive/40 bg-destructive/15 text-destructive",
+  RE: "border-destructive/40 bg-destructive/15 text-destructive",
+  TLE: "border-warning/40 bg-warning/15 text-warning dark:text-amber-400",
+  MLE: "border-warning/40 bg-warning/15 text-warning dark:text-amber-400",
+  SKP: "border-dashed border-muted-foreground/40 text-muted-foreground",
+};
+
+const LEGEND = [
+  { code: "AC", label: "Passed" },
+  { code: "WA", label: "Wrong or crashed" },
+  { code: "TLE", label: "Over a limit" },
+  { code: "SKP", label: "Skipped" },
+];
 
 // What each submission-wide error means and what to do about it. A compile
 // error is the submitter's to fix; the other two are not their fault. Worded

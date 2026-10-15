@@ -3,6 +3,7 @@
 import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { toast } from "sonner";
+import { DEFAULT_VERDICT_STYLE } from "@/app/submission/[id]/verdict";
 
 import {
   Select,
@@ -16,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function VerdictStyleSwitcher() {
   const [verdictStyle, setVerdictStyle] = useLocalStorage(
     "verdictStyle",
-    "table",
+    DEFAULT_VERDICT_STYLE,
   );
   const isClient = useIsClient();
 
@@ -35,6 +36,7 @@ export function VerdictStyleSwitcher() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent align="end">
+        <SelectItem value="grid">Grid</SelectItem>
         <SelectItem value="table">Table</SelectItem>
         <SelectItem value="classic">Classic</SelectItem>
       </SelectContent>
