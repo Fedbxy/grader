@@ -12,7 +12,11 @@ import {
 
 // Labels that are not just the capitalised segment.
 const LABELS: Record<string, string> = {
+    // Collections read as plurals, as in the dashboard's tabs.
+    announcement: "Announcements",
+    problem: "Problems",
     submission: "Submissions",
+    user: "Users",
 };
 
 export function Path({ path }: { path: string }) {
