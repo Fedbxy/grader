@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { EyeOff, Info, Share2 } from "lucide-react";
-import { ActionsButton } from "./actions-button";
+import { VerdictCell } from "./verdict-cell";
 
 export const columns: ColumnDef<SubmissionRow>[] = [
   {
@@ -25,7 +25,9 @@ export const columns: ColumnDef<SubmissionRow>[] = [
 
       return (
         <span className="flex items-center gap-1">
-          {id}
+          <Link href={`/submission/${id}`} className="font-medium text-primary hover:underline">
+            {id}
+          </Link>
           {hidden && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -152,17 +154,16 @@ export const columns: ColumnDef<SubmissionRow>[] = [
     },
   },
   {
-    id: "actions",
+    id: "verdict",
+    header: "Verdict",
     cell: ({ row }) => {
       const submission = row.original;
 
       return (
-        <Link href={`/submission/${submission.id}`}>
-          <ActionsButton
-            submissionId={submission.id}
-            testcases={submission.problem.testcases}
-          />
-        </Link>
+        <VerdictCell
+          submissionId={submission.id}
+          testcases={submission.problem.testcases}
+        />
       );
     },
   },
