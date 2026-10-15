@@ -3,7 +3,10 @@
 export function LocalTime({ date }: { date: string }) {
   return (
     <time dateTime={date} suppressHydrationWarning>
-      {new Date(date).toLocaleString()}
+      {new Date(date).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      })}
     </time>
   );
 }
