@@ -12,6 +12,18 @@ export const publicUserSelect = {
     displayName: true,
 } satisfies Prisma.UserSelect;
 
+// A user as shown on their profile page: everything it renders, and never the
+// password hash.
+export const profileUserSelect = {
+    id: true,
+    username: true,
+    displayName: true,
+    avatar: true,
+    bio: true,
+    role: true,
+    isBanned: true,
+} satisfies Prisma.UserSelect;
+
 // A submission as shown in a submission table: no code, no judge internals.
 export const submissionListSelect = {
     id: true,

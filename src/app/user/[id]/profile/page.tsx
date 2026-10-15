@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { profileUserSelect } from "@/lib/select";
 import { BadgeCheck, Ban } from "lucide-react";
 
 import {
@@ -26,8 +27,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
 
     const user = await prisma.user.findUnique({
-        where: { id: Number(params.id) }
-    })
+        where: { id: Number(params.id) },
+        select: profileUserSelect,
+    });
 
     if (!user) {
         notFound();
