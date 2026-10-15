@@ -130,7 +130,7 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const { title, id } = row.original;
 
       return (
-        <Link href={`/problem/${id}/statement`} className="font-medium text-primary hover:underline">
+        <Link href={`/problem/${id}/statement`} className="link-underlined font-medium">
           {title}
         </Link>
       );
@@ -161,7 +161,7 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const author = row.original.author;
 
       return (
-        <Link href={`/user/${author.id}/profile`} className="link">
+        <Link href={`/user/${author.id}/profile`} className="link-underlined">
           {author.displayName}
         </Link>
       );
