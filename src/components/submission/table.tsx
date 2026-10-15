@@ -83,13 +83,17 @@ function SubmissionListItem({
           />
         </Link>
       </div>
-      <div className="flex items-center justify-between gap-3 text-sm">
+      {/* In a narrow card a long verdict and the score don't fit side by side;
+          the score then drops below, still on the right. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <VerdictCell submissionId={id} testcases={problem.testcases} />
-        <ScoreCell
-          submissionId={id}
-          problemScore={problem.score}
-          testcases={problem.testcases}
-        />
+        <div className="ml-auto">
+          <ScoreCell
+            submissionId={id}
+            problemScore={problem.score}
+            testcases={problem.testcases}
+          />
+        </div>
       </div>
     </div>
   );
