@@ -22,6 +22,7 @@ export const profileUserSelect = {
     bio: true,
     role: true,
     isBanned: true,
+    createdAt: true,
 } satisfies Prisma.UserSelect;
 
 // A submission as shown in a submission table: no code, no judge internals.

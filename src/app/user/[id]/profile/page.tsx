@@ -6,7 +6,7 @@ import { validateRequest } from "@/lib/auth";
 import { profileUserSelect, submissionListSelect } from "@/lib/select";
 import { getProfileStats } from "@/utils/accepted";
 import { visibleSubmissionsWhere } from "@/utils/submission";
-import { BadgeCheck, Ban, CircleCheck } from "lucide-react";
+import { BadgeCheck, Ban, CalendarDays, CircleCheck } from "lucide-react";
 
 import {
     Card,
@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { SubmissionTable } from "@/components/submission/table";
+import { RelativeTime } from "@/components/relative-time";
 
 export const metadata: Metadata = {
     title: "User Profile",
@@ -78,6 +79,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                             </div>
                             <p className="text-lg font-semibold">{user.displayName}</p>
                             <p className="text-sm text-muted-foreground">{user.username}</p>
+                            <p className="mt-1 inline-flex items-center gap-1 text-sm text-muted-foreground">
+                                <CalendarDays className="h-3.5 w-3.5" />
+                                Joined <RelativeTime date={user.createdAt.toISOString()} />
+                            </p>
                         </div>
                         <div className="bg-secondary p-4 rounded-md">
                             <pre className="text-sm text-ellipsis overflow-hidden">{user.bio ?? (<span className="text-muted-foreground">No bio</span>)}</pre>
