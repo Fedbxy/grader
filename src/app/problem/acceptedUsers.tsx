@@ -37,7 +37,7 @@ export function AcceptedUsersDialog({ accepted, problemId }: { accepted: number,
     return (
         <Dialog>
             <DialogTrigger
-                className="font-medium text-primary hover:underline"
+                className="link-underlined font-medium"
                 onClick={onClick}
             >
                 {accepted}
@@ -50,7 +50,7 @@ export function AcceptedUsersDialog({ accepted, problemId }: { accepted: number,
                     <DialogDescription className="flex flex-col space-y-1">
                         <span>Solved by:</span>
                         {acceptedUsers?.map((user) => (
-                            <Link key={user.id} href={`/user/${user.id}/profile`} className="link text-foreground">
+                            <Link key={user.id} href={`/user/${user.id}/profile`} className="link-underlined text-foreground">
                                 {user.displayName}
                             </Link>
                         ))}

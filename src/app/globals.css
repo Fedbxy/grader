@@ -174,3 +174,8 @@
 .link {
   @apply hover:text-primary hover:underline;
 }
+
+/* A link that is underlined at rest, since a phone has no hover to reveal it. */
+.link-underlined {
+  @apply underline decoration-muted-foreground/40 underline-offset-4 hover:text-primary hover:decoration-primary;
+}

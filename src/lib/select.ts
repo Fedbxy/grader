@@ -17,6 +17,7 @@ export const submissionListSelect = {
     id: true,
     hidden: true,
     codePublic: true,
+    createdAt: true,
     problem: {
         select: {
             id: true,

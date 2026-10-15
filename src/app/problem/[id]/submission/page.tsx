@@ -4,8 +4,7 @@ import { getProblemData } from "@/utils/problem";
 import { submissionListSelect } from "@/lib/select";
 import { visibleSubmissionsWhere } from "@/utils/submission";
 
-import { columns } from "@/components/submission/columns";
-import { DataTable } from "@/components/table/data-table";
+import { SubmissionTable } from "@/components/submission/table";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -26,5 +25,5 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     select: submissionListSelect,
   });
 
-  return <DataTable columns={columns} data={data} />;
+  return <SubmissionTable data={data} />;
 }

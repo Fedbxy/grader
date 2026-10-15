@@ -6,6 +6,8 @@ export type SubmissionRow = {
     id: number;
     hidden: boolean;
     codePublic: boolean;
+    // A Date from the server, or an ISO string once it crossed to the client.
+    createdAt: Date | string;
     problem: Pick<
         Problem,
         "id" | "title" | "score" | "timeLimit" | "memoryLimit" | "testcases"

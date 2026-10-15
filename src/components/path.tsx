@@ -10,6 +10,11 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
+// Labels that are not just the capitalised segment.
+const LABELS: Record<string, string> = {
+    submission: "Submissions",
+};
+
 export function Path({ path }: { path: string }) {
     const parts = path.split("/").filter((part) => part !== "");
 
@@ -26,7 +31,7 @@ export function Path({ path }: { path: string }) {
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
                             <BreadcrumbLink asChild>
-                                <Link href={`/${parts.slice(0, index + 1).join("/")}`}>{part[0].toUpperCase() + part.slice(1)}</Link>
+                                <Link href={`/${parts.slice(0, index + 1).join("/")}`}>{LABELS[part] ?? part[0].toUpperCase() + part.slice(1)}</Link>
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                     </Fragment>
