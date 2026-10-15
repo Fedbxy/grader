@@ -10,12 +10,14 @@ import {
   canViewSubmission,
 } from "@/utils/submission";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Path } from "@/components/path";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Verdict } from "./verdict";
 import { SubmissionModal } from "./modal";
+import { Path } from "@/components/path";
 import { LocalTime } from "@/components/local-time";
+import { RelativeTime } from "@/components/relative-time";
+import { VerdictCell } from "@/components/submission/verdict-cell";
 import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
@@ -23,18 +25,19 @@ import { CodeEditor } from "@/components/code-editor";
 import {
   CopyButton,
   CopyLinkButton,
+  CopyPageLinkButton,
   HideButton,
   RejudgeButton,
   ShareSwitch,
 } from "./buttons";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { FileText, Info, Lock, Send, Share2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Info, Lock, Share2 } from "lucide-react";
 
 // The page and the intercepting modal both render this, so one fetch and one
 // permission check cover both.
@@ -216,137 +219,138 @@ export async function SubmissionDetails({
     );
   }
 
-  const result: any = submission.result || {};
-  let maxTime = 0;
-  if (result && result.times) {
-    const times = (result.times as number[][]).flat();
-    maxTime = times.length ? Math.max(...times) : 0;
-  }
-  const isTimeLimitExceeded = maxTime >= submission.problem.timeLimit;
-
-  let maxMemory = 0;
-  if (result && result.memories) {
-    const memories = (result.memories as number[][]).flat();
-    maxMemory = memories.length ? Math.max(...memories) : 0;
-  }
-  const isMemoryLimitExceeded =
-    maxMemory >= submission.problem.memoryLimit * 1024;
-
-  const data = [
+  const problemId = submission.problem.id;
+  const summary = [
     {
-      label: "Problem",
+      key: "time",
+      label: <InfoLabel info={MAX_TIME}>Execution time</InfoLabel>,
       value: (
-        <Link
-          href={`/problem/${submission.problem.id}/statement`}
-          className="link"
-        >
-          {submission.problem.title}
-        </Link>
+        <>
+          <TimeCell
+            submissionId={submission.id}
+            timeLimit={submission.problem.timeLimit}
+          />
+          <Limit>/ {submission.problem.timeLimit} ms</Limit>
+        </>
       ),
     },
     {
-      label: "User",
+      key: "memory",
+      label: <InfoLabel info={MAX_MEMORY}>Memory</InfoLabel>,
       value: (
-        <Link href={`/user/${submission.user.id}/profile`} className="link">
-          {submission.user.displayName}
-        </Link>
+        <>
+          <MemoryCell
+            submissionId={submission.id}
+            memoryLimit={submission.problem.memoryLimit}
+          />
+          <Limit>/ {submission.problem.memoryLimit} MB</Limit>
+        </>
       ),
     },
+    { key: "language", label: "Language", value: <span>{language}</span> },
     {
-      label: "Submission Time",
+      key: "submitted",
+      label: "Submitted",
       value: <LocalTime date={submission.createdAt.toISOString()} />,
-    },
-    {
-      label: "Language",
-      value: language,
-    },
-    {
-      label: "Score",
-      value: (
-        <ScoreCell
-          submissionId={submission.id}
-          problemScore={submission.problem.score}
-          testcases={submission.problem.testcases}
-        />
-      ),
-    },
-    {
-      label: (
-        <Tooltip>
-          <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
-            <span>Execution Time</span>
-            <Info className="h-4 w-4" />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>The maximum time taken by any testcase.</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-      value: (
-        <TimeCell
-          submissionId={submission.id}
-          timeLimit={submission.problem.timeLimit}
-        />
-      ),
-    },
-    {
-      label: (
-        <Tooltip>
-          <TooltipTrigger className="flex items-center space-x-1 text-nowrap">
-            <span>Memory Used</span>
-            <Info className="h-4 w-4" />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>The maximum memory used by any testcase.</p>
-          </TooltipContent>
-        </Tooltip>
-      ),
-      value: (
-        <MemoryCell
-          submissionId={submission.id}
-          memoryLimit={submission.problem.memoryLimit}
-        />
-      ),
     },
   ];
 
+  const tests = (
+    <section>
+      <h2 className="mb-2 text-lg font-semibold">Tests</h2>
+      <Verdict
+        submissionId={submission.id}
+        testcases={submission.problem.testcases}
+        problemScore={submission.problem.score}
+        openSubtasks="failing"
+        compact
+      />
+    </section>
+  );
+
+  // Fixed places: Tests then Code (or the private notice) in the wide column,
+  // Summary alone on the right. The Summary comes first in the DOM so phones read Summary, Tests,
+  // Code; on wide screens the grid pins it to the right column.
   return (
-    <div className="container mx-auto flex justify-center py-10">
-      <Card className="w-full max-w-xl md:max-w-2xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span>Submission {submission.id}</span>
-            {submission.hidden && <Badge variant="secondary">Hidden</Badge>}
-          </CardTitle>
-          <Path path={`/submission/${id}`} />
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col space-y-4">
-            <Table>
-              <TableBody>
-                {data.map(({ label, value }, key) => (
-                  <TableRow key={key}>
-                    <TableCell className="text-muted-foreground">
-                      {label}
-                    </TableCell>
-                    <TableCell>
-                      <pre>{value}</pre>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Verdict
+    <div className="container mx-auto flex flex-col gap-6 py-10">
+      <div className="flex flex-col gap-3">
+        <Path path={`/submission/${id}`} />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <h1 className="text-2xl font-semibold">Submission #{submission.id}</h1>
+          {submission.hidden && <Badge variant="secondary">Hidden</Badge>}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:ml-auto">
+            <VerdictCell
               submissionId={submission.id}
               testcases={submission.problem.testcases}
-              problemScore={submission.problem.score}
             />
-            {code}
+            <ScoreCell
+              submissionId={submission.id}
+              problemScore={submission.problem.score}
+              testcases={submission.problem.testcases}
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          <Link href={`/problem/${problemId}/statement`} className="link-underlined">
+            {submission.problem.title}
+          </Link>
+          {" · "}
+          <Link href={`/user/${submission.user.id}/profile`} className="link-underlined">
+            {submission.user.displayName}
+          </Link>
+          {" · "}
+          <RelativeTime date={submission.createdAt.toISOString()} />
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/problem/${problemId}/statement`}>
+              <FileText className="h-4 w-4" />
+              View problem
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/problem/${problemId}/submit`}>
+              <Send className="h-4 w-4" />
+              {/* "Again" only for the submitter; anyone else is trying it. */}
+              {user?.id === submission.userId ? "Submit again" : "Submit"}
+            </Link>
+          </Button>
+          <CopyPageLinkButton />
+        </div>
+      </div>
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+        <aside className="flex min-w-0 flex-col gap-6 lg:order-2">
+          <section>
+            <h2 className="mb-2 text-lg font-semibold">Summary</h2>
+            <dl className="divide-y rounded-md border text-sm">
+              {summary.map(({ key, label, value }) => (
+                <div
+                  key={key}
+                  className="flex items-center justify-between gap-4 px-3 py-2"
+                >
+                  <dt className="text-muted-foreground">{label}</dt>
+                  <dd className="flex items-baseline gap-1.5 text-right">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        </aside>
+        <div className="flex min-w-0 flex-col gap-6 lg:order-1">
+          {tests}
+          <section>
+            <h2 className="mb-2 text-lg font-semibold">Code</h2>
+            {code}
+          </section>
+        </div>
+      </div>
     </div>
   );
+}
+
+function Limit({ children }: { children: React.ReactNode }) {
+  return <span className="text-muted-foreground">{children}</span>;
 }
 
 const MAX_TIME = "The maximum time taken by any testcase.";

@@ -83,6 +83,25 @@ export function CopyLinkButton() {
   );
 }
 
+// The labelled twin of CopyLinkButton, for the page header.
+export function CopyPageLinkButton() {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Link copied to clipboard");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <Button variant="outline" size="sm" onClick={handleCopy}>
+      {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+      Copy link
+    </Button>
+  );
+}
+
 export function ShareSwitch({
   id,
   codePublic,
