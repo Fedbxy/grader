@@ -84,9 +84,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                                 Joined <RelativeTime date={user.createdAt.toISOString()} />
                             </p>
                         </div>
-                        <div className="bg-secondary p-4 rounded-md">
-                            <pre className="text-sm text-ellipsis overflow-hidden">{user.bio ?? (<span className="text-muted-foreground">No bio</span>)}</pre>
-                        </div>
+                        {/* Prose in the normal font, keeping the bio's own line breaks; no
+                            box at all when there's nothing to say. */}
+                        {user.bio?.trim() && (
+                            <p className="rounded-md bg-secondary p-4 text-sm whitespace-pre-line break-words">{user.bio}</p>
+                        )}
                         {/* One strip with dividers rather than three boxes: no gaps or
                             double padding, so "Submissions" fits on a phone. */}
                         <div className="grid grid-cols-3 divide-x rounded-md border">
