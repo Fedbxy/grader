@@ -2,35 +2,13 @@
 
 import { maps } from "@/config/messages";
 import { useSubmission } from "@/hooks/submission";
+import { submissionVerdict } from "@/utils/verdict";
 
 import { CircleCheck, CircleX, FileWarning, ServerCrash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/ui/spinner";
 
 type VerdictCode = keyof typeof maps.submission.verdict;
-
-// The first testcase that did not pass, walking the subtasks in order, with its
-// 1-based position across all of them. A skipped case (SKP, not run because an
-// earlier one failed) only names the failure when nothing else failed. Null
-// when every case passed (or there are none to look at).
-function firstFailure(verdicts: string[][] | undefined) {
-  let position = 0;
-  let skipped: { verdict: string; position: number } | null = null;
-
-  for (const subtask of verdicts ?? []) {
-    for (const verdict of subtask) {
-      position++;
-      if (verdict === "AC") continue;
-      if (verdict === "SKP") {
-        skipped ??= { verdict, position };
-        continue;
-      }
-      return { verdict, position };
-    }
-  }
-
-  return skipped;
-}
 
 // The judge reports "Running on testcase 23"; add how many there are, so the
 // status shows how far along it is: "Running on testcase 23 / 50".
@@ -55,8 +33,9 @@ export function VerdictCell({
   }
 
   const { score, result, status, errorCode } = data;
+  const verdict = submissionVerdict({ errorCode, status, score, result }, testcases);
 
-  if (isRunning) {
+  if (verdict.code === "running") {
     return (
       <span className={`${item} text-muted-foreground`}>
         <LoadingSpinner className="h-4 w-4" />
@@ -65,7 +44,7 @@ export function VerdictCell({
     );
   }
 
-  if (errorCode === "CE") {
+  if (verdict.code === "CE") {
     return (
       <span className={`${item} font-medium text-amber-600 dark:text-amber-400`}>
         <FileWarning className="h-4 w-4" />
@@ -73,17 +52,16 @@ export function VerdictCell({
       </span>
     );
   }
-  if (errorCode === "JE" || errorCode === "SE") {
+  if (verdict.code === "JE" || verdict.code === "SE") {
     return (
       <span className={`${item} text-muted-foreground`}>
         <ServerCrash className="h-4 w-4" />
-        {maps.submission.verdict[errorCode as VerdictCode]}
+        {maps.submission.verdict[verdict.code]}
       </span>
     );
   }
 
-  // The same rule as utils/accepted.ts: no error, and every testcase passed.
-  if (!errorCode && testcases > 0 && score === testcases) {
+  if (verdict.code === "AC") {
     return (
       <span className={`${item} font-medium text-constructive dark:text-green-400`}>
         <CircleCheck className="h-4 w-4" />
@@ -92,18 +70,15 @@ export function VerdictCell({
     );
   }
 
-  const failure = firstFailure(result?.verdicts);
-  const label = failure
-    ? (maps.submission.verdict[failure.verdict as VerdictCode] ?? failure.verdict)
-    : maps.submission.verdict.WA;
+  const label = maps.submission.verdict[verdict.code as VerdictCode] ?? verdict.code;
 
   return (
     <span className={`${item} font-medium text-destructive`}>
       <CircleX className="h-4 w-4" />
       {label}
-      {failure && (
+      {verdict.position && (
         <span className="font-normal text-muted-foreground">
-          · test {failure.position}
+          · test {verdict.position}
         </span>
       )}
     </span>
