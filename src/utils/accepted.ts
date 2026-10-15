@@ -145,6 +145,44 @@ export async function getProfileStats(
     };
 }
 
+export type AdminProfileStats = {
+    public: { solved: number; attempted: number; submissions: number };
+    private: { solved: number; attempted: number; submissions: number };
+    all: { solved: number; attempted: number; submissions: number };
+    hidden: number;
+};
+
+// The admin-only split of getProfileStats: the same solved / attempted /
+// submissions numbers per problem visibility, in ONE query grouped by problem,
+// plus how many of the user's submissions are hidden. Admins count everything,
+// hidden submissions included, so "All" matches what an admin sees in the
+// public strip.
+export async function getAdminProfileStats(userId: number): Promise<AdminProfileStats> {
+    const rows = await prisma.$queryRaw<{ visibility: string; submissions: bigint; hidden: bigint; solved: boolean }[]>(Prisma.sql`
+        SELECT p."visibility"::text AS visibility,
+               COUNT(*) AS submissions,
+               COUNT(*) FILTER (WHERE s."hidden") AS hidden,
+               BOOL_OR(${ACCEPTED}) AS solved
+        FROM "submissions" s
+        JOIN "problems" p ON p."id" = s."problemId"
+        WHERE s."userId" = ${userId}
+        GROUP BY s."problemId", p."visibility"
+    `);
+    const empty = () => ({ solved: 0, attempted: 0, submissions: 0 });
+    const stats: AdminProfileStats = { public: empty(), private: empty(), all: empty(), hidden: 0 };
+    for (const row of rows) {
+        // COUNT comes back as bigint.
+        const submissions = Number(row.submissions);
+        const bucket = row.visibility === "public" ? stats.public : stats.private;
+        for (const target of [bucket, stats.all]) {
+            target[row.solved ? "solved" : "attempted"]++;
+            target.submissions += submissions;
+        }
+        stats.hidden += Number(row.hidden);
+    }
+    return stats;
+}
+
 // The code and language of the user's latest submission to a problem (highest
 // id, any status, hidden included since it is their own), or null if they never
 // submitted. Used to prefill the editor.
