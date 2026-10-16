@@ -9,6 +9,8 @@ import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
 // Add the languages you need. Each one loads the first time it is used.
 const languages = {
   bash: () => import("shiki/langs/shellscript.mjs"),
+  c: () => import("shiki/langs/c.mjs"),
+  cpp: () => import("shiki/langs/cpp.mjs"),
   css: () => import("shiki/langs/css.mjs"),
   diff: () => import("shiki/langs/diff.mjs"),
   html: () => import("shiki/langs/html.mjs"),
@@ -27,6 +29,8 @@ const aliases: Record<string, keyof typeof languages> = {
   js: "javascript",
   md: "markdown",
   py: "python",
+  // The judge's language ids: py and pypy are both Python.
+  pypy: "python",
   sh: "bash",
   shell: "bash",
   shellscript: "bash",
