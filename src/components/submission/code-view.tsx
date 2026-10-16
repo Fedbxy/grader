@@ -35,8 +35,9 @@ export async function CodeView({
           <CodeBlockCopyButton value={code} />
         </CodeBlockActions>
       </CodeBlockHeader>
-      {/* Long code scrolls inside the block, so the page stays usable. */}
-      <CodeBlockContent lineNumbers className="max-h-[70vh] scroll-fade-y">
+      {/* The whole code at its full length: the page (or the modal) scrolls,
+          not the block. Only long lines scroll sideways. */}
+      <CodeBlockContent lineNumbers>
         {lines.map((line, index) => (
           <CodeBlockLine key={index}>{line}</CodeBlockLine>
         ))}
