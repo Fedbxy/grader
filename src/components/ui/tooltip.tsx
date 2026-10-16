@@ -17,16 +17,73 @@ function TooltipProvider({
   )
 }
 
+// App change, not upstream (re-apply after updating shadcn): Radix tooltips
+// open on hover and focus only, so on a phone they never show. Here a tap on
+// the trigger toggles the tooltip, and a tap elsewhere closes it as usual.
+const TooltipOpenContext = React.createContext<{
+  open: boolean
+  setOpen: (open: boolean) => void
+} | null>(null)
+
 function Tooltip({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
+  const open = openProp ?? uncontrolledOpen
+
+  const setOpen = React.useCallback(
+    (next: boolean) => {
+      if (openProp === undefined) setUncontrolledOpen(next)
+      onOpenChange?.(next)
+    },
+    [openProp, onOpenChange]
+  )
+
+  return (
+    <TooltipOpenContext.Provider value={{ open, setOpen }}>
+      <TooltipPrimitive.Root
+        data-slot="tooltip"
+        open={open}
+        onOpenChange={setOpen}
+        {...props}
+      />
+    </TooltipOpenContext.Provider>
+  )
 }
 
 function TooltipTrigger({
+  onPointerDown,
+  onClick,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  const context = React.useContext(TooltipOpenContext)
+  // Whether the tooltip was open when the finger came down. During a tap Radix
+  // closes it on pointer down, opens it on focus and closes it on click, so
+  // the state by the time of the click says nothing.
+  const tapFromOpen = React.useRef<boolean | null>(null)
+
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      onPointerDown={(event) => {
+        tapFromOpen.current =
+          event.pointerType === "touch" ? (context?.open ?? false) : null
+        onPointerDown?.(event)
+      }}
+      onClick={(event) => {
+        onClick?.(event)
+        const wasOpen = tapFromOpen.current
+        if (context && wasOpen !== null) {
+          // After Radix's own click handler, which closes the tooltip.
+          setTimeout(() => context.setOpen(!wasOpen))
+        }
+      }}
+      {...props}
+    />
+  )
 }
 
 function TooltipContent({
