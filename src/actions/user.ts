@@ -65,8 +65,8 @@ export async function editAccount(data: FormData): Promise<ActionResult> {
             error: messages.form.unexpected,
         };
     }
-    revalidatePath("/settings");
-    return { redirectTo: "/settings" };
+    revalidatePath("/settings", "layout");
+    return { redirectTo: "/settings/account" };
 }
 
 export async function changePassword(data: FormData) {
