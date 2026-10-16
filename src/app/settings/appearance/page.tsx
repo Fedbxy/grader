@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
-import { AppearanceCard } from "./card";
+import { AppearanceSettings } from "./settings";
 
 export const metadata: Metadata = {
   title: "Appearance settings",
 };
 
 export default function Page() {
-  return <AppearanceCard />;
+  return <AppearanceSettings />;
 }
