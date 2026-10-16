@@ -2,11 +2,10 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/shadcn"
 import { Progress as ProgressPrimitive } from "radix-ui"
 
-import { cn } from "@/lib/shadcn"
-
-const progressVariants = cva("h-full w-full flex-1 transition-all", {
+const progressVariants = cva("size-full flex-1 transition-all", {
   variants: {
     variant: {
       default: "bg-primary",
@@ -31,7 +30,7 @@ function Progress({
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
+        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
         className
       )}
       {...props}
