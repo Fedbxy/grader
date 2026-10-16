@@ -56,7 +56,9 @@ export function SubmissionModal({
             ))}
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4">
+        {/* Room below the last box: Nova cards draw their outline as a ring
+            outside the box, which the scroll area would otherwise clip. */}
+        <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 pb-1">
           {children}
         </div>
         <DialogFooter>
