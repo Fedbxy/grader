@@ -9,7 +9,7 @@ import { hash } from "bcrypt";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { messages } from "@/config/messages";
-import { uploadFile, deleteFile } from "@/lib/minio";
+import { replaceAvatar } from "@/utils/avatar";
 import { ActionResult } from "@/types/action";
 
 export async function editUser(id: number, data: FormData): Promise<ActionResult> {
@@ -70,9 +70,7 @@ export async function editUser(id: number, data: FormData): Promise<ActionResult
         }
 
         if (avatar) {
-            if (user.avatar) deleteFile(user.avatar);
-            uploadFile(`user/${user.id}/avatar.${avatar.type.split("/")[1]}`, avatar);
-            updateData.avatar = `user/${user.id}/avatar.${avatar.type.split("/")[1]}`;
+            updateData.avatar = await replaceAvatar(user.id, user.avatar, avatar);
         }
 
         if (bio !== user.bio) {
