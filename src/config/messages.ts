@@ -14,7 +14,7 @@ export const messages = {
         },
         confirmPassword: {
             required: "Confirm password is required",
-            mismatch: "Password does not match",
+            mismatch: "Passwords don't match.",
         },
         displayName: {
             required: "Display name is required",
