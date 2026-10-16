@@ -23,7 +23,6 @@ import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
 import { CodeView } from "@/components/submission/code-view";
 import {
-  CopyButton,
   CopyLinkButton,
   CopyPageLinkButton,
   HideButton,
@@ -146,7 +145,6 @@ export async function SubmissionDetails({
                 </>
               )}
               {submission.codePublic && <CopyLinkButton />}
-              <CopyButton code={submission.code} />
               {user?.role === "admin" && (
                 <>
                   <HideButton

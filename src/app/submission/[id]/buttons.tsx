@@ -8,7 +8,7 @@ import { setSubmissionHidden } from "@/actions/admin/submission";
 import { setCodePublic } from "@/actions/submission";
 import { useSWRConfig } from "swr";
 
-import { Check, Clipboard, Link2 } from "lucide-react";
+import { Check, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -46,23 +46,6 @@ function ToolbarButton({
         <p>{label}</p>
       </TooltipContent>
     </Tooltip>
-  );
-}
-
-export function CopyButton({ code }: { code: string }) {
-  const [copied, setCopied] = useState(false);
-
-  function handleCopy() {
-    navigator.clipboard.writeText(code);
-    toast.success("Copied to clipboard");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  return (
-    <ToolbarButton label="Copy code" onClick={handleCopy}>
-      {copied ? <Check className="h-4 w-4" /> : <Clipboard className="h-4 w-4" />}
-    </ToolbarButton>
   );
 }
 
