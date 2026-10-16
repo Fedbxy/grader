@@ -21,7 +21,7 @@ import { VerdictCell } from "@/components/submission/verdict-cell";
 import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
-import { CodeEditor } from "@/components/code-editor";
+import { CodeView } from "@/components/submission/code-view";
 import {
   CopyButton,
   CopyLinkButton,
@@ -158,10 +158,10 @@ export async function SubmissionDetails({
               )}
             </div>
           </div>
-          <CodeEditor
+          <CodeView
             code={submission.code}
             language={submission.language}
-            readOnly
+            title={language}
           />
         </Card>
       ) : (
