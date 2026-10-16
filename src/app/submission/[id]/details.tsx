@@ -165,7 +165,7 @@ export async function SubmissionDetails({
           />
         </Card>
       ) : (
-        <Card className="border-dashed py-0 shadow-none">
+        <Card className="border border-dashed py-0 ring-0">
           <CardContent className="flex flex-col items-center px-6 py-12 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Lock className="h-5 w-5 text-muted-foreground" />
