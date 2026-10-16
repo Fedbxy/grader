@@ -17,12 +17,15 @@ export default async function Page() {
         competitive programming. Start your journey today!
       </p>
       <div className="flex flex-col items-center gap-4 md:flex-row md:gap-8">
-        <Link href={user ? "/submission/my" : "/signup"}>
+        {/* A plain link, not next/link: a client-side move to
+            /submission/my is caught by the submission modal's intercepting
+            route, which leaves this page on screen. */}
+        <a href={user ? "/submission/my" : "/signup"}>
           <Button className="text-lg font-semibold">
             {user ? "Continue your journey" : "Get Started"}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
-        </Link>
+        </a>
         <Link href="/problem">
           <Button variant="secondary" className="text-lg font-semibold">
             Problems
