@@ -86,6 +86,22 @@ export async function getViewerBestFractions(userId: number): Promise<Map<number
     return best;
 }
 
+// How many of the viewer's judged submissions to public problems were
+// accepted, out of those that were judged without an error code (compile,
+// judge and system errors are left out of both numbers). Their own hidden
+// submissions count. In ONE query.
+export async function getViewerAcceptance(userId: number): Promise<{ accepted: number; judged: number }> {
+    const [row] = await prisma.$queryRaw<{ accepted: bigint; judged: bigint }[]>(Prisma.sql`
+        SELECT COUNT(*) FILTER (WHERE ${ACCEPTED}) AS accepted, COUNT(*) AS judged
+        FROM "submissions" s
+        JOIN "problems" p ON p."id" = s."problemId"
+        WHERE s."userId" = ${userId} AND p."visibility" = 'public'
+          AND s."judgeStatus" = 'done' AND s."errorCode" IS NULL
+    `);
+    // COUNT comes back as bigint.
+    return { accepted: Number(row?.accepted ?? 0), judged: Number(row?.judged ?? 0) };
+}
+
 type PublicUser = Prisma.UserGetPayload<{ select: typeof publicUserSelect }>;
 
 // The distinct users who solved one problem, hidden submissions excluded. Only
