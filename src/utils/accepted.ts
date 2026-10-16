@@ -102,6 +102,49 @@ export async function getViewerAcceptance(userId: number): Promise<{ accepted: n
     return { accepted: Number(row?.accepted ?? 0), judged: Number(row?.judged ?? 0) };
 }
 
+export type UpNextProblem = {
+    id: number;
+    title: string;
+    timeLimit: number;
+    memoryLimit: number;
+    // Whole percent of the users who tried it that solved it; null when nobody
+    // (hidden submissions aside) has tried it yet.
+    solveRate: number | null;
+};
+
+// Public problems the viewer never submitted to, the easiest first: by solve
+// rate (distinct accepted users over distinct users who tried, hidden
+// submissions excluded), problems nobody tried last, then the newest. In ONE
+// query, limited in SQL.
+export async function getUpNextProblems(userId: number, limit: number): Promise<UpNextProblem[]> {
+    const rows = await prisma.$queryRaw<
+        { id: number; title: string; timeLimit: number; memoryLimit: number; tried: bigint; accepted: bigint }[]
+    >(Prisma.sql`
+        SELECT p."id", p."title", p."timeLimit", p."memoryLimit",
+               COUNT(DISTINCT s."userId") AS tried,
+               COUNT(DISTINCT s."userId") FILTER (WHERE ${ACCEPTED}) AS accepted
+        FROM "problems" p
+        LEFT JOIN "submissions" s ON s."problemId" = p."id" AND s."hidden" = false
+        WHERE p."visibility" = 'public'
+          AND NOT EXISTS (
+              SELECT 1 FROM "submissions" own WHERE own."problemId" = p."id" AND own."userId" = ${userId}
+          )
+        GROUP BY p."id"
+        ORDER BY (COUNT(DISTINCT s."userId") FILTER (WHERE ${ACCEPTED}))::float
+                     / NULLIF(COUNT(DISTINCT s."userId"), 0) DESC NULLS LAST,
+                 p."createdAt" DESC, p."id" DESC
+        LIMIT ${limit}
+    `);
+    // COUNT comes back as bigint.
+    return rows.map((row) => ({
+        id: row.id,
+        title: row.title,
+        timeLimit: row.timeLimit,
+        memoryLimit: row.memoryLimit,
+        solveRate: Number(row.tried) === 0 ? null : Math.round((Number(row.accepted) / Number(row.tried)) * 100),
+    }));
+}
+
 type PublicUser = Prisma.UserGetPayload<{ select: typeof publicUserSelect }>;
 
 // The distinct users who solved one problem, hidden submissions excluded. Only
