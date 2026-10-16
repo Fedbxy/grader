@@ -16,9 +16,12 @@ import { ChevronRight } from "lucide-react";
 export function SubmissionTable({
   data,
   columnVisibility,
+  isPaginationSaved,
 }: {
   data: SubmissionRow[];
   columnVisibility?: VisibilityState;
+  // false keeps the page and its size out of the URL.
+  isPaginationSaved?: boolean;
 }) {
   // A page that hides the User column (a profile) hides it on phones too.
   const showUser = columnVisibility?.user !== false;
@@ -28,6 +31,7 @@ export function SubmissionTable({
       columns={columns}
       data={data}
       columnVisibility={columnVisibility}
+      isPaginationSaved={isPaginationSaved}
       rowHref={(submission) => `/submission/${submission.id}`}
       mobileRow={(submission) => (
         <SubmissionListItem submission={submission} showUser={showUser} />

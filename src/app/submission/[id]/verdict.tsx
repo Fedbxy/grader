@@ -5,7 +5,8 @@ import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
 import { liveStatus } from "@/components/submission/verdict-cell";
-import Decimal from "decimal.js";
+import { TEST_TONE } from "@/components/submission/test-tone";
+import { subtaskDisplay } from "@/utils/score";
 
 import {
   Table,
@@ -34,30 +35,6 @@ import { Button } from "@/components/ui/button";
 
 // The view most people see; Settings → Appearance can pick another.
 export const DEFAULT_VERDICT_STYLE = "grid";
-
-/**
- * Convert a subtask's passed-case count into displayed points.
- *
- * result.scores[i] is a count of cases, not points: the weighting lives here so
- * that changing a problem's max score never requires a rejudge. Rounded once,
- * at the end — rounding subtaskFullScore first and then multiplying by it
- * compounds the error.
- */
-function subtaskDisplay(
-  passed: number,
-  caseCount: number,
-  subtaskWeight: number,
-  totalWeight: number,
-  problemScore: number,
-) {
-  const full = new Decimal(subtaskWeight).div(totalWeight).mul(problemScore);
-  const earned = new Decimal(passed).div(caseCount || 1).mul(full);
-
-  return {
-    subtaskScore: earned.toDecimalPlaces(2).toNumber(),
-    subtaskFullScore: full.toDecimalPlaces(2).toNumber(),
-  };
-}
 
 export function Verdict({
   submissionId,
@@ -344,17 +321,6 @@ export function Verdict({
     </div>
   );
 }
-
-// A test's square in the grid: green passed, red wrong or crashed, amber over
-// a limit, dashed grey skipped.
-const TEST_TONE: Record<string, string> = {
-  AC: "border-constructive/40 bg-constructive/15 text-constructive dark:text-green-400",
-  WA: "border-destructive/40 bg-destructive/15 text-destructive",
-  RE: "border-destructive/40 bg-destructive/15 text-destructive",
-  TLE: "border-warning/40 bg-warning/15 text-warning dark:text-amber-400",
-  MLE: "border-warning/40 bg-warning/15 text-warning dark:text-amber-400",
-  SKP: "border-dashed border-muted-foreground/40 text-muted-foreground",
-};
 
 const LEGEND = [
   { code: "AC", label: "Passed" },
