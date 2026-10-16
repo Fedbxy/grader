@@ -35,3 +35,27 @@ export function scoreFraction(
 export function displayPoints(earned: Decimal, total: Decimal, problemScore: number): number {
     return earned.div(total).mul(problemScore).toDecimalPlaces(2).toNumber();
 }
+
+/**
+ * Convert a subtask's passed-case count into displayed points.
+ *
+ * result.scores[i] is a count of cases, not points: the weighting lives here so
+ * that changing a problem's max score never requires a rejudge. Rounded once,
+ * at the end — rounding subtaskFullScore first and then multiplying by it
+ * compounds the error.
+ */
+export function subtaskDisplay(
+    passed: number,
+    caseCount: number,
+    subtaskWeight: number,
+    totalWeight: number,
+    problemScore: number,
+) {
+    const full = new Decimal(subtaskWeight).div(totalWeight).mul(problemScore);
+    const earned = new Decimal(passed).div(caseCount || 1).mul(full);
+
+    return {
+        subtaskScore: earned.toDecimalPlaces(2).toNumber(),
+        subtaskFullScore: full.toDecimalPlaces(2).toNumber(),
+    };
+}

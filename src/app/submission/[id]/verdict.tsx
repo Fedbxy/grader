@@ -5,7 +5,7 @@ import { useIsClient } from "@/hooks/is-client";
 import { useLocalStorage } from "@/hooks/local-storage";
 import { useSubmission } from "@/hooks/submission";
 import { liveStatus } from "@/components/submission/verdict-cell";
-import Decimal from "decimal.js";
+import { subtaskDisplay } from "@/utils/score";
 
 import {
   Table,
@@ -34,30 +34,6 @@ import { Button } from "@/components/ui/button";
 
 // The view most people see; Settings → Appearance can pick another.
 export const DEFAULT_VERDICT_STYLE = "grid";
-
-/**
- * Convert a subtask's passed-case count into displayed points.
- *
- * result.scores[i] is a count of cases, not points: the weighting lives here so
- * that changing a problem's max score never requires a rejudge. Rounded once,
- * at the end — rounding subtaskFullScore first and then multiplying by it
- * compounds the error.
- */
-function subtaskDisplay(
-  passed: number,
-  caseCount: number,
-  subtaskWeight: number,
-  totalWeight: number,
-  problemScore: number,
-) {
-  const full = new Decimal(subtaskWeight).div(totalWeight).mul(problemScore);
-  const earned = new Decimal(passed).div(caseCount || 1).mul(full);
-
-  return {
-    subtaskScore: earned.toDecimalPlaces(2).toNumber(),
-    subtaskFullScore: full.toDecimalPlaces(2).toNumber(),
-  };
-}
 
 export function Verdict({
   submissionId,
