@@ -17,7 +17,7 @@ export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   if (!mounted) {
-    return <Skeleton className="h-9" />;
+    return <Skeleton className="h-8" />;
   }
 
   return (
