@@ -22,7 +22,7 @@ export function VerdictStyleSwitcher() {
   const isClient = useIsClient();
 
   if (!isClient) {
-    return <Skeleton className="h-9" />;
+    return <Skeleton className="h-8" />;
   }
 
   const handleStyleChange = (style: string) => {

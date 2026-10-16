@@ -42,9 +42,7 @@ export function SubmissionModal({
         }}
       >
         <DialogHeader>
-          {/* The header centres its text on phones; the title is a flex row, so
-              it has to be centred as a row. */}
-          <DialogTitle className="flex items-center justify-center gap-2 sm:justify-start">
+          <DialogTitle className="flex items-center gap-2">
             <span>Submission #{id}</span>
             {hidden && <Badge variant="secondary">Hidden</Badge>}
           </DialogTitle>
@@ -58,7 +56,9 @@ export function SubmissionModal({
             ))}
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 min-h-0 flex-1 overflow-y-auto px-6">
+        {/* Room below the last box: Nova cards draw their outline as a ring
+            outside the box, which the scroll area would otherwise clip. */}
+        <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 pb-1">
           {children}
         </div>
         <DialogFooter>

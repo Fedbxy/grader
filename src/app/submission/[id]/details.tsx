@@ -21,9 +21,8 @@ import { VerdictCell } from "@/components/submission/verdict-cell";
 import { ScoreCell } from "@/components/submission/score-cell";
 import { TimeCell } from "@/components/submission/time-cell";
 import { MemoryCell } from "@/components/submission/memory-cell";
-import { CodeEditor } from "@/components/code-editor";
+import { CodeView } from "@/components/submission/code-view";
 import {
-  CopyButton,
   CopyLinkButton,
   CopyPageLinkButton,
   HideButton,
@@ -146,7 +145,6 @@ export async function SubmissionDetails({
                 </>
               )}
               {submission.codePublic && <CopyLinkButton />}
-              <CopyButton code={submission.code} />
               {user?.role === "admin" && (
                 <>
                   <HideButton
@@ -158,14 +156,14 @@ export async function SubmissionDetails({
               )}
             </div>
           </div>
-          <CodeEditor
+          <CodeView
             code={submission.code}
             language={submission.language}
-            readOnly
+            title={language}
           />
         </Card>
       ) : (
-        <Card className="border-dashed py-0 shadow-none">
+        <Card className="border border-dashed py-0 ring-0">
           <CardContent className="flex flex-col items-center px-6 py-12 text-center">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Lock className="h-5 w-5 text-muted-foreground" />
