@@ -3,22 +3,27 @@
 import { useState } from "react";
 import { changePasswordSchema } from "@/lib/zod/user";
 import { changePassword } from "@/actions/user";
-import { limits } from "@/config/limits";
 import { messages } from "@/config/messages";
+import { StrengthMeter } from "./meter";
 import { passwordStrength } from "./strength";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Eye, EyeOff, CircleAlert } from "lucide-react";
+import { Check, Circle, CircleAlert, Eye, EyeOff, X } from "lucide-react";
 import { cn } from "@/lib/shadcn";
 import { SettingField, SettingsSection } from "../section";
 
 type Field = "password" | "newPassword" | "confirmNewPassword";
 
-// How many of the four segments are lit, and in what colour, per score.
-const SEGMENTS = 4;
-const STRENGTH_TONE = ["bg-destructive", "bg-destructive", "bg-warning", "bg-constructive", "bg-constructive"];
+// The word under the meter in the meter's colour.
+const STRENGTH_TEXT = [
+    "text-destructive",
+    "text-destructive",
+    "text-warning dark:text-amber-400",
+    "text-constructive dark:text-green-400",
+    "text-constructive dark:text-green-400",
+];
 
 export function ChangePasswordForm() {
     const [values, setValues] = useState<Record<Field, string>>({
@@ -112,32 +117,52 @@ export function ChangePasswordForm() {
                         />
                         <RevealButton shown={showNew} onToggle={() => setShowNew((shown) => !shown)} label="new password" />
                     </div>
-                    <div
-                        role="meter"
-                        aria-label="Password strength"
-                        aria-valuemin={0}
-                        aria-valuemax={SEGMENTS}
-                        aria-valuenow={values.newPassword ? strength.score : 0}
-                        aria-valuetext={values.newPassword ? strength.label : "Not entered"}
-                        className="grid grid-cols-4 gap-1"
-                    >
-                        {Array.from({ length: SEGMENTS }, (_, i) => (
-                            <div
-                                key={i}
-                                className={cn(
-                                    "h-1 rounded-full",
-                                    values.newPassword && i < strength.score
-                                        ? STRENGTH_TONE[strength.score]
-                                        : "bg-muted",
-                                )}
-                            />
-                        ))}
+                    <StrengthMeter score={strength.score} label={strength.label} typed={!!values.newPassword} />
+                    {/* The rule behind the meter as a checklist: what is met, and
+                        for the rest what is still missing. Only the first is
+                        required, so only it gets a cross; the others a circle. */}
+                    <div id="newPassword-strength" className="flex flex-col gap-1 text-xs">
+                        {values.newPassword && (
+                            <p className={cn("font-medium motion-safe:transition-colors motion-safe:duration-300", STRENGTH_TEXT[strength.score])} aria-live="polite">
+                                {strength.label}
+                            </p>
+                        )}
+                        <ul className="flex flex-col gap-1">
+                            {strength.checks.map((check) => (
+                                <li key={check.label} className="flex items-start gap-1.5">
+                                    {check.met ? (
+                                        <Check aria-hidden className="mt-px size-3.5 shrink-0 text-constructive dark:text-green-400" />
+                                    ) : check.required ? (
+                                        // Red once something is typed; muted on an empty field.
+                                        <X
+                                            aria-hidden
+                                            className={cn(
+                                                "mt-px size-3.5 shrink-0",
+                                                values.newPassword ? "text-destructive" : "text-muted-foreground",
+                                            )}
+                                        />
+                                    ) : (
+                                        <Circle aria-hidden className="mt-px size-3.5 shrink-0 text-muted-foreground" />
+                                    )}
+                                    <span
+                                        className={cn(
+                                            "motion-safe:transition-colors motion-safe:duration-300",
+                                            check.met
+                                                ? "text-constructive dark:text-green-400"
+                                                : check.required && values.newPassword
+                                                  ? "text-destructive"
+                                                  : "text-muted-foreground",
+                                        )}
+                                    >
+                                        <span className="sr-only">{check.met ? "Done: " : "Not yet: "}</span>
+                                        {check.label}
+                                        {check.required && " (required)"}
+                                        {check.hint && <span> · {check.hint}</span>}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <p id="newPassword-strength" className="text-xs text-muted-foreground">
-                        {values.newPassword && strength.score > 0
-                            ? `${strength.label} · length beats complexity`
-                            : `At least ${limits.password.min} characters.`}
-                    </p>
                     <FieldError message={error("newPassword")} />
                 </SettingField>
                 <SettingField id="confirmNewPassword" label="Confirm new password">
