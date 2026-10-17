@@ -14,7 +14,7 @@ import { cn } from "@/lib/shadcn";
 import type { User } from "lucia";
 import { useRouter } from "next/navigation";
 import { SettingField, SettingsSection } from "../section";
-import { SaveNote, useSaveStatus } from "../saved";
+import { SaveNote, useSaveStatus } from "@/components/save-note";
 
 type Field = "avatar" | "displayName" | "bio";
 

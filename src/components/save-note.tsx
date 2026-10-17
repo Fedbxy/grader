@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
+import { cn } from "@/lib/shadcn";
 
 type SaveStatus = "idle" | "saving" | "saved";
 
@@ -33,19 +34,34 @@ export function useSaveStatus(visibleFor = 2500) {
   return { status, saving, saved, idle };
 }
 
-// The quiet note under a form. Always in the page, so screen readers hear it
-// change.
-export function SaveNote({ status }: { status: SaveStatus }) {
+// The quiet note beside what was saved. Always in the page, so screen readers
+// hear it change.
+export function SaveNote({
+  status,
+  label = "Saved",
+  className,
+  labelClassName,
+}: {
+  status: SaveStatus;
+  label?: string;
+  className?: string;
+  // For hiding the words but not the check where space is short.
+  labelClassName?: string;
+}) {
   return (
     <p
       role="status"
-      className="flex h-5 shrink-0 items-center gap-1 text-sm text-muted-foreground"
+      className={cn(
+        "flex h-5 shrink-0 items-center gap-1 text-sm text-muted-foreground",
+        className,
+      )}
+      title={status === "saved" ? label : undefined}
     >
       {status === "saving" && "Saving…"}
       {status === "saved" && (
         <>
           <Check className="h-4 w-4 text-constructive dark:text-green-400" />
-          Saved
+          <span className={labelClassName}>{label}</span>
         </>
       )}
     </p>
