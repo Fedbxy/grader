@@ -1,15 +1,8 @@
-import { notFound } from "next/navigation";
-import { getProblemData } from "@/utils/problem";
+import { redirect } from "next/navigation";
 
-import { Statement } from "../statement";
-
+// The problem page is one workspace now.
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  if (isNaN(Number(params.id))) {
-    notFound();
-  }
 
-  const { problem } = await getProblemData(Number(params.id));
-
-  return <Statement problemId={problem.id} />;
+  redirect(`/problem/${params.id}`);
 }
