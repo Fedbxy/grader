@@ -180,3 +180,10 @@
 .link-underlined {
   @apply underline decoration-muted-foreground/40 underline-offset-4 hover:text-primary hover:decoration-primary;
 }
+
+/* An iframe (the problem statement's PDF) takes the pointer for itself, so a
+   resizable split dragged over one would stop dead. While a split is being
+   dragged, iframes let the pointer through to it. */
+body:has([data-separator="active"]) iframe {
+  pointer-events: none;
+}
