@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
-import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useDefaultLayout,
+  useGroupRef,
+  usePanelRef,
+} from "react-resizable-panels";
 import Link from "next/link";
 import { limits } from "@/config/limits";
 import { maps } from "@/config/messages";
@@ -40,6 +44,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { TurnstileWithSkeleton } from "@/components/turnstile";
 import { SaveNote } from "@/components/save-note";
 import { CodeEditor } from "@/components/code-editor";
@@ -47,6 +67,9 @@ import {
   ChevronDown,
   ChevronUp,
   Code,
+  Columns2,
+  MoreHorizontal,
+  RotateCcw,
   Play,
   TextCursorInput,
   Upload,
@@ -102,17 +125,32 @@ export function CodePane({
   problemId,
   siteKey,
   resizable,
+  onResetLayout,
 }: {
   workspace: Workspace;
   problemId: number;
   siteKey: string;
   // Desktop: the editor, Input and Output can be resized by dragging.
   resizable: boolean;
+  // Resets the statement/code split, which the workspace owns.
+  onResetLayout: () => void;
 }) {
   const { form } = w;
   const fileInput = useRef<HTMLInputElement>(null);
   const submitButton = useRef<HTMLButtonElement>(null);
   const runPanel = usePanelRef();
+  const codeGroup = useGroupRef();
+  const runGroup = useGroupRef();
+  const [isResetCodeOpen, setIsResetCodeOpen] = useState(false);
+
+  // Every split back to its default (the panel open), which then saves as
+  // the remembered layout.
+  function resetLayout() {
+    onResetLayout();
+    codeGroup.current?.setLayout({ editor: 65, run: 35 });
+    runGroup.current?.setLayout({ input: 50, output: 50 });
+    w.setPanelOpen(true);
+  }
   // The editor/panel and Input/Output splits, as the viewer last left them,
   // the panel's being closed included.
   const codeLayout = useDefaultLayout({ id: "workspace-code", storage: layoutStorage });
@@ -360,8 +398,53 @@ export function CodePane({
                 </span>
               </Button>
             </Tip>
+            <DropdownMenu>
+              <Tip label="More">
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="ghost" size="icon-sm" aria-label="More">
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+              </Tip>
+              <DropdownMenuContent align="end">
+                {/* Phones have no splits to reset. */}
+                {resizable && (
+                  <DropdownMenuItem onSelect={resetLayout}>
+                    <Columns2 />
+                    Reset layout
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  disabled={w.disabled}
+                  // The dialog lives outside the menu, which closes first.
+                  onSelect={() => setIsResetCodeOpen(true)}
+                >
+                  <RotateCcw />
+                  Reset code
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
+
+        <AlertDialog open={isResetCodeOpen} onOpenChange={setIsResetCodeOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset your code?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {w.hasSubmission
+                  ? "Your draft will be replaced by the code from your last submission. This can't be undone."
+                  : "Your draft will be cleared. This can't be undone."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={w.resetCode}>
+                Reset code
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {resizable ? (
           // Desktop: drag the line above the panel to make it taller, or all
@@ -372,6 +455,7 @@ export function CodePane({
             className="min-h-0 flex-1"
             defaultLayout={codeLayout.defaultLayout}
             onLayoutChanged={codeLayout.onLayoutChanged}
+            groupRef={codeGroup}
           >
             <ResizablePanel id="editor" minSize={120}>
               {editor}
@@ -391,6 +475,7 @@ export function CodePane({
                 orientation="horizontal"
                 defaultLayout={runLayout.defaultLayout}
                 onLayoutChanged={runLayout.onLayoutChanged}
+                groupRef={runGroup}
               >
                 <ResizablePanel id="input" minSize={120} defaultSize="50%">
                   {input}

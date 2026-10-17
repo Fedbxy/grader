@@ -67,6 +67,16 @@ export function useWorkspace({
   const language = useWatch({ control: form.control, name: "language" });
   const draft = useDraft(form, problemId, viewerId);
 
+  // Reset code: back to the last submission's code and language (an empty
+  // editor without one), and the draft is forgotten. The input stays.
+  function resetCode() {
+    draft.clear();
+    form.reset(
+      { ...form.getValues(), code: latestCode, language: latestLanguage },
+      { keepDefaultValues: true },
+    );
+  }
+
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [runId, setRunId] = useState<number | null>(initialRun?.id ?? null);
   const [isStarting, setIsStarting] = useState(false);
@@ -163,6 +173,8 @@ export function useWorkspace({
     togglePanel: () => setIsPanelOpen((prev) => !prev),
     setPanelOpen: setIsPanelOpen,
     draftStatus: draft.status,
+    resetCode,
+    hasSubmission: latestLanguage !== undefined,
     run: {
       id: runId,
       data: run.data,

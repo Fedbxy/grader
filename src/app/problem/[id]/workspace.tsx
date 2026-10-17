@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDefaultLayout } from "react-resizable-panels";
+import { useDefaultLayout, useGroupRef } from "react-resizable-panels";
 import { useMediaQuery } from "@/hooks/media-query";
 import { Language } from "@/types/submission";
 
@@ -55,6 +55,7 @@ export function Workspace({
   const isDesktop = useMediaQuery("(min-width: 48rem)");
   // The statement/code split, as the viewer last left it.
   const layout = useDefaultLayout({ id: "workspace", storage: layoutStorage });
+  const mainGroup = useGroupRef();
   const [leftTab, setLeftTab] = useState("statement");
   const [phoneTab, setPhoneTab] = useState("statement");
 
@@ -68,6 +69,10 @@ export function Workspace({
       problemId={problemId}
       siteKey={siteKey}
       resizable={isDesktop === true}
+      // Reset layout: the statement/code split's half.
+      onResetLayout={() =>
+        mainGroup.current?.setLayout({ "statement-side": 50, "code-side": 50 })
+      }
     />
   );
 
@@ -96,6 +101,7 @@ export function Workspace({
           orientation="horizontal"
           defaultLayout={layout.defaultLayout}
           onLayoutChanged={layout.onLayoutChanged}
+          groupRef={mainGroup}
         >
           <ResizablePanel id="statement-side" minSize="25%">
             <Tabs
