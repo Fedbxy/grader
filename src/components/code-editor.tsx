@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Editor, { type BeforeMount, type Monaco } from "@monaco-editor/react";
+import Editor, { type BeforeMount, type Monaco, type OnMount } from "@monaco-editor/react";
 import { useIsClient } from "@/hooks/is-client";
 
 // The theme matching the page right now: dark or light from the class
@@ -58,17 +58,30 @@ export function CodeEditor({
   language,
   onChange,
   readOnly = false,
+  height = "80vh",
+  onRun,
 }: {
   code: string;
   language: string;
   onChange?: (value: string) => void;
   readOnly?: boolean;
+  height?: string;
+  // Called on Ctrl+Enter / Cmd+Enter inside the editor, which would otherwise
+  // insert a line.
+  onRun?: () => void;
 }) {
   const isMounted = useIsClient();
 
   if (language === "py" || language === "pypy") {
     language = "python";
   }
+
+  // The shortcut is registered once, on mount; the ref keeps it calling the
+  // latest handler.
+  const onRunRef = useRef(onRun);
+  useEffect(() => {
+    onRunRef.current = onRun;
+  }, [onRun]);
 
   // The theme follows the class on <html> rather than React state, which is
   // still unresolved while Monaco loads on a first visit. Setting it as the
@@ -95,18 +108,25 @@ export function CodeEditor({
     return () => observer.disconnect();
   }, []);
 
+  const handleEditorMount: OnMount = (editor, monaco) => {
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () =>
+      onRunRef.current?.(),
+    );
+  };
+
   if (!isMounted) {
     return null;
   }
 
   return (
     <Editor
-      height="80vh"
+      height={height}
       language={language}
       value={code}
       onChange={(value) => onChange && onChange(value ?? "")}
       theme={theme ?? pageThemeName()}
       beforeMount={defineTheme}
+      onMount={handleEditorMount}
       options={{
         readOnly,
         minimap: {
