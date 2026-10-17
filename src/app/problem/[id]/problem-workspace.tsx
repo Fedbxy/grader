@@ -1,4 +1,5 @@
 import { getProblemData, getProblemSubmissions } from "@/utils/problem";
+import { getLastRun } from "@/utils/run";
 
 import { ProblemHeader } from "./problem-header";
 import { SubmissionsPane } from "./submissions-pane";
@@ -12,6 +13,8 @@ export async function ProblemWorkspace({ id }: { id: number }) {
     await getProblemData(id);
 
   const submissions = await getProblemSubmissions(problem.id, user);
+
+  const initialRun = user ? await getLastRun(user.id, problem.id) : undefined;
 
   return (
     <div
@@ -29,6 +32,7 @@ export async function ProblemWorkspace({ id }: { id: number }) {
         latestCode={latestCode}
         latestLanguage={latestLanguage}
         disabled={!user}
+        initialRun={initialRun}
         submissions={
           <SubmissionsPane
             rows={submissions}

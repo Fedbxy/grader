@@ -17,7 +17,7 @@ import { useWorkspace } from "./use-workspace";
 import { TAB_TOOLBAR } from "./strips";
 
 // A pane stays mounted while another tab shows, so the statement doesn't
-// reload and the code and its undo history keep their place.
+// reload and the code, its undo history and the run keep their place.
 const PANE = "min-h-0 flex-1 data-[state=inactive]:hidden";
 
 // The part of the problem page below its header: the statement and the
@@ -29,6 +29,7 @@ export function Workspace({
   latestCode,
   latestLanguage,
   disabled,
+  initialRun,
   submissions,
 }: {
   problemId: number;
@@ -36,6 +37,7 @@ export function Workspace({
   latestCode: string;
   latestLanguage?: Language;
   disabled?: boolean;
+  initialRun?: { id: number; input: string };
   // Rendered by the server page: the table of this problem's submissions.
   submissions: React.ReactNode;
 }) {
@@ -44,6 +46,7 @@ export function Workspace({
     latestCode,
     latestLanguage,
     disabled,
+    initialRun,
   });
   const isDesktop = useMediaQuery("(min-width: 48rem)");
   const [leftTab, setLeftTab] = useState("statement");
@@ -61,6 +64,15 @@ export function Workspace({
     />
   );
 
+  // Ctrl+Enter or Cmd+Enter runs from anywhere in the workspace. Monaco has
+  // its own binding for it, since it would otherwise insert a line.
+  function handleKeyDown(event: React.KeyboardEvent) {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      workspace.run.start();
+    }
+  }
+
   if (isDesktop === null) {
     return <Skeleton className="min-h-0 flex-1 rounded-none" />;
   }
@@ -70,6 +82,7 @@ export function Workspace({
       // Not a card: the panes run edge to edge under a rule, as part of
       // the page.
       className="min-h-0 flex-1 overflow-hidden border-t"
+      onKeyDown={handleKeyDown}
     >
       {isDesktop ? (
         <ResizablePanelGroup orientation="horizontal">

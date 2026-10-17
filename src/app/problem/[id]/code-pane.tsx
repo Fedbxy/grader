@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { limits } from "@/config/limits";
 import { maps } from "@/config/messages";
@@ -11,9 +11,11 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import { Kbd } from "@/components/ui/kbd";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LoadingSpinner } from "@/components/ui/spinner";
 import {
   Popover,
   PopoverAnchor,
@@ -34,10 +37,14 @@ import {
 import { TurnstileWithSkeleton } from "@/components/turnstile";
 import { CodeEditor } from "@/components/code-editor";
 import {
+  ChevronDown,
+  ChevronUp,
   Code,
+  Play,
   TextCursorInput,
   Upload,
 } from "lucide-react";
+import { RunOutput, RunStatus, runSummary } from "./run-output";
 import { TOOLBAR } from "./strips";
 import type { Workspace } from "./use-workspace";
 
@@ -50,7 +57,10 @@ function Tip({
   children: React.ReactNode;
 }) {
   return (
-    <Tooltip>
+    // Not hoverable: Run's wide tooltip reaches over the toggle beside it,
+    // and Radix would hold the toggle's back while the pointer seemed to be
+    // heading for Run's.
+    <Tooltip disableHoverableContent>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent>
         <p>{label}</p>
@@ -59,8 +69,22 @@ function Tip({
   );
 }
 
-// Language and file on top, the editor, and a bar with Submit (whose captcha
-// pops over it).
+// The label row above Input and Output.
+const PANEL_HEADER = "flex h-9 shrink-0 items-center gap-2 border-b px-3";
+
+// What the shortcut is called here: Cmd on a Mac, Ctrl elsewhere. The server
+// can't know, so it renders the Ctrl one.
+function useShortcutHint() {
+  const isMac = useSyncExternalStore(
+    () => () => {},
+    () => /Mac|iPhone|iPad/.test(navigator.platform),
+    () => false,
+  );
+  return isMac ? "⌘↵" : "Ctrl+Enter";
+}
+
+// Language and file on top, the editor, the run panel (closed until a run),
+// and a bar with Run, the panel toggle and Submit (whose captcha pops over it).
 export function CodePane({
   workspace: w,
   problemId,
@@ -73,6 +97,12 @@ export function CodePane({
   const { form } = w;
   const fileInput = useRef<HTMLInputElement>(null);
   const submitButton = useRef<HTMLButtonElement>(null);
+  const shortcutHint = useShortcutHint();
+  const summary = runSummary(w.run.data, {
+    starting: w.run.isStarting,
+    expired: w.run.isExpired,
+  });
+
   // Clears the "code is required" error as soon as there is code again.
   function setCode(code: string) {
     form.setValue("code", code, {
@@ -91,6 +121,7 @@ export function CodePane({
     reader.readAsText(file);
   }
 
+  // The editor, Input and Output, laid out below.
   const editor = (
     <FormField
       control={form.control}
@@ -117,6 +148,7 @@ export function CodePane({
                     language={w.language ?? ""}
                     height="100%"
                     onChange={setCode}
+                    onRun={w.run.start}
                     readOnly={w.disabled}
                   />
                 ) : (
@@ -133,6 +165,56 @@ export function CodePane({
         </FormItem>
       )}
     />
+  );
+
+  const input = (
+    <FormField
+      control={form.control}
+      name="input"
+      render={({ field }) => (
+        <FormItem className="flex h-full min-h-0 min-w-0 flex-col [&>*+*]:mt-0">
+          <div className={PANEL_HEADER}>
+            <FormLabel className="text-xs font-medium text-muted-foreground">
+              Input
+            </FormLabel>
+            <FormMessage className="ml-auto truncate text-xs" />
+          </div>
+          <FormControl>
+            <Textarea
+              className="field-sizing-fixed min-h-0 flex-1 resize-none rounded-none border-0 bg-transparent px-3 py-2 font-mono text-sm focus-visible:ring-0 dark:bg-transparent"
+              placeholder="Input for your program"
+              readOnly={w.disabled}
+              {...field}
+            />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+  );
+
+  const output = (
+    <div className="flex h-full min-h-0 min-w-0 flex-col">
+      <div className={PANEL_HEADER}>
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">
+          Output
+        </span>
+        <RunStatus
+          runId={w.run.id}
+          run={w.run.data}
+          starting={w.run.isStarting}
+          expired={w.run.isExpired}
+        />
+      </div>
+      <div className="min-h-0 flex-1 overflow-auto">
+        <RunOutput
+          runId={w.run.id}
+          run={w.run.data}
+          starting={w.run.isStarting}
+          expired={w.run.isExpired}
+          shortcutHint={shortcutHint}
+        />
+      </div>
+    </div>
   );
 
   return (
@@ -223,9 +305,60 @@ export function CodePane({
         </div>
 
         {editor}
+        {w.isPanelOpen && (
+          <div className="@container shrink-0 border-t">
+            <div className="grid h-80 grid-cols-1 grid-rows-2 divide-y @lg:h-56 @lg:grid-cols-2 @lg:grid-rows-1 @lg:divide-x @lg:divide-y-0">
+              {input}
+              {output}
+            </div>
+          </div>
+        )}
 
-        {/* Sticky because on a phone the pane scrolls, and Submit must stay in reach. */}
+        {/* Sticky because on a phone the pane scrolls, and Run must stay in reach. */}
         <div className="sticky bottom-0 z-10 flex shrink-0 items-center gap-2 border-t bg-[color-mix(in_oklch,var(--background),var(--muted)_30%)] p-3">
+          <Tip label="Run your code on the input above, without submitting">
+            <Button
+              type="button"
+              variant="constructive"
+              // Only while the request is out: pressing Run during a run
+              // replaces it, and the token bucket limits how fast.
+              disabled={w.disabled || w.run.isStarting}
+              onClick={w.run.start}
+            >
+              {w.run.isStarting ? <LoadingSpinner size={14} /> : <Play />}
+              Run
+              <Kbd className="hidden bg-transparent text-current opacity-70 sm:inline-flex">
+                {shortcutHint}
+              </Kbd>
+            </Button>
+          </Tip>
+          <Tip
+            label={
+              w.isPanelOpen ? "Hide input and output" : "Show input and output"
+            }
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={
+                w.isPanelOpen
+                  ? "Hide input and output"
+                  : "Show input and output"
+              }
+              aria-expanded={w.isPanelOpen}
+              onClick={w.togglePanel}
+            >
+              {w.isPanelOpen ? <ChevronDown /> : <ChevronUp />}
+            </Button>
+          </Tip>
+          {/* With the panel open, its header already says how the run went. */}
+          <span
+            className={`min-w-0 truncate text-sm text-muted-foreground ${w.isPanelOpen ? "sr-only" : ""}`}
+            aria-live="polite"
+          >
+            {summary}
+          </span>
           <Popover
             open={w.submit.isVerifying}
             onOpenChange={w.submit.setVerifying}

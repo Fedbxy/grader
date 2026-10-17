@@ -1,31 +1,36 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { submitSchema } from "@/lib/zod/judge";
+import { runSchema } from "@/lib/zod/judge";
 import { submitCode } from "@/actions/judge";
+import { runCode } from "@/actions/run";
 import { messages } from "@/config/messages";
 import { Language } from "@/types/submission";
+import { useRun } from "@/hooks/run";
 
-export type WorkspaceValues = z.infer<typeof submitSchema>;
+export type WorkspaceValues = z.infer<typeof runSchema>;
 
-// Everything the code side of the workspace shares: the form (language and
-// code) and submitting. It lives above the layouts so that the code survives
-// the window crossing the phone breakpoint.
+// Everything the code side of the workspace shares: the form (language, code,
+// and the input for a run), submitting, and running. It lives above the
+// layouts so that the code survives the window crossing the phone breakpoint.
 export function useWorkspace({
   problemId,
   latestCode,
   latestLanguage,
   disabled,
+  initialRun,
 }: {
   problemId: number;
   latestCode: string;
   latestLanguage?: Language;
   disabled?: boolean;
+  // The viewer's last run on this problem, shown again with its input.
+  initialRun?: { id: number; input: string };
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -48,18 +53,55 @@ export function useWorkspace({
   }, [workspacePath, isCodeEditor]);
 
   const form = useForm<WorkspaceValues>({
-    resolver: zodResolver(submitSchema),
+    resolver: zodResolver(runSchema),
     defaultValues: {
       language: latestLanguage,
       code: latestCode,
+      input: initialRun?.input ?? "",
     },
   });
   const language = useWatch({ control: form.control, name: "language" });
 
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [runId, setRunId] = useState<number | null>(initialRun?.id ?? null);
+  const [isStarting, setIsStarting] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // Turnstile guards Submit only: Submit checks the form and opens a popover
   // with the widget, and passing it sends the submission.
   const [isVerifying, setIsVerifying] = useState(false);
+  const run = useRun(runId);
+
+  // A 404 (the run expired) leaves no data, so isRunning alone would never
+  // settle.
+  const isExpired = runId !== null && !!run.error;
+  const isRunning = isStarting || (runId !== null && !run.error && run.isRunning);
+
+  // Where the input's error shows, so open the panel to see it.
+  function handleInvalid(errors: FieldErrors<WorkspaceValues>) {
+    if (errors.input) {
+      setIsPanelOpen(true);
+    }
+  }
+
+  async function onRun(values: WorkspaceValues) {
+    const data = new FormData();
+    data.append("problemId", problemId.toString());
+    data.append("language", values.language as string);
+    data.append("code", values.code);
+    data.append("input", values.input);
+
+    setIsStarting(true);
+    setIsPanelOpen(true);
+    const response = await runCode(data);
+    setIsStarting(false);
+
+    if (response?.runId === undefined) {
+      return toast.error(response?.error ?? messages.form.noResponse);
+    }
+
+    setRunId(response.runId);
+  }
+
   async function onSubmit(token: string) {
     const values = form.getValues();
     const data = new FormData();
@@ -85,8 +127,8 @@ export function useWorkspace({
     router.push(response.redirectTo);
   }
 
-  // One request at a time: a second click can arrive before the state says
-  // the first has started.
+  // Validation is async, so a second Ctrl+Enter or click can arrive before the
+  // state says a run has started; one at a time covers both buttons.
   const inFlight = useRef(false);
   function once(action: () => Promise<void>) {
     if (disabled || inFlight.current) {
@@ -98,8 +140,10 @@ export function useWorkspace({
     });
   }
 
+  const handleRun = form.handleSubmit(onRun, handleInvalid);
+  // Only the fields a submission sends: the run's input must not block it.
   async function handleSubmit() {
-    if (await form.trigger()) {
+    if (await form.trigger(["language", "code"])) {
       setIsVerifying(true);
     }
   }
@@ -110,6 +154,18 @@ export function useWorkspace({
     disabled: !!disabled,
     isCodeEditor,
     toggleCodeEditor: () => setIsCodeEditor((prev) => !prev),
+    isPanelOpen,
+    togglePanel: () => setIsPanelOpen((prev) => !prev),
+    run: {
+      id: runId,
+      data: run.data,
+      isRunning,
+      isStarting,
+      isExpired,
+      // Does nothing while signed out or while a request is out. During a
+      // run it starts a new one, which replaces it.
+      start: () => once(handleRun),
+    },
     submit: {
       isSubmitting,
       isVerifying,
