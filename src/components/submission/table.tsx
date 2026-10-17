@@ -23,8 +23,10 @@ export function SubmissionTable({
   // false keeps the page and its size out of the URL.
   isPaginationSaved?: boolean;
 }) {
-  // A page that hides the User column (a profile) hides it on phones too.
+  // A page that hides the User column (a profile) or the Problem column (a
+  // problem's own list) hides it on phones too.
   const showUser = columnVisibility?.user !== false;
+  const showProblem = columnVisibility?.problem !== false;
 
   return (
     <DataTable
@@ -34,7 +36,11 @@ export function SubmissionTable({
       isPaginationSaved={isPaginationSaved}
       rowHref={(submission) => `/submission/${submission.id}`}
       mobileRow={(submission) => (
-        <SubmissionListItem submission={submission} showUser={showUser} />
+        <SubmissionListItem
+          submission={submission}
+          showUser={showUser}
+          showProblem={showProblem}
+        />
       )}
     />
   );
@@ -45,9 +51,11 @@ export function SubmissionTable({
 function SubmissionListItem({
   submission,
   showUser,
+  showProblem,
 }: {
   submission: SubmissionRow;
   showUser: boolean;
+  showProblem: boolean;
 }) {
   const { id, problem, user } = submission;
 
@@ -59,16 +67,18 @@ function SubmissionListItem({
           hidden={submission.hidden}
           codePublic={submission.codePublic}
         />
-        <Link
-          href={`/problem/${problem.id}/statement`}
-          className="link-underlined ml-1 min-w-0 truncate"
-        >
-          {problem.title}
-        </Link>
+        {showProblem && (
+          <Link
+            href={`/problem/${problem.id}/statement`}
+            className="link-underlined ml-1 min-w-0 truncate"
+          >
+            {problem.title}
+          </Link>
+        )}
         {showUser && (
           <Link
             href={`/user/${user.id}/profile`}
-            className="link-underlined shrink-0 text-muted-foreground"
+            className={`link-underlined shrink-0 text-muted-foreground ${showProblem ? "" : "ml-1"}`}
           >
             {user.displayName}
           </Link>
