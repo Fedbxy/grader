@@ -17,6 +17,10 @@ const buttonVariants = cva(
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        // App addition (#67, the Run button), tinted like destructive.
+        // Re-apply after a shadcn reinstall.
+        constructive:
+          "bg-constructive/15 text-green-700 hover:bg-constructive/25 focus-visible:border-constructive/40 focus-visible:ring-constructive/20 dark:bg-constructive/25 dark:text-green-400 dark:hover:bg-constructive/35 dark:focus-visible:ring-constructive/40",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
