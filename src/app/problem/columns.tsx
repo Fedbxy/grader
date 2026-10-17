@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, MoreHorizontal, FileCheck2, Send, ListChecks, Circle, CircleCheck, CircleDashed, CircleX } from "lucide-react";
+import { FileText, MoreHorizontal, FileCheck2, ListChecks, Circle, CircleCheck, CircleDashed, CircleX } from "lucide-react";
 import { useSubmission } from "@/hooks/submission";
 import { LoadingSpinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
@@ -130,7 +130,7 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
       const { title, id } = row.original;
 
       return (
-        <Link href={`/problem/${id}/statement`} className="link-underlined font-medium">
+        <Link href={`/problem/${id}`} className="link-underlined font-medium">
           {title}
         </Link>
       );
@@ -199,15 +199,9 @@ export const columns: ColumnDef<ProblemWithAccepted>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link href={`/problem/${problem.id}/statement`}>
+              <Link href={`/problem/${problem.id}`}>
                 <FileText className="mr-1 h-4 w-4" />
-                Statement
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`/problem/${problem.id}/submit`}>
-                <Send className="mr-1 h-4 w-4" />
-                Submit
+                Open
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>

@@ -24,7 +24,7 @@ export function ContinueSection({ data }: { data: ContinueData }) {
           <div className="flex min-w-0 flex-col gap-0.5">
             <p className="flex min-w-0 items-baseline gap-2">
               <span className="text-muted-foreground tabular-nums">#{problem.id}</span>
-              <Link href={`/problem/${problem.id}/statement`} className="link-underlined truncate font-medium">
+              <Link href={`/problem/${problem.id}`} className="link-underlined truncate font-medium">
                 {problem.title}
               </Link>
             </p>
@@ -84,7 +84,7 @@ export function ContinueSection({ data }: { data: ContinueData }) {
         )}
         <div className="flex flex-wrap gap-2 px-3 py-2.5">
           <Button size="sm" asChild>
-            <Link href={`/problem/${problem.id}/statement`}>Open problem</Link>
+            <Link href={`/problem/${problem.id}`}>Open problem</Link>
           </Button>
           {data.submissionId > 0 && (
             <Button size="sm" variant="outline" asChild>

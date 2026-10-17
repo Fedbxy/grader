@@ -69,7 +69,7 @@ function SubmissionListItem({
         />
         {showProblem && (
           <Link
-            href={`/problem/${problem.id}/statement`}
+            href={`/problem/${problem.id}`}
             className="link-underlined ml-1 min-w-0 truncate"
           >
             {problem.title}

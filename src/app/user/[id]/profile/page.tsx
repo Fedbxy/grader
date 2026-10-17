@@ -116,7 +116,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                         {stats.solved.map((problem) => (
                             <li key={problem.id} className="min-w-0 max-w-full">
                                 <Link
-                                    href={`/problem/${problem.id}/statement`}
+                                    href={`/problem/${problem.id}`}
                                     className="inline-flex max-w-full items-center gap-1.5 rounded-full border px-3 py-1 transition-colors hover:bg-accent hover:text-accent-foreground"
                                 >
                                     <CircleCheck className="h-4 w-4 shrink-0 text-constructive dark:text-green-400" />
