@@ -17,3 +17,13 @@ export const submitSchema = z.object({
     language: languageSchema,
     code: codeSchema,
 });
+
+// Stdin for a run. May be empty. The limit is in bytes, not characters.
+export const runInputSchema = z.string()
+    .refine((value) => new TextEncoder().encode(value).length <= limits.run.input, {
+        message: messages.run.inputTooLarge,
+    });
+
+export const runSchema = submitSchema.extend({
+    input: runInputSchema,
+});

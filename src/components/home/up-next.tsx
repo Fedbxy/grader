@@ -25,7 +25,7 @@ export function UpNextSection({
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <p className="flex min-w-0 items-baseline gap-2">
                   <span className="text-muted-foreground tabular-nums">#{problem.id}</span>
-                  <Link href={`/problem/${problem.id}/statement`} className="link-underlined truncate font-medium">
+                  <Link href={`/problem/${problem.id}`} className="link-underlined truncate font-medium">
                     {problem.title}
                   </Link>
                 </p>

@@ -84,6 +84,11 @@ export const messages = {
         samePassword: "New password must be different from the current password.",
         invalidPassword: "Your current password is invalid.",
     },
+    run: {
+        rateLimited: (seconds: number) =>
+            `You're running too often. Try again in ${seconds} ${seconds === 1 ? "second" : "seconds"}.`,
+        inputTooLarge: `Input is too large. The limit is ${limits.run.input / 1024} KB.`,
+    },
     auth: {
         unauthenticated: "You must be signed in to perform this action.",
         unauthorized: "You are not authorized to perform this action.",

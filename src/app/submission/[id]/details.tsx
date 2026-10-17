@@ -285,13 +285,13 @@ export async function SubmissionDetails({
         </p>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/problem/${problemId}/statement`}>
+            <Link href={`/problem/${problemId}`}>
               <FileText className="h-4 w-4" />
               View problem
             </Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/problem/${problemId}/submit`}>
+            <Link href={`/problem/${problemId}`}>
               <Send className="h-4 w-4" />
               {/* "Again" only for the submitter; anyone else is trying it. */}
               {user?.id === submission.userId ? "Submit again" : "Submit"}
@@ -365,7 +365,7 @@ function InfoLabel({
 function ProblemLink({ problem }: { problem: { id: number; title: string } }) {
   return (
     <Link
-      href={`/problem/${problem.id}/statement`}
+      href={`/problem/${problem.id}`}
       className="inline-flex items-center gap-1 align-bottom"
     >
       <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />

@@ -28,7 +28,7 @@ export function PointsSection({ points }: { points: HomeData["points"] }) {
               <div className="flex min-w-0 flex-col gap-0.5">
                 <p className="flex min-w-0 items-baseline gap-2">
                   <span className="text-muted-foreground tabular-nums">#{row.id}</span>
-                  <Link href={`/problem/${row.id}/statement`} className="link-underlined truncate font-medium">
+                  <Link href={`/problem/${row.id}`} className="link-underlined truncate font-medium">
                     {row.title}
                   </Link>
                 </p>

@@ -43,6 +43,7 @@ model User {
   sessions     Session[]
   Problem      Problem[]
   Submission   Submission[]
+  Run          Run[]
   Announcement Announcement[]
 
   createdAt DateTime @default(now())
@@ -74,6 +75,7 @@ model Problem {
   authorId    Int
   author      User          @relation(fields: [authorId], references: [id])
   Submission  Submission[]
+  Run         Run[]
 
   testcaseVersion String?
 
@@ -117,6 +119,57 @@ model Submission {
   // Who solved a problem, and how many.
   @@index([problemId, userId])
   @@map("submissions")
+}
+
+// A run executes the user's code against their own input, without submitting
+// (#67). Runs are a separate table so they can never touch scores, solved
+// status, counts or history: nothing that reads submissions ever sees them.
+// They are private scratch work, queued and claimed like submissions, and the
+// website deletes them after limits.run.ttlMinutes.
+model Run {
+  id        Int      @id @default(autoincrement())
+  // One run per user: a new run replaces the last one (as a new row, so the
+  // judge can't write an old result into it). Nothing keeps run history.
+  userId    Int      @unique
+  problemId Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  language  Language
+  code      String
+  input     String
+
+  judgeStatus JudgeStatus @default(pending)
+  status      String?     @default("In queue")
+  attempts    Int         @default(0)
+
+  // How the program ended: OK, TLE, MLE or RE. Null for a compile error or
+  // a judge failure, which set errorCode instead.
+  verdict         String?
+  exitCode        Int?
+  exitSignal      Int?
+  stdout          String?
+  stdoutTruncated Boolean @default(false)
+  stderr          String?
+  stderrTruncated Boolean @default(false)
+  time            Float?
+  memory          Float?
+
+  errorCode String?
+  error     String?
+
+  // The user's rate limit, a token bucket carried from run to run: what was
+  // left after this run, and when. limits.run says how it refills.
+  runTokens   Float
+  runTokensAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // The judge claims the oldest pending run.
+  @@index([judgeStatus, id])
+  // Expiry deletes everything older than the ttl.
+  @@index([createdAt])
+  @@map("runs")
 }
 
 model Announcement {

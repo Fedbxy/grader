@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getLatestSubmissionCode } from "@/utils/accepted";
 import { notFound } from "next/navigation";
 import type { Language } from "@/types/submission";
+import { submissionListSelect } from "@/lib/select";
+import { visibleSubmissionsWhere } from "@/utils/submission";
 
 export type ProblemData = {
   problem: {
@@ -11,6 +13,7 @@ export type ProblemData = {
     visibility: string;
     timeLimit: number;
     memoryLimit: number;
+    score: number;
     author: { id: number; displayName: string };
   };
   user: any | null;
@@ -29,6 +32,7 @@ export async function getProblemData(id: number): Promise<ProblemData> {
       visibility: true,
       timeLimit: true,
       memoryLimit: true,
+      score: true,
       author: { select: { id: true, displayName: true } },
     },
   });
@@ -50,4 +54,22 @@ export async function getProblemData(id: number): Promise<ProblemData> {
   }
 
   return { problem, user, latestCode, latestLanguage };
+}
+
+// A problem's submissions as the viewer may see them, newest first: what both
+// the workspace's Submissions tab and the problem's submissions page list.
+export async function getProblemSubmissions(
+  problemId: number,
+  user: ProblemData["user"],
+) {
+  return prisma.submission.findMany({
+    where: {
+      problemId,
+      ...visibleSubmissionsWhere(user),
+    },
+    orderBy: {
+      id: "desc",
+    },
+    select: submissionListSelect,
+  });
 }

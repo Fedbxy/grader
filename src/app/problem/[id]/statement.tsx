@@ -1,15 +1,9 @@
-export function Statement({
-  problemId,
-  withSplitLayout,
-}: {
-  problemId: number;
-  withSplitLayout?: boolean;
-}) {
+export function Statement({ problemId }: { problemId: number }) {
   return (
-    <div className="flex min-h-full flex-1 overflow-hidden rounded-lg border">
+    <div className="h-full overflow-hidden">
       <iframe
         src={`/api/problem/${problemId}/statement`}
-        className={`${withSplitLayout ? "min-h-full" : "min-h-screen-minus-header-footer"} w-full`}
+        className="h-full w-full"
       />
     </div>
   );
