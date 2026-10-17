@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useDefaultLayout, usePanelRef } from "react-resizable-panels";
 import Link from "next/link";
 import { limits } from "@/config/limits";
 import { maps } from "@/config/messages";
@@ -15,6 +16,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { Kbd } from "@/components/ui/kbd";
 import {
   Select,
@@ -45,7 +51,7 @@ import {
   Upload,
 } from "lucide-react";
 import { RunOutput, RunStatus, runSummary } from "./run-output";
-import { TOOLBAR } from "./strips";
+import { layoutStorage, TOOLBAR } from "./strips";
 import type { Workspace } from "./use-workspace";
 
 // A control with a tooltip saying what it does.
@@ -69,6 +75,11 @@ function Tip({
   );
 }
 
+// The Input/Output panel on a desktop: never thinner than this in pixels
+// while open, and this share of the code pane until the viewer resizes it.
+const RUN_PANEL_MIN = 120;
+const RUN_PANEL_DEFAULT = "35%";
+
 // The label row above Input and Output.
 const PANEL_HEADER = "flex h-9 shrink-0 items-center gap-2 border-b px-3";
 
@@ -89,14 +100,22 @@ export function CodePane({
   workspace: w,
   problemId,
   siteKey,
+  resizable,
 }: {
   workspace: Workspace;
   problemId: number;
   siteKey: string;
+  // Desktop: the editor, Input and Output can be resized by dragging.
+  resizable: boolean;
 }) {
   const { form } = w;
   const fileInput = useRef<HTMLInputElement>(null);
   const submitButton = useRef<HTMLButtonElement>(null);
+  const runPanel = usePanelRef();
+  // The editor/panel and Input/Output splits, as the viewer last left them,
+  // the panel's being closed included.
+  const codeLayout = useDefaultLayout({ id: "workspace-code", storage: layoutStorage });
+  const runLayout = useDefaultLayout({ id: "workspace-run", storage: layoutStorage });
   const shortcutHint = useShortcutHint();
   const summary = runSummary(w.run.data, {
     starting: w.run.isStarting,
@@ -121,13 +140,16 @@ export function CodePane({
     reader.readAsText(file);
   }
 
-  // The editor, Input and Output, laid out below.
+  // The editor, Input and Output, laid out below: resizable on a desktop,
+  // stacked on a phone.
   const editor = (
     <FormField
       control={form.control}
       name="code"
       render={({ field }) => (
-        <FormItem className="relative flex min-h-64 flex-1 flex-col md:min-h-32 [&>*+*]:mt-0">
+        <FormItem
+          className={`relative flex flex-col [&>*+*]:mt-0 ${resizable ? "h-full" : "min-h-64 flex-1"}`}
+        >
           <div className="relative min-h-0 flex-1 overflow-hidden">
             {w.disabled && (
               <div className="absolute inset-0 z-10 flex items-center justify-center p-4 text-center backdrop-blur-xs">
@@ -217,6 +239,33 @@ export function CodePane({
     </div>
   );
 
+  // Keep the run panel in step with the toggle (and with Run, which opens it).
+  // Not on the first pass: a panel restored closed reports its size through
+  // onResize first, and expanding it here would undo the saved layout.
+  const synced = useRef(false);
+  useEffect(() => {
+    const panel = runPanel.current;
+    if (!resizable || !panel) {
+      return;
+    }
+    if (!synced.current) {
+      synced.current = true;
+      return;
+    }
+    if (w.isPanelOpen && panel.isCollapsed()) {
+      panel.expand();
+      // expand() returns to the size from before it closed, which a reload
+      // forgets; it then opens at the bare minimum. Use the default instead.
+      requestAnimationFrame(() => {
+        if (panel.getSize().inPixels <= RUN_PANEL_MIN + 1) {
+          panel.resize(RUN_PANEL_DEFAULT);
+        }
+      });
+    } else if (!w.isPanelOpen && !panel.isCollapsed()) {
+      panel.collapse();
+    }
+  }, [resizable, w.isPanelOpen, runPanel]);
+
   return (
     <Form {...form}>
       <form
@@ -304,14 +353,59 @@ export function CodePane({
           </div>
         </div>
 
-        {editor}
-        {w.isPanelOpen && (
-          <div className="@container shrink-0 border-t">
-            <div className="grid h-80 grid-cols-1 grid-rows-2 divide-y @lg:h-56 @lg:grid-cols-2 @lg:grid-rows-1 @lg:divide-x @lg:divide-y-0">
-              {input}
-              {output}
-            </div>
-          </div>
+        {resizable ? (
+          // Desktop: drag the line above the panel to make it taller, or all
+          // the way down to close it; drag between Input and Output to
+          // share the width.
+          <ResizablePanelGroup
+            orientation="vertical"
+            className="min-h-0 flex-1"
+            defaultLayout={codeLayout.defaultLayout}
+            onLayoutChanged={codeLayout.onLayoutChanged}
+          >
+            <ResizablePanel id="editor" minSize={120}>
+              {editor}
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel
+              id="run"
+              panelRef={runPanel}
+              collapsible
+              collapsedSize={0}
+              minSize={RUN_PANEL_MIN}
+              defaultSize={RUN_PANEL_DEFAULT}
+              // Dragging it shut (or open) is the same as the toggle.
+              onResize={(size) => w.setPanelOpen(size.inPixels > 0)}
+            >
+              <ResizablePanelGroup
+                orientation="horizontal"
+                defaultLayout={runLayout.defaultLayout}
+                onLayoutChanged={runLayout.onLayoutChanged}
+              >
+                <ResizablePanel id="input" minSize={120} defaultSize="50%">
+                  {input}
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                {/* 136px is the narrowest where the header still fits the
+                    "Output" label and both cut parts as "…". */}
+                <ResizablePanel id="output" minSize={136} defaultSize="50%">
+                  {output}
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <>
+            {editor}
+            {w.isPanelOpen && (
+              <div className="@container shrink-0 border-t">
+                <div className="grid h-80 grid-cols-1 grid-rows-2 divide-y @lg:h-56 @lg:grid-cols-2 @lg:grid-rows-1 @lg:divide-x @lg:divide-y-0">
+                  {input}
+                  {output}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Sticky because on a phone the pane scrolls, and Run must stay in reach. */}

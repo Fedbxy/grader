@@ -156,6 +156,7 @@ export function useWorkspace({
     toggleCodeEditor: () => setIsCodeEditor((prev) => !prev),
     isPanelOpen,
     togglePanel: () => setIsPanelOpen((prev) => !prev),
+    setPanelOpen: setIsPanelOpen,
     run: {
       id: runId,
       data: run.data,

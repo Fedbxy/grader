@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useDefaultLayout } from "react-resizable-panels";
 import { useMediaQuery } from "@/hooks/media-query";
 import { Language } from "@/types/submission";
 
@@ -14,7 +15,7 @@ import {
 import { CodePane } from "./code-pane";
 import { Statement } from "./statement";
 import { useWorkspace } from "./use-workspace";
-import { TAB_TOOLBAR } from "./strips";
+import { layoutStorage, TAB_TOOLBAR } from "./strips";
 
 // A pane stays mounted while another tab shows, so the statement doesn't
 // reload and the code, its undo history and the run keep their place.
@@ -49,6 +50,8 @@ export function Workspace({
     initialRun,
   });
   const isDesktop = useMediaQuery("(min-width: 48rem)");
+  // The statement/code split, as the viewer last left it.
+  const layout = useDefaultLayout({ id: "workspace", storage: layoutStorage });
   const [leftTab, setLeftTab] = useState("statement");
   const [phoneTab, setPhoneTab] = useState("statement");
 
@@ -61,6 +64,7 @@ export function Workspace({
       workspace={workspace}
       problemId={problemId}
       siteKey={siteKey}
+      resizable={isDesktop === true}
     />
   );
 
@@ -85,7 +89,11 @@ export function Workspace({
       onKeyDown={handleKeyDown}
     >
       {isDesktop ? (
-        <ResizablePanelGroup orientation="horizontal">
+        <ResizablePanelGroup
+          orientation="horizontal"
+          defaultLayout={layout.defaultLayout}
+          onLayoutChanged={layout.onLayoutChanged}
+        >
           <ResizablePanel id="statement-side" minSize="25%">
             <Tabs
               value={leftTab}
