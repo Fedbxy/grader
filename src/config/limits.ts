@@ -68,6 +68,20 @@ export const limits = {
             ".py",
         ],
     },
+    // Runs (#67): the user's code on their own input, without submitting.
+    run: {
+        // Bytes of stdin.
+        input: 64 * 1024,
+        // Bytes per stream. The judge enforces this; the UI only displays it.
+        output: 64 * 1024,
+        // A token bucket: a user holds up to this many runs, each run uses
+        // one, and one comes back every refillSeconds. Bursts of 10, then one
+        // run per 6 seconds; empty to full in a minute.
+        tokens: 10,
+        refillSeconds: 6,
+        // Runs are deleted this long after they were created.
+        ttlMinutes: 60,
+    },
     announcement: {
         title: {
             min: 3,
