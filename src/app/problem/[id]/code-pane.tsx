@@ -41,6 +41,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TurnstileWithSkeleton } from "@/components/turnstile";
+import { SaveNote } from "@/components/save-note";
 import { CodeEditor } from "@/components/code-editor";
 import {
   ChevronDown,
@@ -282,7 +283,8 @@ export function CodePane({
               <FormItem className="flex min-w-0 items-center gap-2 [&>*+*]:mt-0">
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  // Controlled: a draft restored after load changes it.
+                  value={field.value ?? ""}
                   disabled={w.disabled}
                 >
                   <FormControl>
@@ -304,6 +306,14 @@ export function CodePane({
                 <FormMessage className="truncate" />
               </FormItem>
             )}
+          />
+          <SaveNote
+            status={w.draftStatus}
+            label="Draft saved locally"
+            className="text-xs [&_svg]:size-3.5"
+            // Where the words don't fit, just the check (the words stay for
+            // screen readers and on hover).
+            labelClassName="sr-only @[38rem]/toolbar:not-sr-only"
           />
           <div className="ml-auto flex items-center gap-1">
             <input

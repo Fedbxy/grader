@@ -31,6 +31,7 @@ export function Workspace({
   latestLanguage,
   disabled,
   initialRun,
+  viewerId,
   submissions,
 }: {
   problemId: number;
@@ -39,6 +40,7 @@ export function Workspace({
   latestLanguage?: Language;
   disabled?: boolean;
   initialRun?: { id: number; input: string };
+  viewerId?: number;
   // Rendered by the server page: the table of this problem's submissions.
   submissions: React.ReactNode;
 }) {
@@ -48,6 +50,7 @@ export function Workspace({
     latestLanguage,
     disabled,
     initialRun,
+    viewerId,
   });
   const isDesktop = useMediaQuery("(min-width: 48rem)");
   // The statement/code split, as the viewer last left it.

@@ -33,6 +33,7 @@ export async function ProblemWorkspace({ id }: { id: number }) {
         latestLanguage={latestLanguage}
         disabled={!user}
         initialRun={initialRun}
+        viewerId={user?.id}
         submissions={
           <SubmissionsPane
             rows={submissions}

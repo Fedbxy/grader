@@ -12,6 +12,7 @@ import { runCode } from "@/actions/run";
 import { messages } from "@/config/messages";
 import { Language } from "@/types/submission";
 import { useRun } from "@/hooks/run";
+import { useDraft } from "./use-draft";
 
 export type WorkspaceValues = z.infer<typeof runSchema>;
 
@@ -24,6 +25,7 @@ export function useWorkspace({
   latestLanguage,
   disabled,
   initialRun,
+  viewerId,
 }: {
   problemId: number;
   latestCode: string;
@@ -31,6 +33,8 @@ export function useWorkspace({
   disabled?: boolean;
   // The viewer's last run on this problem, shown again with its input.
   initialRun?: { id: number; input: string };
+  // Signed in: the code is kept as a draft in this browser.
+  viewerId?: number;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,6 +65,7 @@ export function useWorkspace({
     },
   });
   const language = useWatch({ control: form.control, name: "language" });
+  const draft = useDraft(form, problemId, viewerId);
 
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [runId, setRunId] = useState<number | null>(initialRun?.id ?? null);
@@ -157,6 +162,7 @@ export function useWorkspace({
     isPanelOpen,
     togglePanel: () => setIsPanelOpen((prev) => !prev),
     setPanelOpen: setIsPanelOpen,
+    draftStatus: draft.status,
     run: {
       id: runId,
       data: run.data,
